@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: glpi-ingress
+  namespace: glpi 
+  annotations: 
+    # cert-manager.io/issuer: "letsencrypt-staging"
+    cert-manager.io/issuer: "letsencrypt-prod"
+
+spec:
+  ingressClassName: traefik
+  tls: 
+  - hosts: 
+    - glpi.eftech.com.br
+    secretName: glpi-tls
+  rules:
+  - host: "glpi.eftech.com.br" 
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx
+            port:
+              number: 80

@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: glpi-cronjob
+  labels:
+    app: glpi
+  namespace: glpi 
+spec:
+  schedule: "*/2 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1 
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - image: eftechcombr/glpi:php-fpm-10.0.6
+            imagePullPolicy: Always
+            name: base
+            envFrom: 
+            - configMapRef: 
+                name: glpi-config
+            - secretRef: 
+                name: glpi-secret
+            command: 
+            - php
+            - front/cron.php
+            volumeMounts:
+            - name: files 
+              mountPath: /var/lib/glpi
+            - name: marketplace
+              mountPath: /var/www/html/marketplace
+            - name: etc 
+              mountPath: /etc/glpi
+          volumes: 
+          - name: etc
+            persistentVolumeClaim:
+              claimName: glpi-etc      
+          - name: files
+            persistentVolumeClaim:
+              claimName: glpi-files
+          - name: marketplace
+            persistentVolumeClaim:
+              claimName: glpi-marketplace
+          restartPolicy: OnFailure
+

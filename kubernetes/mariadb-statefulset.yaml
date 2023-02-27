@@ -1,0 +1,135 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app.kubernetes.io/component: primary
+    app.kubernetes.io/instance: glpi
+    app.kubernetes.io/name: mariadb
+  name: mariadb
+  namespace: glpi
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: glpi
+      app.kubernetes.io/name: mariadb
+      role: primary
+  serviceName: mariadb-headless
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: primary
+        app.kubernetes.io/instance: glpi
+        app.kubernetes.io/name: mariadb
+        role: primary
+      name: mariadb
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: primary
+                  app.kubernetes.io/instance: glpi
+                  app.kubernetes.io/name: mariadb
+              namespaces:
+              - glpi
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+      containers:
+      - image: mariadb:10.6
+        name: mariadb
+        imagePullPolicy: IfNotPresent
+        envFrom: 
+        - secretRef: 
+            name: mariadb-glpi-secret
+        ports:
+        - containerPort: 3306
+          name: mariadb
+          protocol: TCP
+        resources:
+          limits:
+            memory: 2Gi
+          requests:
+            memory: 256Mi
+        volumeMounts:
+        - name: data
+          mountPath: "/var/lib/mysql"
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      volumes: 
+      - name: data
+        persistentVolumeClaim:
+          claimName: mariadb-data
+  updateStrategy:
+    type: OnDelete
+status: 
+  replicas: 1
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: glpi
+    app.kubernetes.io/name: mariadb
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+  name: mariadb-headless
+  namespace: glpi
+spec:
+  clusterIP: None
+  clusterIPs:
+  - None
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: mariadb 
+    port: 3306
+    protocol: TCP
+    targetPort: 3306
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/instance: glpi
+    app.kubernetes.io/name: mariadb
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: glpi
+    app.kubernetes.io/name: mariadb
+  name: mariadb
+  namespace: glpi 
+spec:
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: mariadb
+    port: 3306
+    protocol: TCP
+    targetPort: 3306
+  selector:
+    app.kubernetes.io/instance: glpi 
+    app.kubernetes.io/name: mariadb
+    role: primary
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+
+
+

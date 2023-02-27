@@ -1,0 +1,148 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-fpm
+  labels:
+    app: php-fpm
+  namespace: glpi
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: php-fpm
+  template:
+    metadata:
+      labels:
+        app: php-fpm
+    spec:
+      containers:
+      - image: eftechcombr/glpi:php-fpm-10.0.6
+        imagePullPolicy: Always
+        name: php
+        envFrom: 
+        - configMapRef: 
+            name: glpi-config
+        - secretRef: 
+            name: glpi-secret
+        ports:
+        - containerPort: 9000
+          name: fpm
+        volumeMounts:
+        - name: files 
+          mountPath: /var/lib/glpi
+        - name: etc 
+          mountPath: /etc/glpi
+        - name: marketplace
+          mountPath: /var/www/html/marketplace
+        - name: install 
+          mountPath: /var/www/html/install
+        resources: {}
+      volumes: 
+      - name: etc 
+        persistentVolumeClaim: 
+          claimName: glpi-etc 
+      - name: files
+        persistentVolumeClaim:
+          claimName: glpi-files
+      - name: marketplace
+        persistentVolumeClaim:
+          claimName: glpi-marketplace
+
+      - name: install 
+        emptyDir: 
+          sizeLimit: 10Mi
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+  namespace: glpi 
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: eftechcombr/glpi:nginx-10.0.6
+        imagePullPolicy: Always
+        name: nginx
+        envFrom: 
+        - configMapRef: 
+            name: glpi-config
+        - secretRef: 
+            name: glpi-secret
+        ports:
+        - containerPort: 80
+          name: http
+        volumeMounts:
+        - name: files 
+          mountPath: /var/lib/glpi
+        - name: marketplace
+          mountPath: /var/www/html/marketplace
+        - name: etc
+          mountPath: /etc/glpi
+        - name: nginx-conf
+          mountPath: /etc/nginx/conf.d
+        - name: install 
+          mountPath: /var/www/html/install
+        resources: {}
+      volumes: 
+      - name: etc 
+        persistentVolumeClaim:
+          claimName: glpi-etc 
+      - name: files
+        persistentVolumeClaim:
+          claimName: glpi-files
+      - name: marketplace
+        persistentVolumeClaim:
+          claimName: glpi-marketplace          
+      - name: nginx-conf
+        configMap:
+          defaultMode: 420
+          name: nginx-conf
+      - name: install
+        emptyDir: 
+          sizeLimit: 10Mi
+
+
+--- 
+apiVersion: v1
+kind: Service
+metadata: 
+  name: php-fpm
+  labels: 
+    app: php-fpm
+  namespace: glpi 
+spec:
+  ports: 
+    - port: 9000
+      targetPort: 9000
+  selector: 
+    app: php-fpm
+
+
+--- 
+apiVersion: v1
+kind: Service
+metadata: 
+  name: nginx
+  labels: 
+    app: nginx
+  namespace: glpi
+spec:
+  ports: 
+    - port: 80
+      targetPort: 80
+  selector: 
+    app: nginx
+
+

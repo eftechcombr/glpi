@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kaniko-glpi-php-fpm
+  namespace: kaniko
+  labels: 
+    app: kaniko-glpi-php-fpm
+spec:
+  template: 
+    spec: 
+      activeDeadlineSeconds: 900
+      containers:
+      - name: kaniko
+        image: gcr.io/kaniko-project/executor:arm64
+        args:
+        - "--context-sub-path=/docker/php"
+        - "--dockerfile=Dockerfile"
+        - "--context=git://github.com/eftechcombr/glpi.git#refs/heads/master"
+        - "--destination=eftechcombr/glpi:php-fpm-10.0.6"
+        - "--cache=false"
+        - "--force"
+        volumeMounts:
+        - name: kaniko-secret
+          mountPath: "/kaniko/.docker"
+      restartPolicy: Never
+      volumes:
+      - name: kaniko-secret
+        secret:
+          secretName: regcred
+          items:
+          - key: .dockerconfigjson
+            path: config.json

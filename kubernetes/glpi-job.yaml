@@ -1,0 +1,132 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: glpi-verify-dir
+  namespace: glpi
+spec:
+  template:
+    spec:
+      containers:
+      - image: eftechcombr/glpi:php-fpm-10.0.6
+        imagePullPolicy: Always
+        name: base
+        envFrom: 
+        - configMapRef: 
+            name: glpi-config
+        - secretRef: 
+            name: glpi-secret
+        command: 
+        - sh
+        - -c 
+        - "/usr/local/bin/glpi-verify-dir.sh"
+        volumeMounts:
+        - name: files 
+          mountPath: /var/lib/glpi
+        - name: marketplace
+          mountPath: /var/www/html/marketplace
+        - name: etc 
+          mountPath: /etc/glpi
+      volumes: 
+      - name: etc
+        persistentVolumeClaim:
+          claimName: glpi-etc      
+      - name: files
+        persistentVolumeClaim:
+          claimName: glpi-files
+      - name: marketplace
+        persistentVolumeClaim:
+          claimName: glpi-marketplace
+      restartPolicy: Never
+  backoffLimit: 4
+status: {}
+
+
+
+--- 
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: glpi-db-install
+  namespace: glpi
+spec:
+  template:
+    spec:
+      containers:
+      - image: eftechcombr/glpi:php-fpm-10.0.6
+        imagePullPolicy: Always
+        name: base
+        command:
+        - sh 
+        - -c
+        - "/usr/local/bin/glpi-db-install.sh"
+        envFrom: 
+        - configMapRef: 
+            name: glpi-config
+        - secretRef: 
+            name: glpi-secret
+        volumeMounts:
+        - name: files 
+          mountPath: /var/lib/glpi
+        - name: marketplace
+          mountPath: /var/www/html/marketplace
+        - name: etc
+          mountPath: /etc/glpi 
+      volumes: 
+      - name: etc
+        persistentVolumeClaim:
+          claimName: glpi-etc
+      - name: files
+        persistentVolumeClaim:
+          claimName: glpi-files
+      - name: marketplace
+        persistentVolumeClaim:
+          claimName: glpi-marketplace          
+      restartPolicy: Never
+  backoffLimit: 4
+status: {}
+
+
+--- 
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: glpi-db-configure
+  namespace: glpi
+spec:
+  template:
+    spec:
+      containers:
+      - image: eftechcombr/glpi:php-fpm-10.0.6
+        imagePullPolicy: Always
+        name: base
+        command:
+        - sh 
+        - -c
+        - "/usr/local/bin/glpi-db-configure.sh"
+        envFrom: 
+        - configMapRef: 
+            name: glpi-config
+        - secretRef: 
+            name: glpi-secret
+        volumeMounts:
+        - name: etc
+          mountPath: /etc/glpi
+        - name: files 
+          mountPath: /var/lib/glpi
+        - name: marketplace
+          mountPath: /var/www/html/marketplace
+      volumes: 
+      - name: etc
+        persistentVolumeClaim:
+          claimName: glpi-etc 
+      - name: files
+        persistentVolumeClaim:
+          claimName: glpi-files
+      - name: marketplace
+        persistentVolumeClaim:
+          claimName: glpi-marketplace          
+      restartPolicy: Never
+  backoffLimit: 4
+status: {}
+
