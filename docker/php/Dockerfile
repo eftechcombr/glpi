@@ -67,6 +67,8 @@ ADD scripts/glpi-*.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/glpi-*.sh \
   && /usr/local/bin/glpi-verify-dir.sh
 
+RUN rm -rf /var/www/html/install/install.php
+
 EXPOSE 9000/tcp 
 
 CMD ["php-fpm"]

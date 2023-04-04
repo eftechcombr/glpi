@@ -3,8 +3,8 @@ services:
   mariadb: 
     image: mariadb:10.6
     restart: unless-stopped
-    # volumes: 
-    #  - mariadb-glpi-volume:/var/lib/mysql:rw
+    volumes: 
+      - mariadb-glpi-volume:/var/lib/mysql:rw
     environment: 
       MYSQL_DATABASE: glpi
       MYSQL_USER: glpi 
@@ -12,23 +12,52 @@ services:
       MYSQL_RANDOM_ROOT_PASSWORD: 1 
     ports: 
       - 3306:3306
+  glpi-db-install:
+    image: eftechcombr/glpi:php-fpm-10.0.6
+    restart: on-failure 
+    env_file: ./.env
+    volumes: 
+      - glpi-marketplace:/var/www/html/marketplace:rw
+      - glpi-files:/var/lib/glpi:rw
+      - glpi-etc:/etc/glpi:rw    
+    depends_on: 
+      - mariadb
+    command: 
+      - /usr/local/bin/glpi-db-install.sh
+  glpi-verify-dir: 
+    image: eftechcombr/glpi:php-fpm-10.0.6
+    restart: on-failure
+    volumes: 
+      - glpi-marketplace:/var/www/html/marketplace:rw
+      - glpi-files:/var/lib/glpi:rw
+      - glpi-etc:/etc/glpi:rw
+    env_file: ./.env
+    command: 
+      - /usr/local/bin/glpi-verify-dir.sh
+  glpi-db-configure: 
+    image: eftechcombr/glpi:php-fpm-10.0.6
+    restart: on-failure
+    volumes: 
+      - glpi-marketplace:/var/www/html/marketplace:rw
+      - glpi-files:/var/lib/glpi:rw
+      - glpi-etc:/etc/glpi:rw
+    env_file: ./.env
+    command: 
+      - /usr/local/bin/glpi-db-configure.sh
   php: 
     build: php/
     image: eftechcombr/glpi:php-fpm-10.0.6
     restart: unless-stopped
-    # volumes: 
-    #  - glpi-volume-files:/var/www/html/files:rw
-    #  - glpi-volume-plugins:/var/www/html/plugins:rw
-    #  - glpi-volume-config:/var/www/html/config:rw
-    environment: 
-      GLPI_LANG: en_US
-      MARIADB_HOST: mariadb
-      MARIADB_PORT: 3306
-      MARIADB_DATABASE: glpi
-      MARIADB_USER: glpi
-      MARIADB_PASSWORD: glpi
+    volumes: 
+      - glpi-marketplace:/var/www/html/marketplace:rw
+      - glpi-files:/var/lib/glpi:rw
+      - glpi-etc:/etc/glpi:rw
+    env_file: ./.env
     depends_on: 
       - mariadb
+      - glpi-db-install
+      - glpi-db-configure
+      - glpi-verify-dir
     ports: 
       - "9000:9000"
   nginx: 
@@ -37,11 +66,14 @@ services:
     restart: unless-stopped
     ports: 
       - "8080:80"
-#volumes: 
-#  glpi-volume-files:
-#  glpi-volume-plugins:
-#  glpi-volume-config:
-#  mariadb-glpi-volume: 
+    depends_on: 
+      - php
+volumes: 
+  glpi-marketplace:
+  glpi-files:
+  glpi-etc:
+  glpi-install:
+  mariadb-glpi-volume: 
 #networks: 
 #  glpi-frontend: 
 #  glpi-backend:
