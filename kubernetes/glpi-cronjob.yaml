@@ -15,7 +15,7 @@ spec:
       template:
         spec:
           containers:
-          - image: eftechcombr/glpi:php-fpm-10.0.6
+          - image: eftechcombr/glpi:php-fpm-10.0.7
             imagePullPolicy: Always
             name: base
             envFrom: 
