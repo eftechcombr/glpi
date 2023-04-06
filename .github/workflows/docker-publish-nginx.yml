@@ -11,7 +11,7 @@ on:
   push:
     branches: [ "latest", "10.0.7", "10.0.6" ]
     # Publish semver tags as releases.
-    tags: [ 'v*.*.*' ]
+    # tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ "latest" ]
 
@@ -71,7 +71,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=semver,pattern={{version}},prefix=nginx-
             type=ref,event=branch,prefix=nginx-
 
       # Build and push Docker image with Buildx (don't push on PR)
@@ -81,6 +80,7 @@ jobs:
         uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
         with:
           context: ./docker/nginx/
+          platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
