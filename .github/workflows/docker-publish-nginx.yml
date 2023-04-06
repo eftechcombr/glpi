@@ -11,7 +11,7 @@ on:
   push:
     branches: [ "latest" ]
     # Publish semver tags as releases.
-    tags: [ '*.*.*' ]
+    tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ "latest" ]
 
@@ -70,6 +70,8 @@ jobs:
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: type=semver,pattern={{version}},suffix=nginx-
+          
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -79,8 +81,8 @@ jobs:
         with:
           context: ./docker/nginx/
           push: ${{ github.event_name != 'pull_request' }}
-          #tags: ${{ steps.meta.outputs.tags }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:nginx-latest
+          tags: ${{ steps.meta.outputs.tags }}
+          # tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:nginx-latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
