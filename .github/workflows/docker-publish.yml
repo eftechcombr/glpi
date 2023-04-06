@@ -71,7 +71,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=semver,pattern={{version}},suffix=php-fpm-
+            type=semver,pattern={{version}},prefix=php-fpm-
             type=ref,event=branch,prefix=php-fpm-
 
       # Build and push Docker image with Buildx (don't push on PR)
@@ -149,7 +149,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=semver,pattern={{version}},suffix=nginx-
+            type=semver,pattern={{version}},prefix=nginx-
             type=ref,event=branch,prefix=nginx-
 
 
@@ -162,7 +162,6 @@ jobs:
           context: ./docker/nginx/
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
-          # tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:nginx-latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
