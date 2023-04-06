@@ -12,9 +12,4 @@ dbConfigure () {
 
 }
 
-
-chmod -R g+rw ${GLPI_CONFIG_DIR}
-
 dbConfigure
-
-chmod -R g+r ${GLPI_CONFIG_DIR}
