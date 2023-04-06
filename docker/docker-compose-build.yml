@@ -49,6 +49,7 @@ services:
     command: 
       - /usr/local/bin/glpi-db-configure.sh
   php: 
+    build: php/
     image: eftechcombr/glpi:php-fpm-10.0.7
     restart: unless-stopped
     volumes: 
@@ -64,6 +65,7 @@ services:
     ports: 
       - "9000:9000"
   nginx: 
+    build: nginx/
     image: eftechcombr/glpi:nginx-10.0.7
     restart: unless-stopped
     ports: 

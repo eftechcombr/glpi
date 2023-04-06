@@ -9,6 +9,7 @@ dbConfigure () {
     --db-user=$MARIADB_USER \
     --db-password=$MARIADB_PASSWORD \
     --no-interaction --reconfigure 
+
 }
 
 dbConfigure

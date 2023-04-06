@@ -34,9 +34,9 @@ SetPermissions () {
   chown -R www-data:www-data ${GLPI_VAR_DIR} 
   chown -R www-data:www-data ${GLPI_CONFIG_DIR} 
   chown -R www-data:www-data ${GLPI_MARKETPLACE_DIR}
-  chmod -R g+w ${GLPI_VAR_DIR} 
-  chmod -R g+w ${GLPI_CONFIG_DIR} 
-  chmod -R g+w ${GLPI_MARKETPLACE_DIR}
+  chmod -R g+rw ${GLPI_VAR_DIR} 
+  chmod -R g+rw ${GLPI_CONFIG_DIR} 
+  chmod -R g+rw ${GLPI_MARKETPLACE_DIR}
   echo "done"
 }
 
