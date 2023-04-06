@@ -32,8 +32,6 @@ services:
       - glpi-files:/var/lib/glpi:rw
       - glpi-etc:/etc/glpi:rw
     env_file: ./.env
-    depends_on: 
-      - glpi-db-install
     command: 
       - /usr/local/bin/glpi-verify-dir.sh
   glpi-db-configure: 
@@ -44,8 +42,6 @@ services:
       - glpi-files:/var/lib/glpi:rw
       - glpi-etc:/etc/glpi:rw
     env_file: ./.env
-    depends_on: 
-      - glpi-verify-dir
     command: 
       - /usr/local/bin/glpi-db-configure.sh
   php: 
