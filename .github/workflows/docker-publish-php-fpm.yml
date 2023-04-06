@@ -71,7 +71,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=semver,pattern={{version}},prefix=php-fpm-
             type=ref,event=branch,prefix=php-fpm-
 
       # Build and push Docker image with Buildx (don't push on PR)
