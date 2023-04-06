@@ -6,8 +6,8 @@ name: Nginx
 # documentation.
 
 on:
-  schedule:
-    - cron: '26 6 * * *'
+  # schedule:
+  #   - cron: '26 6 * * *'
   push:
     branches: [ "latest", "10.0.7", "10.0.6" ]
     # Publish semver tags as releases.
