@@ -15,8 +15,8 @@ spec:
         args:
         - "--context-sub-path=/docker/nginx"
         - "--dockerfile=Dockerfile"
-        - "--context=git://github.com/eftechcombr/glpi.git#refs/heads/master"
-        - "--destination=eftechcombr/glpi:nginx-10.0.7"
+        - "--context=git://github.com/eftechcombr/glpi.git#refs/heads/10.0.6"
+        - "--destination=eftechcombr/glpi:nginx-10.0.6"
         - "--cache=false"
         - "--force"
         volumeMounts:
