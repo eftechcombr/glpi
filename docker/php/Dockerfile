@@ -1,4 +1,4 @@
-FROM php:8.1-fpm-alpine3.17
+FROM php:8.2-fpm-alpine3.17
 
 ENV VERSION 10.0.7
 ENV GLPI_LANG en_US
