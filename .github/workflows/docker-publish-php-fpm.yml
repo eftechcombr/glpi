@@ -101,6 +101,7 @@ jobs:
         # against the sigstore community Fulcio instance.
         run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
 
+<<<<<<< HEAD
 <<<<<<< HEAD:.github/workflows/docker-publish-php-fpm.yml
 =======
 
@@ -182,3 +183,5 @@ jobs:
         # against the sigstore community Fulcio instance.
         run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
 >>>>>>> 4948b33 (Update docker-publish.yml):.github/workflows/docker-publish.yml
+=======
+>>>>>>> 547aaad (Update and rename docker-publish.yml to docker-publish-php-fpm.yml)
