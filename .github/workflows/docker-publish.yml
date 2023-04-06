@@ -80,7 +80,7 @@ jobs:
           context: ./docker/php/
           push: ${{ github.event_name != 'pull_request' }}
           #tags: ${{ steps.meta.outputs.tags }}
-          tags: php-fpm-latest
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php-fpm-latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
