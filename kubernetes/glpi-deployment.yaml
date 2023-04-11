@@ -34,8 +34,8 @@ spec:
           mountPath: /etc/glpi
         - name: marketplace
           mountPath: /var/www/html/marketplace
-        - name: install 
-          mountPath: /var/www/html/install
+        # - name: install 
+        #  mountPath: /var/www/html/install
         resources: {}
       volumes: 
       - name: etc 
@@ -47,10 +47,9 @@ spec:
       - name: marketplace
         persistentVolumeClaim:
           claimName: glpi-marketplace
-
-      - name: install 
-        emptyDir: 
-          sizeLimit: 10Mi
+      # - name: install 
+      #   emptyDir: 
+      #     sizeLimit: 10Mi
 
 
 ---
@@ -92,8 +91,8 @@ spec:
           mountPath: /etc/glpi
         - name: nginx-conf
           mountPath: /etc/nginx/conf.d
-        - name: install 
-          mountPath: /var/www/html/install
+        # - name: install 
+        #   mountPath: /var/www/html/install
         resources: {}
       volumes: 
       - name: etc 
@@ -109,11 +108,11 @@ spec:
         configMap:
           defaultMode: 420
           name: nginx-conf
-      - name: install
-        emptyDir: 
-          sizeLimit: 10Mi
+      # - name: install
+      #   emptyDir: 
+      #     sizeLimit: 10Mi
 
-
+ß
 --- 
 apiVersion: v1
 kind: Service
