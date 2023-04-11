@@ -112,7 +112,7 @@ spec:
       #   emptyDir: 
       #     sizeLimit: 10Mi
 
-ß
+
 --- 
 apiVersion: v1
 kind: Service
