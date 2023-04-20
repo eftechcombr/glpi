@@ -1,6 +1,6 @@
 #!/bin/sh
 
-dbInstall () {
+dbUpgrade () {
 
     php bin/console database:update \
     --lang=$GLPI_LANG \
@@ -14,8 +14,4 @@ dbInstall () {
 }
 
 
-if [ ! `php bin/console database:check_schema_integrity` ]
-then
-  dbInstall
-fi
-
+php bin/console database:check_schema_integrity || dbUpgrade
