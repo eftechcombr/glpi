@@ -1,3 +1,4 @@
+[![PHP](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-php-fpm.yml/badge.svg?branch=10.0.7)](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-php-fpm.yml)
 ![GLPI Logo](https://raw.githubusercontent.com/glpi-project/glpi/master/pics/logos/logo-GLPI-250-black.png)
 
 # GLPI Containers 
