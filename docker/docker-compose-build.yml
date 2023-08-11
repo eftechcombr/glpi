@@ -5,11 +5,7 @@ services:
     restart: unless-stopped
     volumes: 
       - mariadb-glpi-volume:/var/lib/mysql:rw
-    environment: 
-      MYSQL_DATABASE: glpi
-      MYSQL_USER: glpi 
-      MYSQL_PASSWORD: glpi 
-      MYSQL_RANDOM_ROOT_PASSWORD: 1 
+    env_file: ./.env
     ports: 
       - 3306:3306
   glpi-db-install:
