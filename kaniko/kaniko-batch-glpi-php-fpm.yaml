@@ -16,7 +16,7 @@ spec:
         - "--context-sub-path=/docker/php"
         - "--dockerfile=Dockerfile"
         - "--context=git://github.com/eftechcombr/glpi.git#refs/heads/master"
-        - "--destination=eftechcombr/glpi:php-fpm-10.0.8"
+        - "--destination=eftechcombr/glpi:php-fpm-10.0.9"
         - "--cache=false"
         - "--force"
         volumeMounts:
