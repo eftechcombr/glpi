@@ -8,7 +8,7 @@ spec:
   template:
     spec:
       containers:
-      - image: eftechcombr/glpi:php-fpm-10.0.7
+      - image: eftechcombr/glpi:php-fpm-10.0.9
         imagePullPolicy: Always
         name: base
         envFrom: 
@@ -53,7 +53,7 @@ spec:
   template:
     spec:
       containers:
-      - image: eftechcombr/glpi:php-fpm-10.0.7
+      - image: eftechcombr/glpi:php-fpm-10.0.9
         imagePullPolicy: Always
         name: base
         command:
@@ -91,13 +91,57 @@ status: {}
 apiVersion: batch/v1
 kind: Job
 metadata:
+  name: glpi-db-upgrade
+  namespace: glpi
+spec:
+  template:
+    spec:
+      containers:
+      - image: eftechcombr/glpi:php-fpm-10.0.9
+        imagePullPolicy: Always
+        name: base
+        command:
+        - sh 
+        - -c
+        - "/usr/local/bin/glpi-db-upgrade.sh"
+        envFrom: 
+        - configMapRef: 
+            name: glpi-config
+        - secretRef: 
+            name: glpi-secret
+        volumeMounts:
+        - name: files 
+          mountPath: /var/lib/glpi
+        - name: marketplace
+          mountPath: /var/www/html/marketplace
+        - name: etc
+          mountPath: /etc/glpi 
+      volumes: 
+      - name: etc
+        persistentVolumeClaim:
+          claimName: glpi-etc
+      - name: files
+        persistentVolumeClaim:
+          claimName: glpi-files
+      - name: marketplace
+        persistentVolumeClaim:
+          claimName: glpi-marketplace          
+      restartPolicy: Never
+  backoffLimit: 4
+status: {}
+
+
+--- 
+apiVersion: batch/v1
+kind: Job
+metadata:
   name: glpi-db-configure
   namespace: glpi
 spec:
   template:
     spec:
       containers:
-      - image: eftechcombr/glpi:php-fpm-10.0.7
+      - image: eftechcombr/glpi:php-fpm-10.0.9
         imagePullPolicy: Always
         name: base
         command:

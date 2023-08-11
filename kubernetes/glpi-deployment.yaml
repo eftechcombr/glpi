@@ -1,3 +1,4 @@
+--- 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,7 +17,7 @@ spec:
         app: php-fpm
     spec:
       containers:
-      - image: eftechcombr/glpi:php-fpm-10.0.7
+      - image: eftechcombr/glpi:php-fpm-10.0.9
         imagePullPolicy: Always
         name: php
         envFrom: 
@@ -34,8 +35,6 @@ spec:
           mountPath: /etc/glpi
         - name: marketplace
           mountPath: /var/www/html/marketplace
-        - name: install 
-          mountPath: /var/www/html/install
         resources: {}
       volumes: 
       - name: etc 
@@ -47,10 +46,6 @@ spec:
       - name: marketplace
         persistentVolumeClaim:
           claimName: glpi-marketplace
-
-      - name: install 
-        emptyDir: 
-          sizeLimit: 10Mi
 
 
 ---
@@ -72,7 +67,7 @@ spec:
         app: nginx
     spec:
       containers:
-      - image: eftechcombr/glpi:nginx-10.0.7
+      - image: eftechcombr/glpi:nginx-10.0.9
         imagePullPolicy: Always
         name: nginx
         envFrom: 
@@ -92,8 +87,6 @@ spec:
           mountPath: /etc/glpi
         - name: nginx-conf
           mountPath: /etc/nginx/conf.d
-        - name: install 
-          mountPath: /var/www/html/install
         resources: {}
       volumes: 
       - name: etc 
@@ -109,9 +102,6 @@ spec:
         configMap:
           defaultMode: 420
           name: nginx-conf
-      - name: install
-        emptyDir: 
-          sizeLimit: 10Mi
 
 
 --- 

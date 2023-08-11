@@ -12,9 +12,5 @@ dbInstall () {
     --no-interaction --reconfigure
 }
 
-
-if [ ! `php bin/console database:check_schema_integrity` ]
-then
-  dbInstall
-fi
+php bin/console database:check_schema_integrity || dbInstall
 
