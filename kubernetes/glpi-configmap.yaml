@@ -5,7 +5,7 @@ metadata:
   namespace: glpi 
 data: 
   GLPI_LANG: "en_US"
-  VERSION: "10.0.7"
+  VERSION: "10.0.8"
   GLPI_MARKETPLACE_DIR: /var/www/html/marketplace
   GLPI_VAR_DIR: /var/lib/glpi
   GLPI_DOC_DIR: /var/lib/glpi

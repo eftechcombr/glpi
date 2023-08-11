@@ -9,7 +9,7 @@ on:
   # schedule:
   #  - cron: '26 6 * * *'
   push:
-    branches: [ "10.0.7" ]
+    branches: [ "10.0.8" ]
     # Publish semver tags as releases.
     # tags: [ 'v*.*.*' ]
   pull_request:
@@ -21,7 +21,7 @@ env:
   REGISTRY: "docker.io"
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
-  VERSION: "10.0.7"
+  VERSION: "10.0.8"
 
 
 
