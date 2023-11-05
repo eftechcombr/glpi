@@ -6,13 +6,16 @@ name: Nginx
 # documentation.
 
 on:
-  workflow_run:
-    workflows: ["PHP"]
-    types:
-      - completed
-    branches: 
+  # schedule:
+  #  - cron: '26 6 * * *'
+  push:
+    branches:
       - "10.0.10"
       - "latest"
+    # Publish semver tags as releases.
+    # tags: [ 'v*.*.*' ]
+  # pull_request:
+  #  branches: [ "latest" ]
   # schedule:
   #   - cron: '26 6 * * *'
   # push:
