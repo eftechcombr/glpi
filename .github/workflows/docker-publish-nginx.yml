@@ -6,14 +6,22 @@ name: Nginx
 # documentation.
 
 on:
+  workflow_run:
+    workflows: ["PHP"]
+    types:
+      - completed
+    branches: 
+      - "10.0.10"
+      - "latest"
   # schedule:
   #   - cron: '26 6 * * *'
-  push:
-    branches: [ "10.0.10" ]
-    # Publish semver tags as releases.
-    # tags: [ 'v*.*.*' ]
-  pull_request:
-    branches: [ "latest" ]
+  # push:
+  #   branches: 
+  #     - 10.0.10
+  # Publish semver tags as releases.
+  # tags: [ 'v*.*.*' ]
+  # pull_request:
+  #  branches: [ "latest" ]
 
 env:
   # Use docker.io for Docker Hub if empty
