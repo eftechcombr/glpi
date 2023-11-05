@@ -12,8 +12,8 @@ on:
     branches: [ "10.0.10" ]
     # Publish semver tags as releases.
     # tags: [ 'v*.*.*' ]
-  pull_request:
-    branches: [ "latest" ]
+  # pull_request:
+  #  branches: [ "latest" ]
 
 env:
   # Use docker.io for Docker Hub if empty
