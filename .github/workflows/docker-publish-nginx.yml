@@ -11,12 +11,6 @@ on:
     types:
       - completed
     branches: 
-      - 10.0.10
-  workflow_run:
-    workflows: ["PHP"]
-    types:
-      - completed
-    branches: 
       - "10.0.10"
       - "latest"
   # schedule:
