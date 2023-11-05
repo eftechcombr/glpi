@@ -11,7 +11,8 @@ on:
     types:
       - completed
     branches: 
-      - 10.0.10
+      - "10.0.10"
+      - "latest"
   # schedule:
   #   - cron: '26 6 * * *'
   # push:
