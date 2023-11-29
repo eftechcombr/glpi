@@ -7,6 +7,13 @@
 
 Manifest files for build and deploy the **GLPI** as Containers with Docker using docker-compose or Kubernetes.
 
+In this versio we have deployment containers with: 
+- [x] alpine 3.18; 
+- [x] php 8.2; 
+- [x] nginx 1.25.3; 
+- [x] glpi 10.0.10; 
+
+
 
 ## About GLPI
 
