@@ -20,10 +20,10 @@ VerifyDir () {
 
   for i in $DIR
   do 
-    if [ ! -d $i ]
+    if [ ! -d "$i" ]
     then
       echo -n "Creating $i dir... " 
-      mkdir -p $i
+      mkdir -p "$i"
       echo "done"
     fi
   done
@@ -31,12 +31,12 @@ VerifyDir () {
 
 SetPermissions () {
   echo -n "Setting chown in files and plugins... "
-  chown -R www-data:www-data ${GLPI_VAR_DIR} 
-  chown -R www-data:www-data ${GLPI_CONFIG_DIR} 
-  chown -R www-data:www-data ${GLPI_MARKETPLACE_DIR}
-  chmod -R a+rw ${GLPI_VAR_DIR} 
-  chmod -R a+rw ${GLPI_CONFIG_DIR} 
-  chmod -R a+rw ${GLPI_MARKETPLACE_DIR}
+  chown -R www-data:www-data "${GLPI_VAR_DIR}"
+  chown -R www-data:www-data "${GLPI_CONFIG_DIR}" 
+  chown -R www-data:www-data "${GLPI_MARKETPLACE_DIR}"
+  chmod -R a+rw "${GLPI_VAR_DIR}" 
+  chmod -R a+rw "${GLPI_CONFIG_DIR}" 
+  chmod -R a+rw "${GLPI_MARKETPLACE_DIR}"
   echo "done"
 }
 
