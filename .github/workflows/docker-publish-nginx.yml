@@ -1,10 +1,17 @@
 name: Nginx
 
 on:
-  push:
-    branches:
-      - "10.0.11"
+  workflow_run:
+    workflows: ["PHP"]
+    types:
+      - completed
+    branches: 
       - "latest"
+      - "10.0.*"
+  # push:
+  #   branches:
+  #     - "10.0.11"
+  #     - "latest"
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -12,7 +19,7 @@ env:
   REGISTRY: "docker.io"
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
-  VERSION: "10.0.11"
+  # VERSION: "10.0.11"
 
 jobs:
   build-nginx:
@@ -47,7 +54,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=ref,enable=true,priority=600,prefix=nginx-,suffix=,event=branch
-            type=raw,value=nginx-${{ env.VERSION }}
+      # type=raw,value=nginx-${{ env.VERSION }}
 
       - name: Build and push Docker image
         id: build-and-push
