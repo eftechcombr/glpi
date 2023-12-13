@@ -1,17 +1,17 @@
 name: Nginx
 
 on:
-  workflow_run:
-    workflows: ["PHP"]
-    types:
-      - completed
-    branches: 
-      - "latest"
-      - "10.0.*"
-  # push:
-  #   branches:
-  #     - "10.0.11"
+  # workflow_run:
+  #   workflows: ["PHP"]
+  #   types:
+  #     - completed
+  #   branches: 
   #     - "latest"
+  #     - "10.0.*"
+  push:
+    branches:
+      - "10.0.*"
+      - "latest"
 
 env:
   # Use docker.io for Docker Hub if empty
