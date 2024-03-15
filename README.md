@@ -1,5 +1,5 @@
-[![PHP](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-php-fpm.yml/badge.svg?branch=10.0.12)](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-php-fpm.yml)
-[![Nginx](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-nginx.yml/badge.svg?branch=10.0.12)](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-nginx.yml)
+[![PHP](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-php-fpm.yml/badge.svg?branch=10.0.13)](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-php-fpm.yml)
+[![Nginx](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-nginx.yml/badge.svg?branch=10.0.13)](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-nginx.yml)
 
 ![GLPI Logo](https://raw.githubusercontent.com/glpi-project/glpi/master/pics/logos/logo-GLPI-250-black.png)
 
@@ -11,7 +11,7 @@ In this versio we have deployment containers with:
 - [x] alpine 3.18; 
 - [x] php 8.2; 
 - [x] nginx 1.25.3; 
-- [x] glpi 10.0.12; 
+- [x] glpi 10.0.13; 
 
 
 
