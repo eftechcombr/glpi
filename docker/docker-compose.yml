@@ -9,7 +9,7 @@ services:
     ports: 
       - 3306:3306
   glpi-db-install:
-    image: eftechcombr/glpi:php-fpm-10.0.11
+    image: eftechcombr/glpi:php-fpm-10.0.14
     restart: on-failure 
     env_file: ./.env
     volumes: 
@@ -21,7 +21,7 @@ services:
     command: 
       - /usr/local/bin/glpi-db-install.sh
   glpi-verify-dir: 
-    image: eftechcombr/glpi:php-fpm-10.0.11
+    image: eftechcombr/glpi:php-fpm-10.0.14
     restart: on-failure
     volumes: 
       - glpi-marketplace:/var/www/html/marketplace:rw
@@ -33,7 +33,7 @@ services:
     command: 
       - /usr/local/bin/glpi-verify-dir.sh
   glpi-db-configure: 
-    image: eftechcombr/glpi:php-fpm-10.0.11
+    image: eftechcombr/glpi:php-fpm-10.0.14
     restart: on-failure
     volumes: 
       - glpi-marketplace:/var/www/html/marketplace:rw
@@ -45,7 +45,7 @@ services:
     command: 
       - /usr/local/bin/glpi-db-configure.sh
   php: 
-    image: eftechcombr/glpi:php-fpm-10.0.11
+    image: eftechcombr/glpi:php-fpm-10.0.14
     restart: unless-stopped
     volumes: 
       - glpi-marketplace:/var/www/html/marketplace:rw
@@ -60,7 +60,7 @@ services:
     ports: 
       - "9000:9000"
   nginx: 
-    image: eftechcombr/glpi:nginx-10.0.11
+    image: eftechcombr/glpi:nginx-10.0.14
     restart: unless-stopped
     ports: 
       - "8080:80"
