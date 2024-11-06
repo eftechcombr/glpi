@@ -1,8 +1,8 @@
 
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://stand-with-ukraine.pp.ua)
 
-[![PHP](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-php-fpm.yml/badge.svg?branch=10.0.17)](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-php-fpm.yml)
-[![Nginx](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-nginx.yml/badge.svg?branch=10.0.17)](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-nginx.yml)
+[![PHP](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-php-fpm.yml/badge.svg?branch=latest)](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-php-fpm.yml)
+[![Nginx](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-nginx.yml/badge.svg?branch=latest)](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-nginx.yml)
 
 ![GLPI Logo](https://raw.githubusercontent.com/glpi-project/glpi/master/pics/logos/logo-GLPI-250-black.png)
 
