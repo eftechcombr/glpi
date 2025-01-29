@@ -1,4 +1,3 @@
-
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://stand-with-ukraine.pp.ua)
 
 [![PHP](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-php-fpm.yml/badge.svg?branch=latest)](https://github.com/eftechcombr/glpi/actions/workflows/docker-publish-php-fpm.yml)
@@ -6,15 +5,26 @@
 
 ![GLPI Logo](https://raw.githubusercontent.com/glpi-project/glpi/master/pics/logos/logo-GLPI-250-black.png)
 
-# GLPI Containers 
+# GLPI Containers
 
-Manifest files for build and deploy the **GLPI** as Containers with Docker using docker-compose or Kubernetes.
+Manifest files for building and deploying **GLPI** using containers with Docker Compose or Kubernetes.
 
-Containers: 
-- [x] php:8.3.12-fpm-alpine3.20; 
-- [x] nginx:1.27.2-alpine3.20-slim; 
-- [x] eftechcombr/glpi:php-fpm-10.0.17;
-- [x] eftechcombr/glpi:nginx-10.0.17. 
+## Supported Containers
+
+- [x] PHP-FPM: `php:8.3.12-fpm-alpine3.20`
+- [x] Nginx: `nginx:1.27.2-alpine3.20-slim`
+- [x] GLPI PHP: `eftechcombr/glpi:php-fpm-10.0.17`
+- [x] GLPI Nginx: `eftechcombr/glpi:nginx-10.0.17`
+
+## Quick Start
+
+### Using Docker Compose
+
+1. Clone this repository
+2. Set up environment variables:
+```sh
+cp docker/.env.example docker/.env
+```
 
 ## Credentials
 
