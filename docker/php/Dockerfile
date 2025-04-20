@@ -2,6 +2,7 @@ FROM php:8.3.12-fpm-alpine3.20
 
 ENV VERSION=10.0.18 
 ENV GLPI_LANG=en_US 
+ENV CACHE_DSN=redis://redis:6379/
 ENV MARIADB_HOST=mariadb-glpi 
 ENV MARIADB_PORT=3306 
 ENV MARIADB_DATABASE=glpi 
@@ -48,6 +49,11 @@ RUN apk add libzip-dev \
 
 RUN apk add openldap-dev \
   && docker-php-ext-install ldap 
+
+RUN apk add --no-cache pcre-dev ${PHPIZE_DEPS} \
+  && pecl install redis \
+  && docker-php-ext-enable redis \
+  && apk del pcre-dev ${PHPIZE_DEPS}
 
 RUN docker-php-ext-install opcache
 
