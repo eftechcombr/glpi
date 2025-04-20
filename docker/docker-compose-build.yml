@@ -74,6 +74,13 @@ services:
       - /usr/local/bin/glpi-cache-configure.sh
 
 
+  base: 
+    build: 
+      context: php/
+      dockerfile: Dockerfile.base
+    image: eftechcombr/glpi:base
+    restart: never
+
   php: 
     build: php/
     image: eftechcombr/glpi:php-fpm-10.0.18

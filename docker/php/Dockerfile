@@ -1,4 +1,4 @@
-FROM php:8.3.12-fpm-alpine3.20
+FROM eftechcombr/glpi:base 
 
 ENV VERSION=10.0.18 
 ENV GLPI_LANG=en_US 
@@ -24,22 +24,6 @@ ENV GLPI_SESSION_DIR=${GLPI_VAR_DIR}/_sessions
 ENV GLPI_TMP_DIR=${GLPI_VAR_DIR}/_tmp 
 ENV GLPI_UPLOAD_DIR=${GLPI_VAR_DIR}/_uploads 
 ENV GLPI_CACHE_DIR=${GLPI_VAR_DIR}/_cache
-
-COPY conf.d/*.ini $PHP_INI_DIR/conf.d/
-
-RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-
-RUN apk update 
-
-RUN apk add --no-cache icu-dev zlib-dev libpng-dev bzip2-dev libzip-dev openldap-dev \
-  && docker-php-ext-install intl mysqli gd exif bz2 zip ldap opcache
-
-RUN apk add --no-cache pcre-dev ${PHPIZE_DEPS} \
-  && pecl install redis \
-  && docker-php-ext-enable redis \
-  && apk del pcre-dev ${PHPIZE_DEPS}
-
-RUN docker-php-source delete
 
 WORKDIR /var/www/html
 
