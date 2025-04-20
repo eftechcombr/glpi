@@ -31,31 +31,13 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 RUN apk update 
 
-RUN apk add icu-dev \
-  && docker-php-ext-install intl
-
-RUN docker-php-ext-install mysqli  
-
-RUN apk add zlib-dev libpng-dev \
-  && docker-php-ext-install gd 
-
-RUN docker-php-ext-install exif
-
-RUN apk add bzip2-dev \
-  && docker-php-ext-install bz2
-
-RUN apk add libzip-dev \
-  && docker-php-ext-install zip
-
-RUN apk add openldap-dev \
-  && docker-php-ext-install ldap 
+RUN apk add --no-cache icu-dev zlib-dev libpng-dev bzip2-dev libzip-dev openldap-dev \
+  && docker-php-ext-install intl mysqli gd exif bz2 zip ldap opcache
 
 RUN apk add --no-cache pcre-dev ${PHPIZE_DEPS} \
   && pecl install redis \
   && docker-php-ext-enable redis \
   && apk del pcre-dev ${PHPIZE_DEPS}
-
-RUN docker-php-ext-install opcache
 
 RUN docker-php-source delete
 
