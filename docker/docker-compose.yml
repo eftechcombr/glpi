@@ -1,4 +1,9 @@
 services:
+  redis: 
+    image: redis:7.0-alpine 
+    restart: unless-stopped
+    ports: 
+      - 6379:6379
   mariadb: 
     image: mariadb:11.4
     restart: unless-stopped
@@ -54,6 +59,18 @@ services:
       - glpi-verify-dir
     command: 
       - /usr/local/bin/glpi-db-configure.sh
+  glpi-cache-configure: 
+    image: eftechcombr/glpi:php-fpm-10.0.18
+    restart: on-failure
+    volumes: 
+      - glpi-marketplace:/var/www/html/marketplace:rw
+      - glpi-files:/var/lib/glpi:rw
+      - glpi-etc:/etc/glpi:rw
+    env_file: ./.env
+    depends_on: 
+      - glpi-verify-dir
+    command: 
+      - /usr/local/bin/glpi-cache-configure.sh
 
   php: 
     image: eftechcombr/glpi:php-fpm-10.0.18
