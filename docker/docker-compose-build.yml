@@ -70,6 +70,7 @@ services:
     env_file: ./.env
     depends_on: 
       - glpi-verify-dir
+      - redis 
     command: 
       - /usr/local/bin/glpi-cache-configure.sh
 
@@ -79,7 +80,7 @@ services:
       context: php/
       dockerfile: Dockerfile.base
     image: eftechcombr/glpi:base
-    restart: never
+    restart: on-failure
 
   php: 
     build: php/
