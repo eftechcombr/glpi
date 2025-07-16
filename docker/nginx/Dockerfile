@@ -1,10 +1,13 @@
 FROM eftechcombr/glpi:php-fpm-10.0.18 as BUILD
 #
 
-FROM nginx:1.27.2-alpine3.20-slim
+FROM nginxinc/nginx-unprivileged:1.27.5-alpine3.21-slim
 #
 COPY --from=BUILD /var/www/html /var/www/html
 COPY --from=BUILD /var/lib/glpi /var/lib/glpi
 
 ADD conf.d/*.conf /etc/nginx/conf.d/
+
+# Update the default port to 8080 for unprivileged nginx
+EXPOSE 8080
 
