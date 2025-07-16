@@ -8,7 +8,7 @@ spec:
   template:
     spec:
       containers:
-      - image: eftechcombr/glpi:php-fpm-10.0.18
+      - image: eftechcombr/glpi:php-fpm-10.0.19
         imagePullPolicy: Always
         name: base
         envFrom: 
@@ -54,7 +54,7 @@ spec:
   template:
     spec:
       containers:
-      - image: eftechcombr/glpi:php-fpm-10.0.18
+      - image: eftechcombr/glpi:php-fpm-10.0.19
         imagePullPolicy: Always
         name: base
         command:
@@ -99,7 +99,7 @@ spec:
   template:
     spec:
       containers:
-      - image: eftechcombr/glpi:php-fpm-10.0.18
+      - image: eftechcombr/glpi:php-fpm-10.0.19
         imagePullPolicy: Always
         name: base
         command:
@@ -144,7 +144,7 @@ spec:
   template:
     spec:
       containers:
-      - image: eftechcombr/glpi:php-fpm-10.0.18
+      - image: eftechcombr/glpi:php-fpm-10.0.19
         imagePullPolicy: Always
         name: base
         command:
