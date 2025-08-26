@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - image: eftechcombr/glpi:php-fpm-10.0.19
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         name: php
         envFrom: 
         - configMapRef: 
@@ -68,7 +68,7 @@ spec:
     spec:
       containers:
       - image: eftechcombr/glpi:nginx-10.0.19
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         name: nginx
         envFrom: 
         - configMapRef: 
@@ -76,7 +76,7 @@ spec:
         - secretRef: 
             name: glpi-secret
         ports:
-        - containerPort: 80
+        - containerPort: 8080
           name: http
         volumeMounts:
         - name: files 
@@ -131,7 +131,7 @@ metadata:
 spec:
   ports: 
     - port: 80
-      targetPort: 80
+      targetPort: 8080
   selector: 
     app: nginx
 
