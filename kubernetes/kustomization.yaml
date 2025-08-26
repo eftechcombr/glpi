@@ -1,0 +1,50 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Namespace to deploy all resources
+namespace: glpi
+
+# Resources to include in the kustomization
+resources:
+  - namespace.yaml
+  - glpi-secret.yaml
+  - glpi-configmap.yaml
+  - glpi-persistentvolumeclaim.yaml
+  - glpi-deployment.yaml
+  - glpi-cronjob.yaml
+  - glpi-job.yaml
+  - glpi-ingress.yaml
+  - mariadb-secret.yaml
+  - mariadb-configmap.yaml
+  - mariadb-persistentvolumeclaim.yaml
+  - mariadb-statefulset.yaml
+  - mariadb-job.yaml
+  - redis-deployment.yaml
+
+# Common labels to apply to all resources
+commonLabels:
+  app.kubernetes.io/name: glpi
+  app.kubernetes.io/instance: glpi
+  app.kubernetes.io/version: latest
+  app.kubernetes.io/component: application
+  app.kubernetes.io/part-of: glpi-stack
+  app.kubernetes.io/managed-by: kustomize
+
+# Common annotations
+commonAnnotations:
+  description: "GLPI IT Service Management with MariaDB and Redis"
+
+# Name prefix for all resources (optional)
+# namePrefix: glpi-
+
+# Name suffix for all resources (optional)
+# nameSuffix: -prod
+
+# Images to replace (useful for different environments)
+# images:
+#   - name: glpi
+#     newTag: latest
+#   - name: mariadb
+#     newTag: 10.11
+#   - name: redis
+#     newTag: 7-alpine
