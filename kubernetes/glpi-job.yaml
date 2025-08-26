@@ -9,7 +9,7 @@ spec:
     spec:
       containers:
       - image: eftechcombr/glpi:php-fpm-10.0.19
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         name: base
         envFrom: 
         - configMapRef: 
@@ -55,7 +55,7 @@ spec:
     spec:
       containers:
       - image: eftechcombr/glpi:php-fpm-10.0.19
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         name: base
         command:
         - sh 
@@ -100,7 +100,7 @@ spec:
     spec:
       containers:
       - image: eftechcombr/glpi:php-fpm-10.0.19
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         name: base
         command:
         - sh 
@@ -145,7 +145,7 @@ spec:
     spec:
       containers:
       - image: eftechcombr/glpi:php-fpm-10.0.19
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         name: base
         command:
         - sh 
