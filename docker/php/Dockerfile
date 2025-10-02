@@ -1,6 +1,6 @@
 FROM eftechcombr/glpi:base 
 
-ENV VERSION=10.0.19 
+ENV VERSION=11.0.0 
 ENV GLPI_LANG=en_US 
 ENV CACHE_DSN=redis://redis:6379/
 ENV MARIADB_HOST=mariadb-glpi 
@@ -42,6 +42,8 @@ RUN chmod +x /usr/local/bin/glpi-*.sh \
 RUN rm -rf /var/www/html/install/install.php
 
 EXPOSE 9000/tcp 
+
+USER www-data 
 
 CMD ["php-fpm"]
 

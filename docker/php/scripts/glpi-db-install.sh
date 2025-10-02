@@ -1,8 +1,8 @@
 #!/bin/sh
 
 dbInstall () {
-
-    php bin/console db:install \
+# Temporarily raise the limit for debugging
+    php -d memory_limit=256M bin/console db:install \
     --default-language="$GLPI_LANG" \
     --db-host="$MARIADB_HOST" \
     --db-port="$MARIADB_PORT" \
