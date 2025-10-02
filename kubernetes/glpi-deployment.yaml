@@ -17,7 +17,7 @@ spec:
         app: php-fpm
     spec:
       containers:
-      - image: eftechcombr/glpi:php-fpm-10.0.19
+      - image: eftechcombr/glpi:php-fpm-11.0.0
         imagePullPolicy: IfNotPresent
         name: php
         envFrom: 
@@ -67,7 +67,7 @@ spec:
         app: nginx
     spec:
       containers:
-      - image: eftechcombr/glpi:nginx-10.0.19
+      - image: eftechcombr/glpi:nginx-11.0.0
         imagePullPolicy: IfNotPresent
         name: nginx
         envFrom: 
