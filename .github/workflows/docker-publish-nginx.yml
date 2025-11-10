@@ -3,7 +3,7 @@ name: Nginx
 on:
   push:
     branches:
-      - "latest" 
+      - "10.0.9" 
   release: 
     types: 
       - published

@@ -79,7 +79,7 @@ services:
     build: 
       context: php/
       dockerfile: Dockerfile.base
-    image: eftechcombr/glpi:base
+    image: eftechcombr/glpi:base-10.0.9
     restart: on-failure
 
   php: 

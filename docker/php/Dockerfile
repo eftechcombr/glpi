@@ -1,4 +1,4 @@
-FROM eftechcombr/glpi:base 
+FROM eftechcombr/glpi:base-10.0.9
 
 ENV VERSION=10.0.9 
 ENV GLPI_LANG=en_US 
