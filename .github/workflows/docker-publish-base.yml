@@ -43,7 +43,7 @@ jobs:
           flavor: |
             latest=false
           tags: |
-            type=raw,value=base
+            type=raw,value=base-10.0.9
 
 
       - name: Build and push Docker image
