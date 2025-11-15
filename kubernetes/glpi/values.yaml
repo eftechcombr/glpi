@@ -1,0 +1,396 @@
+# Default values for GLPI Helm Chart
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Global configuration
+global:
+  # Namespace where GLPI will be deployed
+  # If not set, the release namespace will be used
+  # Leave empty to use Helm's release namespace
+  namespace: ""
+
+# -- GLPI Application Configuration
+glpi:
+  # GLPI version to deploy
+  version: "11.0.2"
+  
+  # GLPI default language (e.g., en_US, fr_FR, pt_BR)
+  language: "en_US"
+  
+  # PHP-FPM container configuration
+  phpfpm:
+    # Container image settings
+    image:
+      # Image repository for PHP-FPM
+      repository: eftechcombr/glpi
+      # Image tag for PHP-FPM
+      tag: php-fpm-11.0.2
+      # Image pull policy
+      pullPolicy: IfNotPresent
+    
+    # Number of PHP-FPM replicas
+    replicaCount: 1
+    
+    # Resource limits and requests for PHP-FPM container
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    
+    # Liveness probe configuration for PHP-FPM
+    livenessProbe:
+      # Enable or disable liveness probe
+      enabled: true
+      # TCP socket check on PHP-FPM port
+      tcpSocket:
+        port: 9000
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    
+    # Readiness probe configuration for PHP-FPM
+    readinessProbe:
+      # Enable or disable readiness probe
+      enabled: true
+      # TCP socket check on PHP-FPM port
+      tcpSocket:
+        port: 9000
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+  
+  # Nginx container configuration
+  nginx:
+    # Container image settings
+    image:
+      # Image repository for Nginx
+      repository: eftechcombr/glpi
+      # Image tag for Nginx
+      tag: nginx-11.0.2
+      # Image pull policy
+      pullPolicy: IfNotPresent
+    
+    # Number of Nginx replicas
+    replicaCount: 1
+    
+    # Resource limits and requests for Nginx container
+    resources:
+      limits:
+        cpu: 500m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    
+    # Liveness probe configuration for Nginx
+    livenessProbe:
+      # Enable or disable liveness probe
+      enabled: true
+      # HTTP GET check on Nginx port
+      httpGet:
+        path: /
+        port: 8080
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    
+    # Readiness probe configuration for Nginx
+    readinessProbe:
+      # Enable or disable readiness probe
+      enabled: true
+      # HTTP GET check on Nginx port
+      httpGet:
+        path: /
+        port: 8080
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+    
+    # Nginx service configuration
+    service:
+      # Service type (ClusterIP, NodePort, LoadBalancer)
+      type: ClusterIP
+      # Service port exposed externally
+      port: 80
+      # Target port on the container
+      targetPort: 8080
+  
+  # GLPI directory paths configuration
+  paths:
+    # Marketplace plugins directory
+    marketplace: /var/www/html/marketplace
+    # Variable data directory
+    var: /var/lib/glpi
+    # Configuration directory
+    config: /etc/glpi/config
+  
+  # Persistent storage configuration for GLPI
+  persistence:
+    # Files volume (main GLPI data)
+    files:
+      # Enable persistent storage for files
+      enabled: true
+      # Storage class name (leave empty for default)
+      storageClass: ""
+      # Access mode for the volume
+      accessMode: ReadWriteOnce
+      # Size of the persistent volume
+      size: 10Gi
+    
+    # Marketplace volume (plugins)
+    marketplace:
+      # Enable persistent storage for marketplace
+      enabled: true
+      # Storage class name (leave empty for default)
+      storageClass: ""
+      # Access mode for the volume
+      accessMode: ReadWriteOnce
+      # Size of the persistent volume
+      size: 2Gi
+    
+    # Configuration volume
+    etc:
+      # Enable persistent storage for configuration
+      enabled: true
+      # Storage class name (leave empty for default)
+      storageClass: ""
+      # Access mode for the volume
+      accessMode: ReadWriteOnce
+      # Size of the persistent volume
+      size: 50Mi
+  
+  # -- Job Configuration
+  # Control which initialization jobs are deployed
+  jobs:
+    # Verify and create required GLPI directories
+    verifyDir:
+      enabled: true
+    
+    # Install GLPI database schema (for fresh installations)
+    dbInstall:
+      enabled: true
+    
+    # Upgrade GLPI database schema (for version upgrades)
+    dbUpgrade:
+      enabled: true
+    
+    # Configure GLPI database connection
+    dbConfigure:
+      enabled: true
+    
+    # Configure GLPI cache settings
+    cacheConfigure:
+      enabled: true
+  
+  # -- CronJob Configuration
+  # Control the scheduled maintenance job
+  cronjob:
+    # Enable or disable the GLPI maintenance cronjob
+    enabled: true
+    # Schedule in cron format (default: every 2 minutes)
+    schedule: "*/2 * * * *"
+
+# -- MariaDB Database Configuration
+mariadb:
+  # Enable or disable MariaDB deployment
+  # Set to false to use an external database
+  enabled: true
+  
+  # Container image settings
+  image:
+    # Image repository for MariaDB
+    repository: mariadb
+    # Image tag for MariaDB
+    tag: "11.4"
+    # Image pull policy
+    pullPolicy: IfNotPresent
+  
+  # Number of MariaDB replicas
+  replicaCount: 1
+  
+  # Database authentication configuration
+  auth:
+    # Root password for MariaDB
+    rootPassword: glpi
+    # Database name for GLPI
+    database: glpi
+    # Database username for GLPI
+    username: glpi
+    # Database password for GLPI user
+    password: glpi
+  
+  # Primary database configuration
+  primary:
+    # Resource limits and requests for MariaDB
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+  
+  # Persistent storage configuration for MariaDB
+  persistence:
+    # Enable persistent storage for database
+    enabled: true
+    # Storage class name (leave empty for default)
+    storageClass: ""
+    # Access mode for the volume
+    accessMode: ReadWriteOnce
+    # Size of the persistent volume
+    size: 10Gi
+  
+  # MariaDB service configuration
+  service:
+    # Service type (ClusterIP, NodePort, LoadBalancer)
+    type: ClusterIP
+    # Service port for database connections
+    port: 3306
+
+# -- Redis Cache Configuration
+redis:
+  # Enable or disable Redis deployment
+  # Set to false if caching is not needed
+  enabled: true
+  
+  # Container image settings
+  image:
+    # Image repository for Redis
+    repository: redis
+    # Image tag for Redis
+    tag: "7.0-alpine"
+    # Image pull policy
+    pullPolicy: IfNotPresent
+  
+  # Number of Redis replicas
+  replicaCount: 1
+  
+  # Resource limits and requests for Redis
+  resources:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  
+  # Redis service configuration
+  service:
+    # Service type (ClusterIP, NodePort, LoadBalancer)
+    type: ClusterIP
+    # Service port for Redis connections
+    port: 6379
+
+# -- Ingress Configuration
+# Configure ingress to expose GLPI externally
+ingress:
+  # Enable or disable ingress
+  enabled: false
+  # Ingress class name (e.g., nginx, traefik)
+  className: ""
+  # Annotations for the ingress resource
+  # Example for nginx ingress controller:
+  # annotations:
+  #   cert-manager.io/cluster-issuer: letsencrypt-prod
+  #   nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+  annotations: {}
+  # Ingress host configuration
+  hosts:
+    - host: glpi.example.local
+      paths:
+        - path: /
+          pathType: Prefix
+  # TLS configuration for HTTPS
+  # Example:
+  # tls:
+  #   - secretName: glpi-tls
+  #     hosts:
+  #       - glpi.example.local
+  tls: []
+
+# -- Pod Security Context
+# Security settings applied at the pod level
+podSecurityContext:
+  # Set fsGroup to www-data (33) for file permissions
+  fsGroup: 33
+
+# -- Container Security Context
+# Security settings applied at the container level
+securityContext:
+  # Run as non-root user
+  runAsNonRoot: true
+  # Run as www-data user (33)
+  runAsUser: 33
+  # Drop all capabilities
+  capabilities:
+    drop:
+    - ALL
+
+# -- Service Account Configuration
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# -- Image Pull Secrets
+# Secrets for pulling images from private registries
+imagePullSecrets: []
+
+# -- Name Overrides
+# Override the chart name
+nameOverride: ""
+# Override the full name
+fullnameOverride: ""
+
+# -- Pod Annotations
+# Annotations to add to GLPI pods
+podAnnotations: {}
+
+# -- Pod Labels
+# Labels to add to GLPI pods
+podLabels: {}
+
+# -- Node Selector
+# Node labels for pod assignment
+# Example:
+# nodeSelector:
+#   disktype: ssd
+nodeSelector: {}
+
+# -- Tolerations
+# Tolerations for pod assignment
+# Example:
+# tolerations:
+#   - key: "key1"
+#     operator: "Equal"
+#     value: "value1"
+#     effect: "NoSchedule"
+tolerations: []
+
+# -- Affinity
+# Affinity rules for pod assignment
+# Example:
+# affinity:
+#   nodeAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#       nodeSelectorTerms:
+#       - matchExpressions:
+#         - key: kubernetes.io/hostname
+#           operator: In
+#           values:
+#           - node1
+affinity: {}

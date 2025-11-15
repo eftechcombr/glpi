@@ -1,12 +1,13 @@
+{{- if not (hasKey .Values.glpi.cronjob "enabled") | or .Values.glpi.cronjob.enabled }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: glpi-cronjob
+  namespace: {{ include "glpi.namespace" . }}
   labels:
-    app: glpi
-  namespace: glpi 
+    {{- include "glpi.labels" . | nindent 4 }}
 spec:
-  schedule: "*/2 * * * *"
+  schedule: {{ .Values.glpi.cronjob.schedule | quote }}
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1 
@@ -15,8 +16,8 @@ spec:
       template:
         spec:
           containers:
-          - image: eftechcombr/glpi:php-fpm-11.0.2
-            imagePullPolicy: IfNotPresent
+          - image: {{ include "glpi.phpfpm.image" . }}
+            imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
             name: base
             envFrom: 
             - configMapRef: 
@@ -44,4 +45,5 @@ spec:
             persistentVolumeClaim:
               claimName: glpi-marketplace
           restartPolicy: OnFailure
+{{- end }}
 

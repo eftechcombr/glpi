@@ -1,0 +1,59 @@
+{{- if .Values.glpi.persistence.files.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: glpi-files
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
+spec:
+  {{- if .Values.glpi.persistence.files.storageClass }}
+  storageClassName: {{ .Values.glpi.persistence.files.storageClass }}
+  {{- end }}
+  accessModes:
+    - {{ .Values.glpi.persistence.files.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.glpi.persistence.files.size }}
+{{- end }}
+
+{{- if .Values.glpi.persistence.marketplace.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: glpi-marketplace
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
+spec:
+  {{- if .Values.glpi.persistence.marketplace.storageClass }}
+  storageClassName: {{ .Values.glpi.persistence.marketplace.storageClass }}
+  {{- end }}
+  accessModes:
+    - {{ .Values.glpi.persistence.marketplace.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.glpi.persistence.marketplace.size }}
+{{- end }}
+
+{{- if .Values.glpi.persistence.etc.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: glpi-etc
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
+spec:
+  {{- if .Values.glpi.persistence.etc.storageClass }}
+  storageClassName: {{ .Values.glpi.persistence.etc.storageClass }}
+  {{- end }}
+  accessModes:
+    - {{ .Values.glpi.persistence.etc.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.glpi.persistence.etc.size }}
+{{- end }}

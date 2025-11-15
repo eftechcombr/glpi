@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata: 
-  name: mariadb-glpi-config
-  namespace: glpi 
-data: 
-  MARIADB_HOST: "mariadb-headless.glpi.svc.cluster.local"
-  MARIADB_PORT: "3306"
