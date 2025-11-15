@@ -1,0 +1,19 @@
+{{- if and .Values.mariadb.enabled .Values.mariadb.persistence.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mariadb-data
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+{{ include "glpi.labels" . | indent 4 }}
+spec:
+  {{- if .Values.mariadb.persistence.storageClass }}
+  storageClassName: {{ .Values.mariadb.persistence.storageClass }}
+  {{- end }}
+  accessModes:
+    - {{ .Values.mariadb.persistence.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.mariadb.persistence.size }}
+{{- end }}

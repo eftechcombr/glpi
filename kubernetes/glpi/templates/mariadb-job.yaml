@@ -1,14 +1,17 @@
+{{- if .Values.mariadb.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: mariadb-timezone
-  namespace: glpi
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
 spec:
   template:
     spec:
       containers:
-      - image: mariadb:11.4
-        imagePullPolicy: IfNotPresent
+      - image: {{ include "glpi.mariadb.image" . }}
+        imagePullPolicy: {{ .Values.mariadb.image.pullPolicy }}
         name: base
         command:
         - sh
@@ -23,4 +26,5 @@ spec:
   parallelism: 1
   completions: 1
 status: {}
+{{- end }}
 

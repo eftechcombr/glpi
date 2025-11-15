@@ -1,0 +1,95 @@
+name: Helm Chart CI/CD
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish chart to repository'
+        required: false
+        default: 'true'
+        type: boolean
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+env:
+  CHART_DIR: kubernetes/glpi
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v5
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: '3.x'
+
+      - name: Lint Helm chart
+        run: helm lint ${{ env.CHART_DIR }}
+
+  package:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v5
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: '3.x'
+
+      - name: Extract chart version
+        id: chart_version
+        run: |
+          VERSION=$(grep '^version:' "${{ env.CHART_DIR }}/Chart.yaml" | awk '{print $2}')
+          echo "Chart version: $VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Create package directory
+        run: mkdir -p .cr-release-packages
+
+      - name: Package Helm chart
+        run: |
+          helm package ${{ env.CHART_DIR }} --destination .cr-release-packages
+          echo "Packaged chart: glpi-${{ steps.chart_version.outputs.version }}.tgz"
+
+      - name: Upload packaged chart as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: helm-chart-package
+          path: .cr-release-packages/*.tgz
+          retention-days: 30
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: package
+    if: github.event.inputs.publish == 'true'
+    steps:
+      - name: Check out repository code with full history
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git user
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: '3.x'
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.6.0
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          charts_dir: kubernetes
+          skip_existing: true

@@ -1,15 +1,18 @@
+{{- if .Values.glpi.jobs.verifyDir.enabled }}
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: glpi-verify-dir
-  namespace: glpi
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
 spec:
   template:
     spec:
       containers:
-      - image: eftechcombr/glpi:php-fpm-11.0.2
-        imagePullPolicy: IfNotPresent
+      - image: {{ include "glpi.phpfpm.image" . }}
+        imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
         name: base
         envFrom: 
         - configMapRef: 
@@ -41,21 +44,24 @@ spec:
   parallelism: 1
   completions: 1
 status: {}
+{{- end }}
 
 
-
+{{- if .Values.glpi.jobs.dbInstall.enabled }}
 --- 
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: glpi-db-install
-  namespace: glpi
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
 spec:
   template:
     spec:
       containers:
-      - image: eftechcombr/glpi:php-fpm-11.0.2
-        imagePullPolicy: IfNotPresent
+      - image: {{ include "glpi.phpfpm.image" . }}
+        imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
         name: base
         command:
         - sh 
@@ -87,20 +93,24 @@ spec:
   parallelism: 1
   completions: 1
 status: {}
+{{- end }}
 
 
+{{- if .Values.glpi.jobs.dbUpgrade.enabled }}
 --- 
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: glpi-db-upgrade
-  namespace: glpi
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
 spec:
   template:
     spec:
       containers:
-      - image: eftechcombr/glpi:php-fpm-11.0.2
-        imagePullPolicy: IfNotPresent
+      - image: {{ include "glpi.phpfpm.image" . }}
+        imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
         name: base
         command:
         - sh 
@@ -132,20 +142,24 @@ spec:
   parallelism: 1
   completions: 1
 status: {}
+{{- end }}
 
 
+{{- if .Values.glpi.jobs.dbConfigure.enabled }}
 --- 
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: glpi-db-configure
-  namespace: glpi
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
 spec:
   template:
     spec:
       containers:
-      - image: eftechcombr/glpi:php-fpm-11.0.2
-        imagePullPolicy: IfNotPresent
+      - image: {{ include "glpi.phpfpm.image" . }}
+        imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
         name: base
         command:
         - sh 
@@ -177,4 +191,53 @@ spec:
   parallelism: 1
   completions: 1
 status: {}
+{{- end }}
 
+
+{{- if .Values.glpi.jobs.cacheConfigure.enabled }}
+--- 
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: glpi-cache-configure
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      containers:
+      - image: {{ include "glpi.phpfpm.image" . }}
+        imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
+        name: base
+        command:
+        - sh 
+        - -c
+        - "/usr/local/bin/glpi-cache-configure.sh"
+        envFrom: 
+        - configMapRef: 
+            name: glpi-config
+        - secretRef: 
+            name: glpi-secret
+        volumeMounts:
+        - name: etc
+          mountPath: /etc/glpi
+        - name: files 
+          mountPath: /var/lib/glpi
+        - name: marketplace
+          mountPath: /var/www/html/marketplace
+      volumes: 
+      - name: etc
+        persistentVolumeClaim:
+          claimName: glpi-etc 
+      - name: files
+        persistentVolumeClaim:
+          claimName: glpi-files
+      - name: marketplace
+        persistentVolumeClaim:
+          claimName: glpi-marketplace          
+      restartPolicy: OnFailure
+  parallelism: 1
+  completions: 1
+status: {}
+{{- end }}

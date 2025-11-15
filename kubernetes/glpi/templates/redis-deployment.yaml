@@ -1,0 +1,29 @@
+{{- if .Values.redis.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.redis.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "glpi.selectorLabels" . | nindent 6 }}
+      app: redis
+  template:
+    metadata:
+      labels:
+        {{- include "glpi.selectorLabels" . | nindent 8 }}
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: {{ include "glpi.redis.image" . }}
+        imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
+        ports:
+        - containerPort: 6379
+        resources:
+          {{- toYaml .Values.redis.resources | nindent 10 }}
+{{- end }}
