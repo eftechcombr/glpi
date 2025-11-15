@@ -98,11 +98,11 @@ Successfully packaged chart and saved it to: .cr-release-packages/glpi-X.Y.Z.tgz
 - [x] All three jobs appear in workflow (lint, package, publish)
 - [x] Lint job completes successfully
 - [x] Package job completes successfully
-- [-] Publish job is skipped
-- [ ] Workflow completes with green status
-- [ ] Artifact is available and contains valid chart package
-- [ ] No changes to gh-pages branch
-- [ ] Total execution time < 5 minutes
+- [x] Publish job is skipped
+- [x] Workflow completes with green status
+- [x] Artifact is available and contains valid chart package
+- [x] No changes to gh-pages branch
+- [x] Total execution time < 5 minutes
 
 ---
 
