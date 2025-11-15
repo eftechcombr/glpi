@@ -7,7 +7,7 @@ global:
   # Namespace where GLPI will be deployed
   # If not set, the release namespace will be used
   # Leave empty to use Helm's release namespace
-  namespace: ""
+  namespace: "glpi"
 
 # -- GLPI Application Configuration
 glpi:
@@ -294,7 +294,7 @@ redis:
 ingress:
   # Enable or disable ingress
   enabled: false
-  # Ingress class name (e.g., nginx, traefik)
+  # Ingress class name (e.g., nginx, traefik, kong)
   className: ""
   # Annotations for the ingress resource
   # Example for nginx ingress controller:
@@ -320,7 +320,7 @@ ingress:
 # Security settings applied at the pod level
 podSecurityContext:
   # Set fsGroup to www-data (33) for file permissions
-  fsGroup: 33
+  fsGroup: 82
 
 # -- Container Security Context
 # Security settings applied at the container level
@@ -328,7 +328,7 @@ securityContext:
   # Run as non-root user
   runAsNonRoot: true
   # Run as www-data user (33)
-  runAsUser: 33
+  runAsUser: 82
   # Drop all capabilities
   capabilities:
     drop:
