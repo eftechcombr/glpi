@@ -26,8 +26,6 @@ jobs:
 
       - name: Install Helm
         uses: azure/setup-helm@v4
-        with:
-          version: '3.x'
 
       - name: Lint Helm chart
         run: helm lint ${{ env.CHART_DIR }}
@@ -41,8 +39,6 @@ jobs:
 
       - name: Install Helm
         uses: azure/setup-helm@v4
-        with:
-          version: '3.x'
 
       - name: Extract chart version
         id: chart_version
