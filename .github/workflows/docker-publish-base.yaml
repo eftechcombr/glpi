@@ -1,12 +1,7 @@
-name: PHP
+name: Build and publish base image
 
 on:
-  push:
-    branches:
-      - "latest" 
-  release: 
-    types: 
-      - published
+  workflow_dispatch:
 
 
 env:
@@ -14,8 +9,19 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-php-fpm:
 
+  lint: 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ./docker/php/Dockerfile.base
+
+  build-php-fpm:
+    needs: 
+      - lint
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -48,11 +54,7 @@ jobs:
           flavor: |
             latest=false
           tags: |
-            type=semver,pattern={{version}},prefix=php-fpm- 
-            type=semver,pattern={{version}},suffix=-php-fpm   
-            type=ref,event=branch,prefix=php-fpm- 
-            type=ref,event=branch,suffix=-php-fpm   
-            type=raw,value=php-fpm
+            type=raw,value=base
 
 
       - name: Build and push Docker image
@@ -60,6 +62,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./docker/php/
+          file: ./docker/php/Dockerfile.base
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}

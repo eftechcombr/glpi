@@ -1,4 +1,4 @@
-name: Nginx
+name: PHP
 
 on:
   push:
@@ -8,13 +8,25 @@ on:
     types: 
       - published
 
+
 env:
   REGISTRY: "docker.io"
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-nginx:
 
+  lint: 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ./docker/php/Dockerfile
+
+  build-php-fpm:
+    needs: 
+      - lint 
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -24,10 +36,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-
+      
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
-        
+      
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v3
 
@@ -44,25 +56,25 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          flavors: |
-            latest=false 
+          flavor: |
+            latest=false
           tags: |
-            type=semver,pattern={{version}},prefix=nginx-
-            type=semver,pattern={{version}},suffix=-nginx
-            type=ref,event=branch,prefix=nginx-
-            type=ref,event=branch,suffix=-nginx  
-            type=raw,value=nginx
+            type=semver,pattern={{version}},prefix=php-fpm- 
+            type=semver,pattern={{version}},suffix=-php-fpm   
+            type=ref,event=branch,prefix=php-fpm- 
+            type=ref,event=branch,suffix=-php-fpm   
+            type=raw,value=php-fpm
 
 
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@v6
         with:
-          context: ./docker/nginx/
+          context: ./docker/php/
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
+          
