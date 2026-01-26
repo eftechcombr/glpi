@@ -34,7 +34,7 @@ jobs:
       - uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: 
-            - docker/nginx/Dockerfile
+            - ./docker/nginx/Dockerfile
 
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
