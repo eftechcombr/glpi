@@ -4,15 +4,14 @@ COPY conf.d/*.ini $PHP_INI_DIR/conf.d/
 
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# hadolint ignore=DL3018
 RUN apk update \
   && apk add --no-cache \
-    icu-dev \
-    zlib-dev \
-    libpng-dev \
-    bzip2-dev \
-    libzip-dev \
-    openldap-dev \
+    icu-dev=76.1-r1 \
+    zlib-dev=1.3.1-r2 \
+    libpng-dev=1.6.54-r0 \
+    bzip2-dev=1.0.8-r6 \
+    libzip-dev=1.11.4-r0 \
+    openldap-dev=2.6.8-r0 \
   && docker-php-ext-install \
     intl mysqli gd exif bz2 zip ldap opcache bcmath \
   && apk add --no-cache --virtual .build-deps \
