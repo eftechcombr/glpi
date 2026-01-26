@@ -15,7 +15,16 @@ RUN apk update \
   && docker-php-ext-install \
     intl mysqli gd exif bz2 zip ldap opcache bcmath \
   && apk add --no-cache --virtual .build-deps \
-    ${PHPIZE_DEPS} \
+    autoconf=2.72-r1 \
+    dpkg-dev=1.22.15-r0 \
+    dpkg=1.22.15-r0 \
+    file=5.46-r2 \
+    g++=14.2.0-r6 \
+    gcc=14.2.0-r6 \
+    musl-dev=1.2.5-r10 \
+    make=4.4.1-r3 \
+    pkgconf=2.4.3-r0 \
+    re2c=4.2-r0 \
   && pecl install redis \
   && docker-php-ext-enable redis \
   && apk del .build-deps
