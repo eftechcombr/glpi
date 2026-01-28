@@ -1,6 +1,12 @@
 name: Nginx
 
 on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to build"
+        required: true
+        default: "latest"
   push:
     branches:
       - "latest" 

@@ -21,6 +21,21 @@ services:
       - mariadb
     command: mariadb -h $MARIADB_HOST -u root -p$MARIADB_ROOT_PASSWORD -e "GRANT SELECT ON \`mysql\`.\`time_zone_name\` TO 'glpi'@'%'; FLUSH PRIVILEGES;"
 
+
+  glpi-db-upgrade:
+    image: eftechcombr/glpi:php-fpm-11.0.5
+    restart: on-failure 
+    env_file: ./.env
+    volumes: 
+      - glpi-marketplace:/var/www/html/marketplace:rw
+      - glpi-files:/var/lib/glpi:rw
+      - glpi-etc:/etc/glpi:rw    
+    depends_on: 
+      - mariadb
+    command: 
+      - /usr/local/bin/glpi-db-upgrade.sh
+
+
   glpi-db-install:
     image: eftechcombr/glpi:php-fpm-11.0.5
     restart: on-failure 
