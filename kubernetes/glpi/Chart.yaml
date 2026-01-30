@@ -1,6 +1,6 @@
 apiVersion: v2
 name: glpi
-description: GLPI - IT Asset Management and Service Desk
+description: GLPI Helm Chart - IT Asset Management and Service Desk
 
 # A chart can be either an 'application' or a 'library' chart.
 #
