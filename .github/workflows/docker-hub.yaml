@@ -1,0 +1,27 @@
+name: "Update DockerHub README"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "latest"
+    paths:
+      - "README.md"
+
+env:
+  REGISTRY: "docker.io"
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+    update-readme:
+      runs-on: "ubuntu-latest"
+      steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v6"
+      - name: "Update repository description"
+        uses: "peter-evans/dockerhub-description@v5"
+        with:
+          repository: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
