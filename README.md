@@ -22,11 +22,10 @@ Manifest files for building and deploying **GLPI** using containers with Docker 
 Add the GLPI Helm chart repository:
 
 ```sh
-helm repo add glpi https://<owner>.github.io/<repo>
+helm repo add glpi https://eftechcombr.github.io/glpi/
 helm repo update
 ```
 
-Replace `<owner>` with the GitHub organization/user name and `<repo>` with the repository name.
 
 #### Installing the Chart
 
