@@ -1,11 +1,16 @@
 name: "Update DockerHub README"
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - "latest"
     paths:
       - "README.md"
+
+env:
+  REGISTRY: "docker.io"
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
     update-readme:
@@ -16,6 +21,7 @@ jobs:
       - name: "Update repository description"
         uses: "peter-evans/dockerhub-description@v5"
         with:
-          username: "${{ secrets.DOCKER_HUB_USERNAME }}"
-          password: "${{ secrets.DOCKER_HUB_TOKEN }}"
-          repository: ${{ vars.DOCKERHUB_IMAGE || 'glpi/glpi' }}
+          repository: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
