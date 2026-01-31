@@ -21,7 +21,7 @@ jobs:
       - name: "Update repository description"
         uses: "peter-evans/dockerhub-description@v5"
         with:
-          repository: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          repository: eftechcombr/glpi
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
