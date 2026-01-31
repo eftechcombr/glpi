@@ -1,5 +1,4 @@
-[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://stand-with-ukraine.pp.ua)
-
+[![Helm Chart CI/CD](https://github.com/eftechcombr/glpi/actions/workflows/helm-publish.yaml/badge.svg)](https://github.com/eftechcombr/glpi/actions/workflows/helm-publish.yaml)
 
 # GLPI Containers
 
@@ -259,4 +258,8 @@ contato@eftech.com.br
 ## License
 
 ![license](https://img.shields.io/github/license/glpi-project/glpi.svg)
+
+
+[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://stand-with-ukraine.pp.ua)
+
 
