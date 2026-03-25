@@ -59,7 +59,7 @@ jobs:
           echo "Packaged chart: glpi-${{ steps.chart_version.outputs.version }}.tgz"
 
       - name: Upload packaged chart as artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: helm-chart-package
           path: .cr-release-packages/*.tgz
