@@ -7,8 +7,8 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 RUN apk update \
   && apk add --no-cache \
     icu-dev=76.1-r1 \
-    zlib-dev=1.3.1-r2 \
-    libpng-dev=1.6.56-r0 \
+    zlib-dev=1.3.2-r0 \
+    libpng-dev=1.6.57-r0 \
     bzip2-dev=1.0.8-r6 \
     libzip-dev=1.11.4-r0 \
     openldap-dev=2.6.8-r0 \
@@ -21,7 +21,7 @@ RUN apk update \
     file=5.46-r2 \
     g++=14.2.0-r6 \
     gcc=14.2.0-r6 \
-    musl-dev=1.2.5-r10 \
+    musl-dev=1.2.5-r12 \
     make=4.4.1-r3 \
     pkgconf=2.4.3-r0 \
     re2c=4.2-r0 \
