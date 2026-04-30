@@ -10,8 +10,8 @@ Manifest files for building and deploying **GLPI** using containers with Docker 
 
 - [x] PHP-FPM: `php:8.4.13-fpm-alpine3.22`
 - [x] Nginx: `nginxinc/nginx-unprivileged:1.29.1-alpine3.22-slim`
-- [x] GLPI PHP: `eftechcombr/glpi:php-fpm-10.0.24`
-- [x] GLPI Nginx: `eftechcombr/glpi:nginx-10.0.24`
+- [x] GLPI PHP: `eftechcombr/glpi:php-fpm-10.0.25`
+- [x] GLPI Nginx: `eftechcombr/glpi:nginx-10.0.25`
 
 ## Quick Start
 
