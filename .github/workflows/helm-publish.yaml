@@ -64,6 +64,7 @@ jobs:
           name: helm-chart-package
           path: .cr-release-packages/*.tgz
           retention-days: 30
+          overwrite: true
 
   publish:
     runs-on: ubuntu-latest
