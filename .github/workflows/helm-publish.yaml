@@ -62,7 +62,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: helm-chart-package
-          path: .cr-release-packages/*.tgz
+          path: .cr-release-packages/glpi-${{ steps.chart_version.outputs.version }}.tgz
           retention-days: 30
           overwrite: true
 
