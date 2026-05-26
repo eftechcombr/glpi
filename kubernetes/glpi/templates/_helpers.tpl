@@ -52,10 +52,17 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Return the proper namespace
 */}}
 {{- define "glpi.namespace" -}}
-{{- if .Values.global }}
 {{- .Values.global.namespace | default .Release.Namespace }}
+{{- end }}
+
+{{/*
+Return the service account name
+*/}}
+{{- define "glpi.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- .Values.serviceAccount.name | default (include "glpi.fullname" .) }}
 {{- else }}
-{{- .Release.Namespace }}
+{{- .Values.serviceAccount.name | default "default" }}
 {{- end }}
 {{- end }}
 

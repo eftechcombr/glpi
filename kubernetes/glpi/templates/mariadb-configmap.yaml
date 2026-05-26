@@ -1,12 +1,12 @@
 {{- if .Values.mariadb.enabled }}
 apiVersion: v1
 kind: ConfigMap
-metadata: 
+metadata:
   name: mariadb-glpi-config
   namespace: {{ include "glpi.namespace" . }}
   labels:
     {{- include "glpi.labels" . | nindent 4 }}
-data: 
+data:
   MARIADB_HOST: "mariadb-headless.{{ include "glpi.namespace" . }}.svc.cluster.local"
   MARIADB_PORT: {{ .Values.mariadb.service.port | quote }}
 {{- end }}

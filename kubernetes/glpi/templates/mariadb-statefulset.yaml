@@ -4,7 +4,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-{{ include "glpi.labels" . | indent 4 }}
+    {{- include "glpi.labels" . | nindent 4 }}
     app.kubernetes.io/component: primary
   name: mariadb
   namespace: {{ include "glpi.namespace" . }}
@@ -14,63 +14,86 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-{{ include "glpi.selectorLabels" . | indent 6 }}
+      {{- include "glpi.selectorLabels" . | nindent 6 }}
       role: primary
   serviceName: mariadb-headless
+  terminationGracePeriodSeconds: 120
   template:
     metadata:
       labels:
-{{ include "glpi.labels" . | indent 8 }}
+        {{- include "glpi.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: primary
         role: primary
       name: mariadb
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.mariadb.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       affinity:
+        {{- if .Values.affinity }}
+        {{- toYaml .Values.affinity | nindent 8 }}
+        {{- else }}
         podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - podAffinityTerm:
-              labelSelector:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
                 matchLabels:
-{{ include "glpi.selectorLabels" . | indent 18 }}
+                  {{- include "glpi.selectorLabels" . | nindent 18 }}
                   app.kubernetes.io/component: primary
               namespaces:
-              - {{ include "glpi.namespace" . }}
+                - {{ include "glpi.namespace" . }}
               topologyKey: kubernetes.io/hostname
-            weight: 1
-      containers:
-      - image: {{ include "glpi.mariadb.image" . }}
-        name: mariadb
-        {{- with .Values.mariadb.securityContext }}
-        securityContext:
-          {{- toYaml . | nindent 10 }}
         {{- end }}
-        imagePullPolicy: {{ .Values.mariadb.image.pullPolicy }}
-        envFrom: 
-        - secretRef: 
-            name: mariadb-glpi-secret
-        ports:
-        - containerPort: 3306
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - image: {{ include "glpi.mariadb.image" . }}
           name: mariadb
-          protocol: TCP
-        resources:
-{{ toYaml .Values.mariadb.primary.resources | indent 10 }}
-        volumeMounts:
-        - name: data
-          mountPath: "/var/lib/mysql"
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-      volumes: 
-      - name: data
-        persistentVolumeClaim:
-          claimName: mariadb-data
+          {{- with .Values.mariadb.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          imagePullPolicy: {{ .Values.mariadb.image.pullPolicy }}
+          envFrom:
+            - secretRef:
+                name: mariadb-glpi-secret
+          ports:
+            - containerPort: 3306
+              name: mariadb
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.mariadb.primary.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: "/var/lib/mysql"
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
   updateStrategy:
     type: OnDelete
-status: 
-  replicas: {{ .Values.mariadb.replicaCount }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          {{- include "glpi.labels" . | nindent 10 }}
+      spec:
+        accessModes:
+          - {{ .Values.mariadb.persistence.accessMode }}
+        resources:
+          requests:
+            storage: {{ .Values.mariadb.persistence.size }}
+        {{- if .Values.mariadb.persistence.storageClass }}
+        storageClassName: {{ .Values.mariadb.persistence.storageClass }}
+        {{- end }}
 
 
 ---
@@ -78,30 +101,27 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-{{ include "glpi.labels" . | indent 4 }}
-    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+    {{- include "glpi.labels" . | nindent 4 }}
   name: mariadb-headless
   namespace: {{ include "glpi.namespace" . }}
 spec:
   clusterIP: None
   clusterIPs:
-  - None
+    - None
   ipFamilies:
-  - IPv4
+    - IPv4
   ipFamilyPolicy: SingleStack
   ports:
-  - name: mariadb 
-    port: {{ .Values.mariadb.service.port }}
-    protocol: TCP
-    targetPort: {{ .Values.mariadb.service.port }}
+    - name: mariadb
+      port: {{ .Values.mariadb.service.port }}
+      protocol: TCP
+      targetPort: {{ .Values.mariadb.service.port }}
   publishNotReadyAddresses: true
   selector:
-{{ include "glpi.selectorLabels" . | indent 4 }}
+    {{- include "glpi.selectorLabels" . | nindent 4 }}
     role: primary
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 
 
 ---
@@ -109,27 +129,21 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-{{ include "glpi.labels" . | indent 4 }}
+    {{- include "glpi.labels" . | nindent 4 }}
   name: mariadb
   namespace: {{ include "glpi.namespace" . }}
 spec:
   ipFamilies:
-  - IPv4
+    - IPv4
   ipFamilyPolicy: SingleStack
   ports:
-  - name: mariadb
-    port: {{ .Values.mariadb.service.port }}
-    protocol: TCP
-    targetPort: {{ .Values.mariadb.service.port }}
+    - name: mariadb
+      port: {{ .Values.mariadb.service.port }}
+      protocol: TCP
+      targetPort: {{ .Values.mariadb.service.port }}
   selector:
-{{ include "glpi.selectorLabels" . | indent 4 }}
+    {{- include "glpi.selectorLabels" . | nindent 4 }}
     role: primary
   sessionAffinity: None
   type: {{ .Values.mariadb.service.type }}
-status:
-  loadBalancer: {}
 {{- end }}
-
-
-
-

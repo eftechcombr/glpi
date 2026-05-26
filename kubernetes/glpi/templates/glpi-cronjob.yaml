@@ -1,4 +1,4 @@
-{{- if not (hasKey .Values.glpi.cronjob "enabled") | or .Values.glpi.cronjob.enabled }}
+{{- if .Values.glpi.cronjob.enabled }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -14,44 +14,61 @@ spec:
   jobTemplate:
     spec:
       template:
-          spec:
-            {{- with .Values.glpi.podSecurityContext }}
-            securityContext:
-              {{- toYaml . | nindent 14 }}
-            {{- end }}
-            containers:
+        spec:
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.glpi.podSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
             - image: {{ include "glpi.phpfpm.image" . }}
-            imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
-            name: base
-            {{- with .Values.glpi.securityContext }}
-            securityContext:
-              {{- toYaml . | nindent 14 }}
-            {{- end }}
-            envFrom: 
-            - configMapRef: 
-                name: glpi-config
-            - secretRef: 
-                name: glpi-secret
-            command: 
-            - php
-            - front/cron.php
-            volumeMounts:
-            - name: files 
-              mountPath: /var/lib/glpi
-            - name: marketplace
-              mountPath: /var/www/html/marketplace
-            - name: etc 
-              mountPath: /etc/glpi
+              imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
+              name: base
+              {{- with .Values.glpi.securityContext }}
+              securityContext:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              envFrom: 
+                - configMapRef: 
+                    name: glpi-config
+                - secretRef: 
+                    name: glpi-secret
+              command: 
+                - php
+                - front/cron.php
+              volumeMounts:
+                - name: files 
+                  mountPath: /var/lib/glpi
+                - name: marketplace
+                  mountPath: /var/www/html/marketplace
+                - name: etc 
+                  mountPath: /etc/glpi
+              resources:
+                {{- toYaml .Values.glpi.phpfpm.resources | nindent 16 }}
           volumes: 
-          - name: etc
-            persistentVolumeClaim:
-              claimName: glpi-etc      
-          - name: files
-            persistentVolumeClaim:
-              claimName: glpi-files
-          - name: marketplace
-            persistentVolumeClaim:
-              claimName: glpi-marketplace
+            - name: etc
+              persistentVolumeClaim:
+                claimName: glpi-etc
+            - name: files
+              persistentVolumeClaim:
+                claimName: glpi-files
+            - name: marketplace
+              persistentVolumeClaim:
+                claimName: glpi-marketplace
           restartPolicy: OnFailure
 {{- end }}
-

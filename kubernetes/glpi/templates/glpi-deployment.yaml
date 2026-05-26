@@ -1,81 +1,105 @@
---- 
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: php-fpm
   labels:
     {{- include "glpi.labels" . | nindent 4 }}
-    app: php-fpm
+    app.kubernetes.io/component: php-fpm
   namespace: {{ include "glpi.namespace" . }}
 spec:
   replicas: {{ .Values.glpi.phpfpm.replicaCount }}
   selector:
     matchLabels:
       {{- include "glpi.selectorLabels" . | nindent 6 }}
-      app: php-fpm
+      app.kubernetes.io/component: php-fpm
   template:
     metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         {{- include "glpi.selectorLabels" . | nindent 8 }}
-        app: php-fpm
+        app.kubernetes.io/component: php-fpm
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "glpi.serviceAccountName" . }}
       {{- with .Values.glpi.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
-      - image: {{ include "glpi.phpfpm.image" . }}
-        imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
-        name: php
-        {{- with .Values.glpi.securityContext }}
-        securityContext:
-          {{- toYaml . | nindent 10 }}
-        {{- end }}
-        envFrom: 
-        - configMapRef: 
-            name: glpi-config
-        - secretRef: 
-            name: glpi-secret
-        ports:
-        - containerPort: 9000
-          name: fpm
-        volumeMounts:
-        - name: files 
-          mountPath: /var/lib/glpi
-        - name: etc 
-          mountPath: /etc/glpi
+        - image: {{ include "glpi.phpfpm.image" . }}
+          imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
+          name: php
+          {{- with .Values.glpi.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: glpi-config
+            - secretRef:
+                name: glpi-secret
+          ports:
+            - containerPort: 9000
+              name: fpm
+          volumeMounts:
+            - name: files
+              mountPath: /var/lib/glpi
+            - name: etc
+              mountPath: /etc/glpi
+            - name: marketplace
+              mountPath: /var/www/html/marketplace
+          {{- if .Values.glpi.phpfpm.livenessProbe.enabled }}
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.glpi.phpfpm.livenessProbe.tcpSocket.port }}
+            initialDelaySeconds: {{ .Values.glpi.phpfpm.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.glpi.phpfpm.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.glpi.phpfpm.livenessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.glpi.phpfpm.livenessProbe.failureThreshold }}
+          {{- end }}
+          {{- if .Values.glpi.phpfpm.readinessProbe.enabled }}
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.glpi.phpfpm.readinessProbe.tcpSocket.port }}
+            initialDelaySeconds: {{ .Values.glpi.phpfpm.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.glpi.phpfpm.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.glpi.phpfpm.readinessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.glpi.phpfpm.readinessProbe.failureThreshold }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.glpi.phpfpm.resources | nindent 12 }}
+      volumes:
+        - name: etc
+          persistentVolumeClaim:
+            claimName: glpi-etc
+        - name: files
+          persistentVolumeClaim:
+            claimName: glpi-files
         - name: marketplace
-          mountPath: /var/www/html/marketplace
-        {{- if .Values.glpi.phpfpm.livenessProbe.enabled }}
-        livenessProbe:
-          tcpSocket:
-            port: {{ .Values.glpi.phpfpm.livenessProbe.tcpSocket.port }}
-          initialDelaySeconds: {{ .Values.glpi.phpfpm.livenessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.glpi.phpfpm.livenessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.glpi.phpfpm.livenessProbe.timeoutSeconds }}
-          failureThreshold: {{ .Values.glpi.phpfpm.livenessProbe.failureThreshold }}
-        {{- end }}
-        {{- if .Values.glpi.phpfpm.readinessProbe.enabled }}
-        readinessProbe:
-          tcpSocket:
-            port: {{ .Values.glpi.phpfpm.readinessProbe.tcpSocket.port }}
-          initialDelaySeconds: {{ .Values.glpi.phpfpm.readinessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.glpi.phpfpm.readinessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.glpi.phpfpm.readinessProbe.timeoutSeconds }}
-          failureThreshold: {{ .Values.glpi.phpfpm.readinessProbe.failureThreshold }}
-        {{- end }}
-        resources:
-          {{- toYaml .Values.glpi.phpfpm.resources | nindent 10 }}
-      volumes: 
-      - name: etc 
-        persistentVolumeClaim: 
-          claimName: glpi-etc 
-      - name: files
-        persistentVolumeClaim:
-          claimName: glpi-files
-      - name: marketplace
-        persistentVolumeClaim:
-          claimName: glpi-marketplace
+          persistentVolumeClaim:
+            claimName: glpi-marketplace
 
 
 ---
@@ -85,121 +109,144 @@ metadata:
   name: nginx
   labels:
     {{- include "glpi.labels" . | nindent 4 }}
-    app: nginx
+    app.kubernetes.io/component: nginx
   namespace: {{ include "glpi.namespace" . }}
 spec:
   replicas: {{ .Values.glpi.nginx.replicaCount }}
   selector:
     matchLabels:
       {{- include "glpi.selectorLabels" . | nindent 6 }}
-      app: nginx
+      app.kubernetes.io/component: nginx
   template:
     metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         {{- include "glpi.selectorLabels" . | nindent 8 }}
-        app: nginx
+        app.kubernetes.io/component: nginx
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "glpi.serviceAccountName" . }}
       {{- with .Values.glpi.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
-      - image: {{ include "glpi.nginx.image" . }}
-        imagePullPolicy: {{ .Values.glpi.nginx.image.pullPolicy }}
-        name: nginx
-        {{- with .Values.glpi.securityContext }}
-        securityContext:
-          {{- toYaml . | nindent 10 }}
-        {{- end }}
-        envFrom: 
-        - configMapRef: 
-            name: glpi-config
-        - secretRef: 
-            name: glpi-secret
-        ports:
-        - containerPort: 8080
-          name: http
-        volumeMounts:
-        - name: files 
-          mountPath: /var/lib/glpi
-        - name: marketplace
-          mountPath: /var/www/html/marketplace
+        - image: {{ include "glpi.nginx.image" . }}
+          imagePullPolicy: {{ .Values.glpi.nginx.image.pullPolicy }}
+          name: nginx
+          {{- with .Values.glpi.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: glpi-config
+            - secretRef:
+                name: glpi-secret
+          ports:
+            - containerPort: 8080
+              name: http
+          volumeMounts:
+            - name: files
+              mountPath: /var/lib/glpi
+            - name: marketplace
+              mountPath: /var/www/html/marketplace
+            - name: etc
+              mountPath: /etc/glpi
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d
+          {{- if .Values.glpi.nginx.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.glpi.nginx.livenessProbe.httpGet.path }}
+              port: {{ .Values.glpi.nginx.livenessProbe.httpGet.port }}
+            initialDelaySeconds: {{ .Values.glpi.nginx.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.glpi.nginx.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.glpi.nginx.livenessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.glpi.nginx.livenessProbe.failureThreshold }}
+          {{- end }}
+          {{- if .Values.glpi.nginx.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.glpi.nginx.readinessProbe.httpGet.path }}
+              port: {{ .Values.glpi.nginx.readinessProbe.httpGet.port }}
+            initialDelaySeconds: {{ .Values.glpi.nginx.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.glpi.nginx.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.glpi.nginx.readinessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.glpi.nginx.readinessProbe.failureThreshold }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.glpi.nginx.resources | nindent 12 }}
+      volumes:
         - name: etc
-          mountPath: /etc/glpi
+          persistentVolumeClaim:
+            claimName: glpi-etc
+        - name: files
+          persistentVolumeClaim:
+            claimName: glpi-files
+        - name: marketplace
+          persistentVolumeClaim:
+            claimName: glpi-marketplace
         - name: nginx-conf
-          mountPath: /etc/nginx/conf.d
-        {{- if .Values.glpi.nginx.livenessProbe.enabled }}
-        livenessProbe:
-          httpGet:
-            path: {{ .Values.glpi.nginx.livenessProbe.httpGet.path }}
-            port: {{ .Values.glpi.nginx.livenessProbe.httpGet.port }}
-          initialDelaySeconds: {{ .Values.glpi.nginx.livenessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.glpi.nginx.livenessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.glpi.nginx.livenessProbe.timeoutSeconds }}
-          failureThreshold: {{ .Values.glpi.nginx.livenessProbe.failureThreshold }}
-        {{- end }}
-        {{- if .Values.glpi.nginx.readinessProbe.enabled }}
-        readinessProbe:
-          httpGet:
-            path: {{ .Values.glpi.nginx.readinessProbe.httpGet.path }}
-            port: {{ .Values.glpi.nginx.readinessProbe.httpGet.port }}
-          initialDelaySeconds: {{ .Values.glpi.nginx.readinessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.glpi.nginx.readinessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.glpi.nginx.readinessProbe.timeoutSeconds }}
-          failureThreshold: {{ .Values.glpi.nginx.readinessProbe.failureThreshold }}
-        {{- end }}
-        resources:
-          {{- toYaml .Values.glpi.nginx.resources | nindent 10 }}
-      volumes: 
-      - name: etc 
-        persistentVolumeClaim:
-          claimName: glpi-etc 
-      - name: files
-        persistentVolumeClaim:
-          claimName: glpi-files
-      - name: marketplace
-        persistentVolumeClaim:
-          claimName: glpi-marketplace          
-      - name: nginx-conf
-        configMap:
-          defaultMode: 420
-          name: nginx-conf
+          configMap:
+            defaultMode: 420
+            name: nginx-conf
 
 
---- 
+---
 apiVersion: v1
 kind: Service
-metadata: 
+metadata:
   name: php-fpm
   labels:
     {{- include "glpi.labels" . | nindent 4 }}
-    app: php-fpm
+    app.kubernetes.io/component: php-fpm
   namespace: {{ include "glpi.namespace" . }}
 spec:
-  ports: 
+  type: ClusterIP
+  ports:
     - port: 9000
       targetPort: 9000
   selector:
     {{- include "glpi.selectorLabels" . | nindent 4 }}
-    app: php-fpm
+    app.kubernetes.io/component: php-fpm
 
 
---- 
+---
 apiVersion: v1
 kind: Service
-metadata: 
+metadata:
   name: nginx
   labels:
     {{- include "glpi.labels" . | nindent 4 }}
-    app: nginx
+    app.kubernetes.io/component: nginx
   namespace: {{ include "glpi.namespace" . }}
 spec:
   type: {{ .Values.glpi.nginx.service.type }}
-  ports: 
+  ports:
     - port: {{ .Values.glpi.nginx.service.port }}
       targetPort: {{ .Values.glpi.nginx.service.targetPort }}
   selector:
     {{- include "glpi.selectorLabels" . | nindent 4 }}
-    app: nginx
-
-
+    app.kubernetes.io/component: nginx

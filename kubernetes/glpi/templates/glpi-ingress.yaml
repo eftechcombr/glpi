@@ -34,7 +34,7 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ include "glpi.fullname" $ }}-nginx
+                name: nginx
                 port:
                   number: {{ $.Values.glpi.nginx.service.port }}
           {{- end }}
