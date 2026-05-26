@@ -14,11 +14,19 @@ spec:
   jobTemplate:
     spec:
       template:
-        spec:
-          containers:
-          - image: {{ include "glpi.phpfpm.image" . }}
+          spec:
+            {{- with .Values.glpi.podSecurityContext }}
+            securityContext:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
+            containers:
+            - image: {{ include "glpi.phpfpm.image" . }}
             imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
             name: base
+            {{- with .Values.glpi.securityContext }}
+            securityContext:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
             envFrom: 
             - configMapRef: 
                 name: glpi-config

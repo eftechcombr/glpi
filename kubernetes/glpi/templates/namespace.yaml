@@ -1,8 +1,8 @@
-{{- if .Values.global.namespace }}
+{{- if .Values.global.createNamespace }}
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{ .Values.global.namespace }}
+  name: {{ include "glpi.namespace" . }}
   labels:
     {{- include "glpi.labels" . | nindent 4 }}
 {{- end }}

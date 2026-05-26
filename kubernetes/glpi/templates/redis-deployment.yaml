@@ -18,8 +18,16 @@ spec:
         {{- include "glpi.selectorLabels" . | nindent 8 }}
         app: redis
     spec:
+      {{- with .Values.redis.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - name: redis
+        {{- with .Values.redis.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         image: {{ include "glpi.redis.image" . }}
         imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
         ports:
