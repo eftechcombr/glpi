@@ -7,7 +7,11 @@ global:
   # Namespace where GLPI will be deployed
   # If not set, the release namespace will be used
   # Leave empty to use Helm's release namespace
-  namespace: "glpi"
+  namespace: ""
+  # Enable to create the Namespace resource (cluster-scoped)
+  # Set to true if your SA has cluster-wide permissions; leave false
+  # for namespace-scoped RBAC (e.g., FluxCD multi-tenancy)
+  createNamespace: false
 
 # -- GLPI Application Configuration
 glpi:
