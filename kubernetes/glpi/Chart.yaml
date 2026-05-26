@@ -2,7 +2,7 @@ apiVersion: v2
 name: glpi
 description: GLPI Helm Chart - IT Asset Management and Service Desk
 type: application
-version: 11.0.7
+version: 11.0.7-1
 appVersion: "11.0.7"
 
 # Artifact Hub Metadata
@@ -32,5 +32,29 @@ annotations:
     - name: support
       url: https://github.com/eftechcombr/glpi/issues
   artifacthub.io/changes: |
+    - kind: fixed
+      description: "Fix CronJob YAML indentation bug preventing deployment"
+    - kind: fixed
+      description: "Fix Ingress backend service name to match nginx service"
+    - kind: changed
+      description: "StatefulSet now uses volumeClaimTemplates for multi-replica support"
+    - kind: changed
+      description: "Use app.kubernetes.io/component labels consistently across all templates"
     - kind: added
-      description: "Initial release of GLPI 11.0.7 Helm Chart"
+      description: "ServiceAccount template with imagePullSecrets and scheduling values"
+    - kind: added
+      description: "External database support via externalDatabase config"
+    - kind: changed
+      description: "Added security contexts and resource limits to init containers"
+    - kind: changed
+      description: "Redis now has liveness/readiness probes and security context defaults"
+    - kind: changed
+      description: "MariaDB and Redis now run with non-root security contexts by default"
+    - kind: fixed
+      description: "Fix GLPI_DOC_DIR pointing to /var/www/html instead of var dir"
+    - kind: changed
+      description: "StatefulSet anti-affinity changed to requiredDuringScheduling"
+    - kind: fixed
+      description: "Remove deprecated alpha API annotation and status subresource fields"
+    - kind: added
+      description: "Added terminationGracePeriodSeconds to MariaDB StatefulSet"

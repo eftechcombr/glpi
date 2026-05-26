@@ -279,11 +279,17 @@ mariadb:
 
   # -- MariaDB Pod Security Context
   # Security settings applied at the pod level
-  podSecurityContext: {}
+  podSecurityContext:
+    fsGroup: 1001
 
   # -- MariaDB Container Security Context
   # Security settings applied at the container level
-  securityContext: {}
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+    capabilities:
+      drop:
+        - ALL
 
 # -- Redis Cache Configuration
 redis:
@@ -318,14 +324,22 @@ redis:
     type: ClusterIP
     # Service port for Redis connections
     port: 6379
+    # Target port on the container
+    targetPort: 6379
 
   # -- Redis Pod Security Context
   # Security settings applied at the pod level
-  podSecurityContext: {}
+  podSecurityContext:
+    fsGroup: 1001
 
   # -- Redis Container Security Context
   # Security settings applied at the container level
-  securityContext: {}
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 999
+    capabilities:
+      drop:
+        - ALL
 
 # -- Ingress Configuration
 # Configure ingress to expose GLPI externally
@@ -414,3 +428,15 @@ tolerations: []
 #           values:
 #           - node1
 affinity: {}
+
+# -- External Database Configuration
+# Used when mariadb.enabled is false
+externalDatabase:
+  # External database hostname or IP
+  host: ""
+  # External database name
+  database: ""
+  # External database username
+  username: ""
+  # External database password
+  password: ""

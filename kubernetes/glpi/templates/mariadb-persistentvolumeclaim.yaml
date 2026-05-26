@@ -1,4 +1,4 @@
-{{- if and .Values.mariadb.enabled .Values.mariadb.persistence.enabled }}
+{{- if .Values.mariadb.enabled }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -6,7 +6,7 @@ metadata:
   name: mariadb-data
   namespace: {{ include "glpi.namespace" . }}
   labels:
-{{ include "glpi.labels" . | indent 4 }}
+    {{- include "glpi.labels" . | nindent 4 }}
 spec:
   {{- if .Values.mariadb.persistence.storageClass }}
   storageClassName: {{ .Values.mariadb.persistence.storageClass }}

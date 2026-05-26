@@ -46,7 +46,41 @@ If using multiple replicas for PHP-FPM, ensure your StorageClass supports `ReadW
 
 ## Database
 
-By default, the chart deploys MariaDB. For production, it is recommended to use an external database by setting `mariadb.enabled: false` and providing connection details in `glpi.jobs.dbConfigure`.
+By default, the chart deploys MariaDB. For production, it is recommended to use an external database by setting `mariadb.enabled: false` and providing connection details via the `externalDatabase` section:
+
+```yaml
+mariadb:
+  enabled: false
+
+externalDatabase:
+  host: my-db-host.example.com
+  database: glpi
+  username: glpi
+  password: mySecurePassword
+```
+
+## Initialization Jobs
+
+The chart includes Helm hook jobs that run during install/upgrade:
+
+| Job | Hook | Weight | Description |
+|-----|------|--------|-------------|
+| `glpi-verify-dir` | post-install, post-upgrade | 5 | Create required GLPI directories |
+| `mariadb-timezone` | post-install, post-upgrade | 7 | Populate MariaDB timezone data |
+| `glpi-db-install` | post-install | 10 | Install GLPI database schema (fresh installs) |
+| `glpi-db-upgrade` | post-upgrade | 10 | Upgrade GLPI database schema (upgrades) |
+| `glpi-db-configure` | post-install, post-upgrade | 20 | Configure GLPI database connection |
+| `glpi-cache-configure` | post-install, post-upgrade | 30 | Configure GLPI Redis cache settings |
+
+Jobs can be individually disabled via `glpi.jobs.<name>.enabled: false`.
+
+## Security Contexts
+
+All components are configured with secure defaults:
+- **GLPI (PHP-FPM/Nginx)**: Runs as non-root user `www-data` (uid 82), drops all capabilities
+- **MariaDB**: Runs as non-root user (uid 1001) with `fsGroup: 1001`
+- **Redis**: Runs as non-root user (uid 999) with `fsGroup: 1001`
 
 ---
+
 *Developed by [EFTech](https://eftech.com.br)*
