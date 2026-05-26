@@ -19,10 +19,18 @@ spec:
         {{- include "glpi.selectorLabels" . | nindent 8 }}
         app: php-fpm
     spec:
+      {{- with .Values.glpi.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - image: {{ include "glpi.phpfpm.image" . }}
         imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
         name: php
+        {{- with .Values.glpi.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         envFrom: 
         - configMapRef: 
             name: glpi-config
@@ -91,10 +99,18 @@ spec:
         {{- include "glpi.selectorLabels" . | nindent 8 }}
         app: nginx
     spec:
+      {{- with .Values.glpi.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - image: {{ include "glpi.nginx.image" . }}
         imagePullPolicy: {{ .Values.glpi.nginx.image.pullPolicy }}
         name: nginx
+        {{- with .Values.glpi.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         envFrom: 
         - configMapRef: 
             name: glpi-config

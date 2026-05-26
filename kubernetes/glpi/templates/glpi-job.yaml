@@ -10,18 +10,26 @@ metadata:
 spec:
   template:
     spec:
+      {{- with .Values.glpi.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - image: {{ include "glpi.phpfpm.image" . }}
         imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
         name: base
-        envFrom: 
-        - configMapRef: 
+        {{- with .Values.glpi.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        envFrom:
+        - configMapRef:
             name: glpi-config
-        - secretRef: 
+        - secretRef:
             name: glpi-secret
-        command: 
+        command:
         - sh
-        - -c 
+        - -c
         - "/usr/local/bin/glpi-verify-dir.sh"
         volumeMounts:
         - name: files 
@@ -59,12 +67,20 @@ metadata:
 spec:
   template:
     spec:
+      {{- with .Values.glpi.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - image: {{ include "glpi.phpfpm.image" . }}
         imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
         name: base
+        {{- with .Values.glpi.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         command:
-        - sh 
+        - sh
         - -c
         - "/usr/local/bin/glpi-db-install.sh"
         envFrom: 
@@ -108,12 +124,20 @@ metadata:
 spec:
   template:
     spec:
+      {{- with .Values.glpi.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - image: {{ include "glpi.phpfpm.image" . }}
         imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
         name: base
+        {{- with .Values.glpi.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         command:
-        - sh 
+        - sh
         - -c
         - "/usr/local/bin/glpi-db-upgrade.sh"
         envFrom: 
@@ -157,12 +181,20 @@ metadata:
 spec:
   template:
     spec:
+      {{- with .Values.glpi.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - image: {{ include "glpi.phpfpm.image" . }}
         imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
         name: base
+        {{- with .Values.glpi.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         command:
-        - sh 
+        - sh
         - -c
         - "/usr/local/bin/glpi-db-configure.sh"
         envFrom: 
@@ -206,12 +238,20 @@ metadata:
 spec:
   template:
     spec:
+      {{- with .Values.glpi.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - image: {{ include "glpi.phpfpm.image" . }}
         imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
         name: base
+        {{- with .Values.glpi.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         command:
-        - sh 
+        - sh
         - -c
         - "/usr/local/bin/glpi-cache-configure.sh"
         envFrom: 

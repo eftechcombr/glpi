@@ -25,6 +25,10 @@ spec:
         role: primary
       name: mariadb
     spec:
+      {{- with .Values.mariadb.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -40,6 +44,10 @@ spec:
       containers:
       - image: {{ include "glpi.mariadb.image" . }}
         name: mariadb
+        {{- with .Values.mariadb.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         imagePullPolicy: {{ .Values.mariadb.image.pullPolicy }}
         envFrom: 
         - secretRef: 
