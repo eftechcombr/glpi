@@ -2,7 +2,7 @@ apiVersion: v2
 name: glpi
 description: GLPI Helm Chart - IT Asset Management and Service Desk
 type: application
-version: 11.0.7-1
+version: 11.0.7-2
 appVersion: "11.0.7"
 
 # Artifact Hub Metadata
@@ -56,5 +56,7 @@ annotations:
       description: "StatefulSet anti-affinity changed to requiredDuringScheduling"
     - kind: fixed
       description: "Remove deprecated alpha API annotation and status subresource fields"
-    - kind: added
-      description: "Added terminationGracePeriodSeconds to MariaDB StatefulSet"
+    - kind: fixed
+      description: "Fix terminationGracePeriodSeconds moved to pod template spec"
+    - kind: fixed
+      description: "Fix helm-publish workflow skipping publish on release events"
