@@ -7,33 +7,45 @@ metadata:
   namespace: {{ include "glpi.namespace" . }}
   labels:
     {{- include "glpi.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   template:
     spec:
+      {{- with .Values.glpi.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - image: {{ include "glpi.phpfpm.image" . }}
         imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
         name: base
-        envFrom: 
-        - configMapRef: 
+        {{- with .Values.glpi.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        envFrom:
+        - configMapRef:
             name: glpi-config
-        - secretRef: 
+        - secretRef:
             name: glpi-secret
-        command: 
+        command:
         - sh
-        - -c 
+        - -c
         - "/usr/local/bin/glpi-verify-dir.sh"
         volumeMounts:
-        - name: files 
+        - name: files
           mountPath: /var/lib/glpi
         - name: marketplace
           mountPath: /var/www/html/marketplace
-        - name: etc 
+        - name: etc
           mountPath: /etc/glpi
-      volumes: 
+      volumes:
       - name: etc
         persistentVolumeClaim:
-          claimName: glpi-etc      
+          claimName: glpi-etc
       - name: files
         persistentVolumeClaim:
           claimName: glpi-files
@@ -48,7 +60,7 @@ status: {}
 
 
 {{- if .Values.glpi.jobs.dbInstall.enabled }}
---- 
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -56,30 +68,52 @@ metadata:
   namespace: {{ include "glpi.namespace" . }}
   labels:
     {{- include "glpi.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "10"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   template:
     spec:
+      {{- with .Values.glpi.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+      - name: wait-for-mariadb
+        image: busybox:1.36.1
+        command:
+        - sh
+        - -c
+        - until nc -z $MARIADB_HOST $MARIADB_PORT; do sleep 2; done
+        envFrom:
+        - configMapRef:
+            name: mariadb-glpi-config
       containers:
       - image: {{ include "glpi.phpfpm.image" . }}
         imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
         name: base
+        {{- with .Values.glpi.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         command:
-        - sh 
+        - sh
         - -c
         - "/usr/local/bin/glpi-db-install.sh"
-        envFrom: 
-        - configMapRef: 
+        envFrom:
+        - configMapRef:
             name: glpi-config
-        - secretRef: 
+        - secretRef:
             name: glpi-secret
         volumeMounts:
-        - name: files 
+        - name: files
           mountPath: /var/lib/glpi
         - name: marketplace
           mountPath: /var/www/html/marketplace
         - name: etc
-          mountPath: /etc/glpi 
-      volumes: 
+          mountPath: /etc/glpi
+      volumes:
       - name: etc
         persistentVolumeClaim:
           claimName: glpi-etc
@@ -88,7 +122,7 @@ spec:
           claimName: glpi-files
       - name: marketplace
         persistentVolumeClaim:
-          claimName: glpi-marketplace          
+          claimName: glpi-marketplace
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1
@@ -97,7 +131,7 @@ status: {}
 
 
 {{- if .Values.glpi.jobs.dbUpgrade.enabled }}
---- 
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -105,30 +139,52 @@ metadata:
   namespace: {{ include "glpi.namespace" . }}
   labels:
     {{- include "glpi.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-weight": "10"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   template:
     spec:
+      {{- with .Values.glpi.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+      - name: wait-for-mariadb
+        image: busybox:1.36.1
+        command:
+        - sh
+        - -c
+        - until nc -z $MARIADB_HOST $MARIADB_PORT; do sleep 2; done
+        envFrom:
+        - configMapRef:
+            name: mariadb-glpi-config
       containers:
       - image: {{ include "glpi.phpfpm.image" . }}
         imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
         name: base
+        {{- with .Values.glpi.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         command:
-        - sh 
+        - sh
         - -c
         - "/usr/local/bin/glpi-db-upgrade.sh"
-        envFrom: 
-        - configMapRef: 
+        envFrom:
+        - configMapRef:
             name: glpi-config
-        - secretRef: 
+        - secretRef:
             name: glpi-secret
         volumeMounts:
-        - name: files 
+        - name: files
           mountPath: /var/lib/glpi
         - name: marketplace
           mountPath: /var/www/html/marketplace
         - name: etc
-          mountPath: /etc/glpi 
-      volumes: 
+          mountPath: /etc/glpi
+      volumes:
       - name: etc
         persistentVolumeClaim:
           claimName: glpi-etc
@@ -137,7 +193,7 @@ spec:
           claimName: glpi-files
       - name: marketplace
         persistentVolumeClaim:
-          claimName: glpi-marketplace          
+          claimName: glpi-marketplace
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1
@@ -146,7 +202,7 @@ status: {}
 
 
 {{- if .Values.glpi.jobs.dbConfigure.enabled }}
---- 
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -154,39 +210,61 @@ metadata:
   namespace: {{ include "glpi.namespace" . }}
   labels:
     {{- include "glpi.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "20"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   template:
     spec:
+      {{- with .Values.glpi.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+      - name: wait-for-mariadb
+        image: busybox:1.36.1
+        command:
+        - sh
+        - -c
+        - until nc -z $MARIADB_HOST $MARIADB_PORT; do sleep 2; done
+        envFrom:
+        - configMapRef:
+            name: mariadb-glpi-config
       containers:
       - image: {{ include "glpi.phpfpm.image" . }}
         imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
         name: base
+        {{- with .Values.glpi.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         command:
-        - sh 
+        - sh
         - -c
         - "/usr/local/bin/glpi-db-configure.sh"
-        envFrom: 
-        - configMapRef: 
+        envFrom:
+        - configMapRef:
             name: glpi-config
-        - secretRef: 
+        - secretRef:
             name: glpi-secret
         volumeMounts:
         - name: etc
           mountPath: /etc/glpi
-        - name: files 
+        - name: files
           mountPath: /var/lib/glpi
         - name: marketplace
           mountPath: /var/www/html/marketplace
-      volumes: 
+      volumes:
       - name: etc
         persistentVolumeClaim:
-          claimName: glpi-etc 
+          claimName: glpi-etc
       - name: files
         persistentVolumeClaim:
           claimName: glpi-files
       - name: marketplace
         persistentVolumeClaim:
-          claimName: glpi-marketplace          
+          claimName: glpi-marketplace
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1
@@ -195,7 +273,7 @@ status: {}
 
 
 {{- if .Values.glpi.jobs.cacheConfigure.enabled }}
---- 
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -203,39 +281,51 @@ metadata:
   namespace: {{ include "glpi.namespace" . }}
   labels:
     {{- include "glpi.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "30"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   template:
     spec:
+      {{- with .Values.glpi.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - image: {{ include "glpi.phpfpm.image" . }}
         imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
         name: base
+        {{- with .Values.glpi.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         command:
-        - sh 
+        - sh
         - -c
         - "/usr/local/bin/glpi-cache-configure.sh"
-        envFrom: 
-        - configMapRef: 
+        envFrom:
+        - configMapRef:
             name: glpi-config
-        - secretRef: 
+        - secretRef:
             name: glpi-secret
         volumeMounts:
         - name: etc
           mountPath: /etc/glpi
-        - name: files 
+        - name: files
           mountPath: /var/lib/glpi
         - name: marketplace
           mountPath: /var/www/html/marketplace
-      volumes: 
+      volumes:
       - name: etc
         persistentVolumeClaim:
-          claimName: glpi-etc 
+          claimName: glpi-etc
       - name: files
         persistentVolumeClaim:
           claimName: glpi-files
       - name: marketplace
         persistentVolumeClaim:
-          claimName: glpi-marketplace          
+          claimName: glpi-marketplace
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1
