@@ -83,4 +83,6 @@ All components are configured with secure defaults:
 
 ---
 
+---
+
 *Developed by [EFTech](https://eftech.com.br)*
