@@ -2,11 +2,12 @@
 
 ## Overview
 
-This repository contains Docker configurations for deploying GLPI (an IT asset management system). The project consists of:
+This repository contains Docker and Kubernetes configurations for deploying GLPI (an IT asset management system). The project consists of:
 - PHP-FPM base image (`docker/php/Dockerfile.base`)
 - PHP-FPM application image (`docker/php/Dockerfile`)
 - Nginx reverse proxy (`docker/nginx/Dockerfile`)
 - Docker Compose configurations for development and production
+- Helm chart for Kubernetes deployment (`kubernetes/glpi/`)
 
 ## Build Commands
 
@@ -19,8 +20,8 @@ docker-compose -f docker-compose-build.yml build
 
 # Build specific image
 docker build -t eftechcombr/glpi:base -f docker/php/Dockerfile.base docker/php/
-docker build -t eftechcombr/glpi:php-fpm-11.0.6 -f docker/php/Dockerfile docker/php/
-docker build -t eftechcombr/glpi:nginx-11.0.6 -f docker/nginx/Dockerfile docker/nginx/
+docker build -t eftechcombr/glpi:php-fpm-11.0.7 -f docker/php/Dockerfile docker/php/
+docker build -t eftechcombr/glpi:nginx-11.0.7 -f docker/nginx/Dockerfile docker/nginx/
 ```
 
 ### Run Containers
@@ -51,15 +52,17 @@ docker build --check docker/php/
 docker build --check docker/nginx/
 
 # Scan for secrets (via hadolint --secret)
-hadolint --secret支气管 docker/php/Dockerfile.base
+hadolint --secret docker/php/Dockerfile.base
 ```
+
+DeepSource is also configured for automated linting via `.deepsource.toml` (docker, secrets, and shell analyzers).
 
 ## Code Style Guidelines
 
 ### Dockerfiles
 
 #### General Rules
-- Use specific version tags for base images (e.g., `php:8.4.14-fpm-alpine3.22`, not `php:latest`)
+- Use specific version tags for base images (e.g., `php:8.4.19-fpm-alpine3.22`, not `php:latest`)
 - Pin package versions in Alpine (e.g., `icu-dev=76.1-r1`)
 - Always clean up build dependencies with `apk del .build-deps`
 - Remove `docker-php-source delete` after installing extensions
@@ -83,16 +86,16 @@ docker-php-ext-install intl mysqli gd exif bz2 zip ldap opcache bcmath
 ```
 
 #### Redis Extension
-Install via PECL with version pinning:
+Install via PECL (version pinning recommended for reproducible builds):
 ```dockerfile
-pecl install redis-6.2.0
+pecl install redis
 docker-php-ext-enable redis
 ```
 
 ### Docker Compose
 
 #### Version Tagging
-- Always use explicit version tags (e.g., `11.0.6`, not `latest`)
+- Always use explicit version tags (e.g., `11.0.7`, not `latest`)
 - Keep all service image tags synchronized
 - Use semantic versioning
 
@@ -162,11 +165,11 @@ trap 'echo "Error on line $LINENO"' ERR
 ### Images
 - Lowercase: `eftechcombr/glpi`
 - Use kebab-case: `php-fpm`, `nginx`
-- Version format: `11.0.6`
+- Version format: `11.0.7`
 
 ### Services (docker-compose)
 - Lowercase with hyphens: `mariadb`, `glpi-db-install`
-- Descriptive: `glpi-db-configure`, `glpi-cache-configure`
+- Descriptive: `glpi-db-configure`, `glpi-cache-configure`, `glpi-verify-dir`, `glpi-db-upgrade`, `mariadb-timezone`
 
 ### Environment Variables
 - Uppercase with underscores: `MARIADB_HOST`, `GLPI_VERSION`
@@ -177,7 +180,7 @@ trap 'echo "Error on line $LINENO"' ERR
 When upgrading GLPI or PHP versions:
 
 1. Update `docker/php/Dockerfile.base`:
-   - PHP version (e.g., `8.4.13` → `8.4.14`)
+   - PHP version (e.g., `8.4.13` → `8.4.19`)
    - Alpine version if needed
    - All pinned package versions (verify they exist in Alpine)
 
@@ -187,23 +190,32 @@ When upgrading GLPI or PHP versions:
 3. Update `docker/.env`:
    - `VERSION="11.0.x"`
 
-4. Update `docker/docker-compose.yml`:
+4. Update `docker/.env.example`:
+   - `VERSION="11.0.x"`
+
+5. Update `docker/docker-compose.yml`:
    - All image tags
 
-5. Update `docker/docker-compose-build.yml`:
+6. Update `docker/docker-compose-build.yml`:
    - All image tags
 
-6. Update `docker/nginx/Dockerfile`:
+7. Update `docker/nginx/Dockerfile`:
    - Base image tag
 
-7. Verify with hadolint:
+8. Update `kubernetes/glpi/Chart.yaml`:
+   - `version:` and `appVersion:` fields
+
+9. Update `kubernetes/glpi/values.yaml`:
+   - `glpi.version`, `glpi.phpfpm.image.tag`, `glpi.nginx.image.tag`
+
+10. Verify with hadolint:
    ```bash
    hadolint docker/php/Dockerfile.base
    hadolint docker/php/Dockerfile
    hadolint docker/nginx/Dockerfile
    ```
 
-8. Test build locally:
+11. Test build locally:
    ```bash
    cd docker
    docker-compose -f docker-compose-build.yml build base
@@ -215,10 +227,10 @@ Current pinned versions in `Dockerfile.base` (Alpine 3.22):
 
 | Package | Version |
 |---------|---------|
-| php base | 8.4.14-fpm-alpine3.22 |
+| php base | 8.4.19-fpm-alpine3.22 |
 | icu-dev | 76.1-r1 |
-| zlib-dev | 1.3.1-r2 |
-| libpng-dev | 1.6.55-r0 |
+| zlib-dev | 1.3.2-r0 |
+| libpng-dev | 1.6.57-r0 |
 | bzip2-dev | 1.0.8-r6 |
 | libzip-dev | 1.11.4-r0 |
 | openldap-dev | 2.6.8-r0 |
@@ -228,7 +240,7 @@ Current pinned versions in `Dockerfile.base` (Alpine 3.22):
 | file | 5.46-r2 |
 | g++ | 14.2.0-r6 |
 | gcc | 14.2.0-r6 |
-| musl-dev | 1.2.5-r10 |
+| musl-dev | 1.2.5-r12 |
 | make | 4.4.1-r3 |
 | pkgconf | 2.4.3-r0 |
 | re2c | 4.2-r0 |
