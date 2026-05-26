@@ -21,7 +21,7 @@ Manifest files for building and deploying **GLPI** using containers with Docker 
 Add the GLPI Helm chart repository:
 
 ```sh
-helm repo add glpi https://eftechcombr.github.io/glpi/
+helm repo add eftechcombr https://eftechcombr.github.io/glpi/
 helm repo update
 ```
 
@@ -31,25 +31,25 @@ helm repo update
 Install GLPI using Helm:
 
 ```sh
-helm install my-glpi glpi/glpi
+helm install my-glpi eftechcombr/glpi
 ```
 
 Or with custom values:
 
 ```sh
-helm install my-glpi glpi/glpi -f custom-values.yaml
+helm install my-glpi eftechcombr/glpi -f custom-values.yaml
 ```
 
 #### Searching for Available Versions
 
 ```sh
-helm search repo glpi --versions
+helm search repo eftechcombr --versions
 ```
 
 #### Upgrading the Chart
 
 ```sh
-helm upgrade my-glpi glpi/glpi
+helm upgrade my-glpi eftechcombr/glpi
 ```
 
 #### Uninstalling the Chart
@@ -92,10 +92,8 @@ GLPI will be accessible at http://localhost:8080
 
 ### kubernetes
 
-    ./kubernetes/glpi-configmap.yaml
-    ./kubernetes/glpi-secrets.yaml
-    ./kubernetes/mariadb-configmap.yaml
-    ./kubernetes/mariadb-secret.yaml 
+    See ./kubernetes/glpi/values.yaml for all configurable Helm chart parameters,
+    including GLPI, MariaDB, Redis, Ingress, and external database settings.
     
 
 
