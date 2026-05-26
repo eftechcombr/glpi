@@ -68,7 +68,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     needs: package
-    if: github.event.inputs.publish == 'true'
+    if: ${{ github.event_name == 'release' || github.event.inputs.publish == 'true' }}
     steps:
       - name: Check out repository code with full history
         uses: actions/checkout@v6
