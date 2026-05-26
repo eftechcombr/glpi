@@ -197,6 +197,24 @@ glpi:
     # Schedule in cron format (default: every 2 minutes)
     schedule: "*/2 * * * *"
 
+  # -- GLPI Pod Security Context
+  # Security settings applied at the pod level
+  podSecurityContext:
+    # Set fsGroup to www-data (82) for file permissions
+    fsGroup: 82
+
+  # -- GLPI Container Security Context
+  # Security settings applied at the container level
+  securityContext:
+    # Run as non-root user
+    runAsNonRoot: true
+    # Run as www-data user (82)
+    runAsUser: 82
+    # Drop all capabilities
+    capabilities:
+      drop:
+      - ALL
+
 # -- MariaDB Database Configuration
 mariadb:
   # Enable or disable MariaDB deployment
@@ -255,6 +273,14 @@ mariadb:
     # Service port for database connections
     port: 3306
 
+  # -- MariaDB Pod Security Context
+  # Security settings applied at the pod level
+  podSecurityContext: {}
+
+  # -- MariaDB Container Security Context
+  # Security settings applied at the container level
+  securityContext: {}
+
 # -- Redis Cache Configuration
 redis:
   # Enable or disable Redis deployment
@@ -289,6 +315,14 @@ redis:
     # Service port for Redis connections
     port: 6379
 
+  # -- Redis Pod Security Context
+  # Security settings applied at the pod level
+  podSecurityContext: {}
+
+  # -- Redis Container Security Context
+  # Security settings applied at the container level
+  securityContext: {}
+
 # -- Ingress Configuration
 # Configure ingress to expose GLPI externally
 ingress:
@@ -315,24 +349,6 @@ ingress:
   #     hosts:
   #       - glpi.example.local
   tls: []
-
-# -- Pod Security Context
-# Security settings applied at the pod level
-podSecurityContext:
-  # Set fsGroup to www-data (33) for file permissions
-  fsGroup: 82
-
-# -- Container Security Context
-# Security settings applied at the container level
-securityContext:
-  # Run as non-root user
-  runAsNonRoot: true
-  # Run as www-data user (33)
-  runAsUser: 82
-  # Drop all capabilities
-  capabilities:
-    drop:
-    - ALL
 
 # -- Service Account Configuration
 serviceAccount:

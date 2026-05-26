@@ -9,10 +9,18 @@ metadata:
 spec:
   template:
     spec:
+      {{- with .Values.mariadb.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - image: {{ include "glpi.mariadb.image" . }}
         imagePullPolicy: {{ .Values.mariadb.image.pullPolicy }}
         name: base
+        {{- with .Values.mariadb.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         command:
         - sh
         - -c 
