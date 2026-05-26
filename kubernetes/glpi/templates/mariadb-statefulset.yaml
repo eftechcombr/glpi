@@ -97,6 +97,7 @@ spec:
   publishNotReadyAddresses: true
   selector:
 {{ include "glpi.selectorLabels" . | indent 4 }}
+    role: primary
   sessionAffinity: None
   type: ClusterIP
 status:
