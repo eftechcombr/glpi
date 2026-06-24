@@ -31,7 +31,7 @@ The following table lists the configurable parameters of the GLPI chart and thei
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `glpi.version` | GLPI version to deploy | `"11.0.7"` |
+| `glpi.version` | GLPI version to deploy | `"11.0.8"` |
 | `glpi.language` | Default language for GLPI | `en_US` |
 
 ### PHP-FPM Configuration
@@ -39,7 +39,7 @@ The following table lists the configurable parameters of the GLPI chart and thei
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `glpi.phpfpm.image.repository` | PHP-FPM image repository | `eftechcombr/glpi` |
-| `glpi.phpfpm.image.tag` | PHP-FPM image tag | `php-fpm-11.0.7` |
+| `glpi.phpfpm.image.tag` | PHP-FPM image tag | `php-fpm-11.0.8` |
 | `glpi.phpfpm.image.pullPolicy` | PHP-FPM image pull policy | `IfNotPresent` |
 | `glpi.phpfpm.replicaCount` | Number of PHP-FPM pods | `1` |
 | `glpi.phpfpm.resources.limits.cpu` | PHP-FPM container CPU limit | `1000m` |
@@ -54,7 +54,7 @@ The following table lists the configurable parameters of the GLPI chart and thei
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `glpi.nginx.image.repository` | Nginx image repository | `eftechcombr/glpi` |
-| `glpi.nginx.image.tag` | Nginx image tag | `nginx-11.0.7` |
+| `glpi.nginx.image.tag` | Nginx image tag | `nginx-11.0.8` |
 | `glpi.nginx.image.pullPolicy` | Nginx image pull policy | `IfNotPresent` |
 | `glpi.nginx.replicaCount` | Number of Nginx pods | `1` |
 | `glpi.nginx.resources.limits.cpu` | Nginx container CPU limit | `500m` |

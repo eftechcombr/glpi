@@ -16,7 +16,7 @@ global:
 # -- GLPI Application Configuration
 glpi:
   # GLPI version to deploy
-  version: "11.0.7"
+  version: "11.0.8"
   
   # GLPI default language (e.g., en_US, fr_FR, pt_BR)
   language: "en_US"
@@ -28,7 +28,7 @@ glpi:
       # Image repository for PHP-FPM
       repository: eftechcombr/glpi
       # Image tag for PHP-FPM
-      tag: php-fpm-11.0.7
+      tag: php-fpm-11.0.8
       # Image pull policy
       pullPolicy: IfNotPresent
     
@@ -75,7 +75,7 @@ glpi:
       # Image repository for Nginx
       repository: eftechcombr/glpi
       # Image tag for Nginx
-      tag: nginx-11.0.7
+      tag: nginx-11.0.8
       # Image pull policy
       pullPolicy: IfNotPresent
     
