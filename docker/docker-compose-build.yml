@@ -22,7 +22,7 @@ services:
     command: mariadb -h $MARIADB_HOST -u root -p$MARIADB_ROOT_PASSWORD -e "GRANT SELECT ON \`mysql\`.\`time_zone_name\` TO 'glpi'@'%'; FLUSH PRIVILEGES;"
 
   glpi-db-install:
-    image: eftechcombr/glpi:php-fpm-10.0.25
+    image: eftechcombr/glpi:php-fpm-10.0.26
     restart: on-failure 
     env_file: ./.env
     volumes: 
@@ -35,7 +35,7 @@ services:
       - /usr/local/bin/glpi-db-install.sh
 
   glpi-verify-dir: 
-    image: eftechcombr/glpi:php-fpm-10.0.25
+    image: eftechcombr/glpi:php-fpm-10.0.26
     restart: on-failure
     volumes: 
       - glpi-marketplace:/var/www/html/marketplace:rw
@@ -48,7 +48,7 @@ services:
       - /usr/local/bin/glpi-verify-dir.sh
 
   glpi-db-configure: 
-    image: eftechcombr/glpi:php-fpm-10.0.25
+    image: eftechcombr/glpi:php-fpm-10.0.26
     restart: on-failure
     volumes: 
       - glpi-marketplace:/var/www/html/marketplace:rw
@@ -61,7 +61,7 @@ services:
       - /usr/local/bin/glpi-db-configure.sh
 
   glpi-cache-configure: 
-    image: eftechcombr/glpi:php-fpm-10.0.25
+    image: eftechcombr/glpi:php-fpm-10.0.26
     restart: on-failure
     volumes: 
       - glpi-marketplace:/var/www/html/marketplace:rw
@@ -84,7 +84,7 @@ services:
 
   php: 
     build: php/
-    image: eftechcombr/glpi:php-fpm-10.0.25
+    image: eftechcombr/glpi:php-fpm-10.0.26
     restart: unless-stopped
     volumes: 
       - glpi-marketplace:/var/www/html/marketplace:rw
@@ -101,7 +101,7 @@ services:
 
   nginx: 
     build: nginx/
-    image: eftechcombr/glpi:nginx-10.0.25
+    image: eftechcombr/glpi:nginx-10.0.26
     restart: unless-stopped
     ports: 
       - "8080:8080"
