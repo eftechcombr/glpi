@@ -2,8 +2,8 @@ apiVersion: v2
 name: glpi
 description: GLPI Helm Chart - IT Asset Management and Service Desk
 type: application
-version: 11.0.7
-appVersion: "11.0.7"
+version: 11.0.8
+appVersion: "11.0.8"
 
 # Artifact Hub Metadata
 home: https://github.com/eftechcombr/glpi

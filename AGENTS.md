@@ -20,8 +20,8 @@ docker-compose -f docker-compose-build.yml build
 
 # Build specific image
 docker build -t eftechcombr/glpi:base -f docker/php/Dockerfile.base docker/php/
-docker build -t eftechcombr/glpi:php-fpm-11.0.7 -f docker/php/Dockerfile docker/php/
-docker build -t eftechcombr/glpi:nginx-11.0.7 -f docker/nginx/Dockerfile docker/nginx/
+docker build -t eftechcombr/glpi:php-fpm-11.0.8 -f docker/php/Dockerfile docker/php/
+docker build -t eftechcombr/glpi:nginx-11.0.8 -f docker/nginx/Dockerfile docker/nginx/
 ```
 
 ### Run Containers
@@ -95,7 +95,7 @@ docker-php-ext-enable redis
 ### Docker Compose
 
 #### Version Tagging
-- Always use explicit version tags (e.g., `11.0.7`, not `latest`)
+- Always use explicit version tags (e.g., `11.0.8`, not `latest`)
 - Keep all service image tags synchronized
 - Use semantic versioning
 
@@ -165,7 +165,7 @@ trap 'echo "Error on line $LINENO"' ERR
 ### Images
 - Lowercase: `eftechcombr/glpi`
 - Use kebab-case: `php-fpm`, `nginx`
-- Version format: `11.0.7`
+- Version format: `11.0.8`
 
 ### Services (docker-compose)
 - Lowercase with hyphens: `mariadb`, `glpi-db-install`
