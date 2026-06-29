@@ -70,6 +70,9 @@ spec:
               mountPath: /etc/glpi
             - name: marketplace
               mountPath: /var/www/html/marketplace
+            - name: php-config
+              mountPath: /usr/local/etc/php/conf.d/zz-helm-custom.ini
+              subPath: zz-helm-custom.ini
           {{- if .Values.glpi.phpfpm.livenessProbe.enabled }}
           livenessProbe:
             tcpSocket:
@@ -100,6 +103,9 @@ spec:
         - name: marketplace
           persistentVolumeClaim:
             claimName: glpi-marketplace
+        - name: php-config
+          configMap:
+            name: glpi-php-config
 
 
 ---

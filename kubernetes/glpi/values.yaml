@@ -44,6 +44,12 @@ glpi:
         cpu: 250m
         memory: 256Mi
     
+    # PHP ini configuration overrides
+    # These values are mounted as a ConfigMap into the PHP ini scan directory
+    phpConfig:
+      # PHP memory limit
+      memory_limit: "256M"
+    
     # Liveness probe configuration for PHP-FPM
     livenessProbe:
       # Enable or disable liveness probe

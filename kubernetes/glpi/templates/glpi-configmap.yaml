@@ -65,3 +65,16 @@ data:
             fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         }
     }
+
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: glpi-php-config
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
+data:
+  zz-helm-custom.ini: |
+    memory_limit = {{ .Values.glpi.phpfpm.phpConfig.memory_limit }};

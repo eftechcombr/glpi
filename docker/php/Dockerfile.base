@@ -1,8 +1,10 @@
 FROM php:8.4.19-fpm-alpine3.22
 
 COPY conf.d/*.ini $PHP_INI_DIR/conf.d/
+COPY docker-entrypoint.sh /usr/local/bin/
 
-RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
+  && mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 RUN apk update \
   && apk add --no-cache \
@@ -30,6 +32,8 @@ RUN apk update \
   && apk del .build-deps
 
 RUN docker-php-source delete
+
+ENTRYPOINT ["docker-entrypoint.sh"]
 
 EXPOSE 9000/tcp 
 

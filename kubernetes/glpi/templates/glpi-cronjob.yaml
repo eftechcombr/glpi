@@ -58,6 +58,9 @@ spec:
                   mountPath: /var/www/html/marketplace
                 - name: etc 
                   mountPath: /etc/glpi
+                - name: php-config
+                  mountPath: /usr/local/etc/php/conf.d/zz-helm-custom.ini
+                  subPath: zz-helm-custom.ini
               resources:
                 {{- toYaml .Values.glpi.phpfpm.resources | nindent 16 }}
           volumes: 
@@ -70,5 +73,8 @@ spec:
             - name: marketplace
               persistentVolumeClaim:
                 claimName: glpi-marketplace
+            - name: php-config
+              configMap:
+                name: glpi-php-config
           restartPolicy: OnFailure
 {{- end }}

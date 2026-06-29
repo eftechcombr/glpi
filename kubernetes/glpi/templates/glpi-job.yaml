@@ -58,6 +58,9 @@ spec:
         - name: marketplace
           persistentVolumeClaim:
             claimName: glpi-marketplace
+        - name: php-config
+          configMap:
+            name: glpi-php-config
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1
@@ -137,6 +140,9 @@ spec:
               mountPath: /var/www/html/marketplace
             - name: etc
               mountPath: /etc/glpi
+            - name: php-config
+              mountPath: /usr/local/etc/php/conf.d/zz-helm-custom.ini
+              subPath: zz-helm-custom.ini
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -147,6 +153,9 @@ spec:
         - name: marketplace
           persistentVolumeClaim:
             claimName: glpi-marketplace
+        - name: php-config
+          configMap:
+            name: glpi-php-config
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1
@@ -226,6 +235,9 @@ spec:
               mountPath: /var/www/html/marketplace
             - name: etc
               mountPath: /etc/glpi
+            - name: php-config
+              mountPath: /usr/local/etc/php/conf.d/zz-helm-custom.ini
+              subPath: zz-helm-custom.ini
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -236,6 +248,9 @@ spec:
         - name: marketplace
           persistentVolumeClaim:
             claimName: glpi-marketplace
+        - name: php-config
+          configMap:
+            name: glpi-php-config
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1
@@ -315,6 +330,9 @@ spec:
               mountPath: /var/lib/glpi
             - name: marketplace
               mountPath: /var/www/html/marketplace
+            - name: php-config
+              mountPath: /usr/local/etc/php/conf.d/zz-helm-custom.ini
+              subPath: zz-helm-custom.ini
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -325,6 +343,9 @@ spec:
         - name: marketplace
           persistentVolumeClaim:
             claimName: glpi-marketplace
+        - name: php-config
+          configMap:
+            name: glpi-php-config
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1
@@ -381,6 +402,9 @@ spec:
               mountPath: /var/lib/glpi
             - name: marketplace
               mountPath: /var/www/html/marketplace
+            - name: php-config
+              mountPath: /usr/local/etc/php/conf.d/zz-helm-custom.ini
+              subPath: zz-helm-custom.ini
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -391,6 +415,9 @@ spec:
         - name: marketplace
           persistentVolumeClaim:
             claimName: glpi-marketplace
+        - name: php-config
+          configMap:
+            name: glpi-php-config
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1
