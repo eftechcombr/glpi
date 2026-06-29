@@ -1,0 +1,59 @@
+project:
+  name: "upgrade-version-11.0.8"
+  scale: SMALL
+  started: "2026-06-24T09:09:06.141Z"
+  current_phase: V
+
+phases:
+  P:
+    status: filled
+    started_at: "2026-06-24T09:09:06.141Z"
+    completed_at: "2026-06-24T09:10:05.164Z"
+  R:
+    status: skipped
+    reason: "Not required for scale SMALL"
+  E:
+    status: filled
+    started_at: "2026-06-24T09:10:05.165Z"
+    completed_at: "2026-06-24T09:10:07.645Z"
+  V:
+    status: completed
+    started_at: "2026-06-24T09:10:07.646Z"
+    completed_at: "2026-06-29T12:14:43.163Z"
+    outputs:
+      - path: "docker/php/docker-entrypoint.sh"
+        status: filled
+      - path: "docker/php/Dockerfile.base"
+        status: filled
+      - path: "docker/.env"
+        status: filled
+      - path: "docker/.env.example"
+        status: filled
+      - path: "kubernetes/glpi/values.yaml"
+        status: filled
+      - path: "kubernetes/glpi/templates/glpi-configmap.yaml"
+        status: filled
+      - path: "kubernetes/glpi/templates/glpi-deployment.yaml"
+        status: filled
+      - path: "kubernetes/glpi/templates/glpi-job.yaml"
+        status: filled
+      - path: "kubernetes/glpi/templates/glpi-cronjob.yaml"
+        status: filled
+  C:
+    status: skipped
+    reason: "Not required for scale SMALL"
+
+execution:
+  history:
+    - timestamp: "2026-06-29T12:14:43.163Z"
+      phase: V
+      action: completed
+  last_activity: "2026-06-29T12:14:43.163Z"
+  resume_context: "Fase V (Validação) concluída"
+
+approval:
+  plan_created: false
+  plan_approved: true
+  approved_by: "system-migration"
+  approved_at: "2026-06-24T09:10:07.645Z"
+
