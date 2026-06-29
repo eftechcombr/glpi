@@ -46,9 +46,24 @@ glpi:
     
     # PHP ini configuration overrides
     # These values are mounted as a ConfigMap into the PHP ini scan directory
+    # Mirrors docker/php/conf.d/99-glpi.ini
     phpConfig:
       # PHP memory limit
       memory_limit: "256M"
+      # File uploads
+      file_uploads: "on"
+      # Maximum execution time
+      max_execution_time: "600"
+      # Register globals
+      register_globals: "off"
+      # Magic quotes sybase
+      magic_quotes_sybase: "off"
+      # Session auto start
+      session_auto_start: "off"
+      # Session use trans sid
+      session_use_trans_sid: "0"
+      # Session cookie httponly
+      session_cookie_httponly: "1"
     
     # Liveness probe configuration for PHP-FPM
     livenessProbe:

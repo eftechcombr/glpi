@@ -78,3 +78,10 @@ metadata:
 data:
   zz-helm-custom.ini: |
     memory_limit = {{ .Values.glpi.phpfpm.phpConfig.memory_limit }};
+    file_uploads = {{ .Values.glpi.phpfpm.phpConfig.file_uploads }};
+    max_execution_time = {{ .Values.glpi.phpfpm.phpConfig.max_execution_time }};
+    register_globals = {{ .Values.glpi.phpfpm.phpConfig.register_globals }};
+    magic_quotes_sybase = {{ .Values.glpi.phpfpm.phpConfig.magic_quotes_sybase }};
+    session.auto_start = {{ .Values.glpi.phpfpm.phpConfig.session_auto_start }};
+    session.use_trans_sid = {{ .Values.glpi.phpfpm.phpConfig.session_use_trans_sid }};
+    session.cookie_httponly = {{ .Values.glpi.phpfpm.phpConfig.session_cookie_httponly }};
