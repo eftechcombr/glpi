@@ -105,7 +105,7 @@ spec:
             - until nc -z $MARIADB_HOST $MARIADB_PORT; do sleep 2; done
           envFrom:
             - configMapRef:
-                name: mariadb-glpi-config
+                name: glpi-config
           resources:
             limits:
               cpu: 100m
@@ -194,7 +194,7 @@ spec:
             - until nc -z $MARIADB_HOST $MARIADB_PORT; do sleep 2; done
           envFrom:
             - configMapRef:
-                name: mariadb-glpi-config
+                name: glpi-config
           resources:
             limits:
               cpu: 100m
@@ -283,7 +283,7 @@ spec:
             - until nc -z $MARIADB_HOST $MARIADB_PORT; do sleep 2; done
           envFrom:
             - configMapRef:
-                name: mariadb-glpi-config
+                name: glpi-config
           resources:
             limits:
               cpu: 100m
