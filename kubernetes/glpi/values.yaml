@@ -434,6 +434,8 @@ affinity: {}
 externalDatabase:
   # External database hostname or IP
   host: ""
+  # External database port
+  port: 3306
   # External database name
   database: ""
   # External database username
