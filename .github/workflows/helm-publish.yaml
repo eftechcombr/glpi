@@ -51,7 +51,9 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Create package directory
-        run: mkdir -p .cr-release-packages
+        run: |
+          rm -rf .cr-release-packages
+          mkdir -p .cr-release-packages          
 
       - name: Package Helm chart
         run: |
