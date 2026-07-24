@@ -14,6 +14,10 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   template:
+    metadata:
+      labels:
+        {{- include "glpi.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: job
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -80,6 +84,10 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   template:
+    metadata:
+      labels:
+        {{- include "glpi.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: job
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -169,6 +177,10 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   template:
+    metadata:
+      labels:
+        {{- include "glpi.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: job
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -258,6 +270,10 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   template:
+    metadata:
+      labels:
+        {{- include "glpi.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: job
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -347,6 +363,10 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   template:
+    metadata:
+      labels:
+        {{- include "glpi.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: job
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

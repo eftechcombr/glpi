@@ -277,6 +277,19 @@ mariadb:
     # Service port for database connections
     port: 3306
 
+  # -- NetworkPolicy Configuration
+  # Isolates the MariaDB pod at the network level: only pods that legitimately need a DB
+  # connection (php-fpm, the init Jobs, the cronjob) can reach it. nginx, redis, and anything
+  # outside the namespace are denied by default.
+  networkPolicy:
+    # Enable or disable the NetworkPolicy restricting access to MariaDB.
+    # Requires a CNI that enforces NetworkPolicy (Calico, Cilium, etc); on CNIs that don't
+    # enforce it, this resource is created but has no effect.
+    enabled: true
+    # Extra ingress rules to merge in (e.g. to allow a backup CronJob or an external
+    # monitoring/backup tool with its own pod labels). Evaluated as a template.
+    extraIngress: []
+
   # -- MariaDB Pod Security Context
   # Security settings applied at the pod level
   podSecurityContext:

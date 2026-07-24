@@ -1,0 +1,48 @@
+{{- if and .Values.mariadb.enabled .Values.mariadb.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mariadb-netpol
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "glpi.selectorLabels" . | nindent 6 }}
+      role: primary
+  policyTypes:
+    - Ingress
+  ingress:
+    # php-fpm: the only long-running workload that talks to the database
+    - from:
+        - podSelector:
+            matchLabels:
+              {{- include "glpi.selectorLabels" . | nindent 14 }}
+              app.kubernetes.io/component: php-fpm
+      ports:
+        - protocol: TCP
+          port: {{ .Values.mariadb.service.port }}
+    # init Jobs (verifyDir, dbInstall, dbUpgrade, dbConfigure, cacheConfigure) and the
+    # mariadb-timezone Job, which run as short-lived batch Pods during install/upgrade
+    - from:
+        - podSelector:
+            matchLabels:
+              {{- include "glpi.selectorLabels" . | nindent 14 }}
+              app.kubernetes.io/component: job
+      ports:
+        - protocol: TCP
+          port: {{ .Values.mariadb.service.port }}
+    # the GLPI maintenance cronjob (front/cron.php), which needs a live DB connection
+    - from:
+        - podSelector:
+            matchLabels:
+              {{- include "glpi.selectorLabels" . | nindent 14 }}
+              app.kubernetes.io/component: cronjob
+      ports:
+        - protocol: TCP
+          port: {{ .Values.mariadb.service.port }}
+    {{- with .Values.mariadb.networkPolicy.extraIngress }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}
+{{- end }}

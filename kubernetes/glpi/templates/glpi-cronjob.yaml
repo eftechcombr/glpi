@@ -14,6 +14,10 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            {{- include "glpi.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: cronjob
         spec:
           {{- with .Values.imagePullSecrets }}
           imagePullSecrets:
