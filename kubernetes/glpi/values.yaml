@@ -201,6 +201,15 @@ glpi:
     # Schedule in cron format (default: every 2 minutes)
     schedule: "*/2 * * * *"
 
+  # -- Cache Configuration
+  cache:
+    # Override CACHE_DSN used by the glpi-cache-configure job.
+    # Leave empty to auto-generate from redis.* (redis://redis.<namespace>.svc.cluster.local:<port>/)
+    # when redis.enabled is true. If redis.enabled is false and this is left empty, caching is
+    # disabled (GLPI falls back to filesystem cache). Set this to point to an external
+    # Redis/Memcached instance instead of the bundled one, e.g. "redis://my-external-redis:6379/2"
+    dsn: ""
+
   # -- GLPI Pod Security Context
   # Security settings applied at the pod level
   podSecurityContext:

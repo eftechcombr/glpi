@@ -33,6 +33,14 @@ data:
   MARIADB_PORT: {{ .Values.externalDatabase.port | quote }}
   {{- end }}
 
+  {{- if .Values.glpi.cache.dsn }}
+  CACHE_DSN: {{ .Values.glpi.cache.dsn | quote }}
+  {{- else if .Values.redis.enabled }}
+  CACHE_DSN: "redis://redis.{{ include "glpi.namespace" . }}.svc.cluster.local:{{ .Values.redis.service.port }}/"
+  {{- else }}
+  CACHE_DSN: ""
+  {{- end }}
+
 
 ---
 apiVersion: v1
