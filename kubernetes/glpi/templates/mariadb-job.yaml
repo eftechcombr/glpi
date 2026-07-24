@@ -62,7 +62,7 @@ spec:
                 -e "GRANT SELECT ON mysql.time_zone_name TO '{{ .Values.mariadb.auth.username }}'@'%'; FLUSH PRIVILEGES;"
           envFrom:
             - secretRef:
-                name: mariadb-glpi-secret
+                name: {{ include "glpi.mariadbSecretName" . }}
             - configMapRef:
                 name: mariadb-glpi-config
       restartPolicy: OnFailure

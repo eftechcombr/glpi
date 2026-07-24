@@ -201,6 +201,17 @@ glpi:
     # Schedule in cron format (default: every 2 minutes)
     schedule: "*/2 * * * *"
 
+  # -- Database Credentials Configuration
+  database:
+    # Name of an existing Secret containing the GLPI application's DB credentials,
+    # sourced from an external secrets manager (Doppler, External Secrets Operator,
+    # Vault, etc). Must contain keys: MARIADB_DATABASE, MARIADB_USER, MARIADB_PASSWORD.
+    # When set, this chart will not create its own glpi-secret Secret and the plaintext
+    # database credentials below (mariadb.auth.* / externalDatabase.*) are ignored by
+    # the application containers (php-fpm, jobs, cronjob). Applies whether mariadb.enabled
+    # is true or false.
+    existingSecret: ""
+
   # -- GLPI Pod Security Context
   # Security settings applied at the pod level
   podSecurityContext:
@@ -247,6 +258,12 @@ mariadb:
     username: glpi
     # Database password for GLPI user
     password: glpi
+    # Name of an existing Secret containing MariaDB server credentials, sourced from an
+    # external secrets manager (Doppler, External Secrets Operator, Vault, etc). Must
+    # contain keys: MARIADB_ROOT_PASSWORD, MARIADB_DATABASE, MARIADB_USER, MARIADB_PASSWORD.
+    # When set, this chart will not create its own mariadb-glpi-secret Secret and the
+    # rootPassword/database/username/password values above are ignored.
+    existingSecret: ""
   
   # Primary database configuration
   primary:

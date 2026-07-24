@@ -36,7 +36,7 @@ spec:
             - configMapRef:
                 name: glpi-config
             - secretRef:
-                name: glpi-secret
+                name: {{ include "glpi.databaseSecretName" . }}
           command:
             - sh
             - -c
@@ -129,7 +129,7 @@ spec:
             - configMapRef:
                 name: glpi-config
             - secretRef:
-                name: glpi-secret
+                name: {{ include "glpi.databaseSecretName" . }}
           volumeMounts:
             - name: files
               mountPath: /var/lib/glpi
@@ -218,7 +218,7 @@ spec:
             - configMapRef:
                 name: glpi-config
             - secretRef:
-                name: glpi-secret
+                name: {{ include "glpi.databaseSecretName" . }}
           volumeMounts:
             - name: files
               mountPath: /var/lib/glpi
@@ -307,7 +307,7 @@ spec:
             - configMapRef:
                 name: glpi-config
             - secretRef:
-                name: glpi-secret
+                name: {{ include "glpi.databaseSecretName" . }}
           volumeMounts:
             - name: etc
               mountPath: /etc/glpi
@@ -373,7 +373,7 @@ spec:
             - configMapRef:
                 name: glpi-config
             - secretRef:
-                name: glpi-secret
+                name: {{ include "glpi.databaseSecretName" . }}
           volumeMounts:
             - name: etc
               mountPath: /etc/glpi

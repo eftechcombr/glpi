@@ -88,6 +88,38 @@ Return the proper MariaDB image name
 {{- end }}
 
 {{/*
+Return the name of the Secret holding MariaDB server credentials
+(MARIADB_ROOT_PASSWORD, MARIADB_DATABASE, MARIADB_USER, MARIADB_PASSWORD).
+Used by the MariaDB StatefulSet itself and the mariadb-timezone Job.
+Set mariadb.auth.existingSecret to reference a Secret managed outside this
+chart (e.g. synced by Doppler, External Secrets Operator, Vault) instead of
+letting the chart create one from plaintext values.yaml values.
+*/}}
+{{- define "glpi.mariadbSecretName" -}}
+{{- if .Values.mariadb.auth.existingSecret -}}
+{{- .Values.mariadb.auth.existingSecret -}}
+{{- else -}}
+mariadb-glpi-secret
+{{- end -}}
+{{- end }}
+
+{{/*
+Return the name of the Secret holding the GLPI application's DB credentials
+(MARIADB_DATABASE, MARIADB_USER, MARIADB_PASSWORD - no root password).
+Used by php-fpm, all init Jobs, and the cronjob.
+Set glpi.database.existingSecret to reference a Secret managed outside this
+chart instead of letting the chart create one from plaintext values.yaml
+values. Applies regardless of mariadb.enabled (internal or external DB).
+*/}}
+{{- define "glpi.databaseSecretName" -}}
+{{- if .Values.glpi.database.existingSecret -}}
+{{- .Values.glpi.database.existingSecret -}}
+{{- else -}}
+glpi-secret
+{{- end -}}
+{{- end }}
+
+{{/*
 Return the proper Redis image name
 */}}
 {{- define "glpi.redis.image" -}}

@@ -47,7 +47,7 @@ spec:
                 - configMapRef: 
                     name: glpi-config
                 - secretRef: 
-                    name: glpi-secret
+                    name: {{ include "glpi.databaseSecretName" . }}
               command: 
                 - php
                 - front/cron.php
