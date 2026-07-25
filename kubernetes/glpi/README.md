@@ -145,7 +145,7 @@ The following table lists the configurable parameters of the GLPI chart and thei
 |-----------|-------------|---------|
 | `redis.enabled` | Deploy internal Redis for caching | `true` |
 | `redis.image.repository` | Redis image repository | `redis` |
-| `redis.image.tag` | Redis image tag | `"7.0-alpine"` |
+| `redis.image.tag` | Redis image tag | `"7.4-alpine"` |
 | `redis.image.pullPolicy` | Redis image pull policy | `IfNotPresent` |
 | `redis.replicaCount` | Number of Redis replicas | `1` |
 | `redis.resources.limits.cpu` | Redis CPU limit | `500m` |

@@ -302,7 +302,7 @@ redis:
     # Image repository for Redis
     repository: redis
     # Image tag for Redis
-    tag: "7.0-alpine"
+    tag: "7.4-alpine"
     # Image pull policy
     pullPolicy: IfNotPresent
   
