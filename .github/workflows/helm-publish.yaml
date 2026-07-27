@@ -3,7 +3,6 @@ name: Helm Chart CI/CD
 on:
   push:
     branches:
-      - latest
       - main
     paths:
       - 'helm/**'
