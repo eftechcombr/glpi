@@ -7,12 +7,12 @@ on:
         description: "Version to build"
         required: true
         default: "latest"
-  push:
-    branches:
-      - "latest" 
-  release: 
-    types: 
-      - published
+  # push:
+  #   branches:
+  #     - "latest" 
+  # release: 
+  #   types: 
+  #     - published
 
 env:
   REGISTRY: "docker.io"

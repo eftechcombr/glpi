@@ -5,3 +5,5 @@
 */.env
 values-custom.yaml
 */values-custom.yaml
+
+**/*.tgz
