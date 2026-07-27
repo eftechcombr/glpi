@@ -106,7 +106,7 @@ entries:
     - https://github.com/eftechcombr/glpi/releases/download/glpi-2.11.0/glpi-2.11.0.tgz
     version: 2.11.0
   - annotations:
-      artifacthub.io/category: it-service-management
+      artifacthub.io/category: integration-delivery
       artifacthub.io/changes: |
         - kind: changed
           description: "Replace inline Redis with helmforge/valkey subchart"
@@ -154,7 +154,7 @@ entries:
     description: GLPI Helm Chart - IT Asset Management and Service Desk
     digest: d47cdcb8698d7694b93f2cf2ea317f3c6a7e5ae2ae8953c219cea0dcef76a8fb
     home: https://github.com/eftechcombr/glpi
-    icon: https://glpi-project.org/wp-content/themes/glpi/assets/img/logo-glpi.svg
+    icon: https://www.glpi-project.org/wp-content/uploads/2025/03/glpi-teclib-color-logo.svg
     keywords:
     - glpi
     - itil
@@ -174,7 +174,7 @@ entries:
     - https://github.com/eftechcombr/glpi/releases/download/glpi-1.11.1/glpi-1.11.1.tgz
     version: 1.11.1
   - annotations:
-      artifacthub.io/category: it-service-management
+      artifacthub.io/category: integration-delivery
       artifacthub.io/changes: |
         - kind: changed
           description: "Replace inline Redis with helmforge/valkey subchart"
@@ -222,7 +222,7 @@ entries:
     description: GLPI Helm Chart - IT Asset Management and Service Desk
     digest: 1cb96b732b2ac642a51402a2b89d60c79417f5d4873a9e336a0dcc580c2ac5a9
     home: https://github.com/eftechcombr/glpi
-    icon: https://glpi-project.org/wp-content/themes/glpi/assets/img/logo-glpi.svg
+    icon: https://www.glpi-project.org/wp-content/uploads/2025/03/glpi-teclib-color-logo.svg
     keywords:
     - glpi
     - itil
