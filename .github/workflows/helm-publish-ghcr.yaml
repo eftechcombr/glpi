@@ -1,0 +1,38 @@
+name: Publish Helm Chart to GHCR
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Helm
+        uses: azure/setup-helm@v5
+
+      - name: Get chart version
+        id: chart
+        run: echo "version=$(grep '^version:' kubernetes/glpi/Chart.yaml | awk '{print $2}')" >> $GITHUB_OUTPUT
+
+      - name: Helm login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Add Helm repositories
+        run: |
+          helm repo add helmforge https://repo.helmforge.dev
+          helm repo update
+
+      - name: Build chart dependencies
+        run: helm dependency build kubernetes/glpi/
+
+      - name: Package chart
+        run: helm package kubernetes/glpi/ --version ${{ steps.chart.outputs.version }}
+
+      - name: Push chart to GitHub Packages
+        run: helm push ${{ github.event.repository.name }}-${{ steps.chart.outputs.version }}.tgz oci://ghcr.io/${{ github.repository_owner }}/helm-charts
