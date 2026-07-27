@@ -5,5 +5,5 @@ repositoryID: 5eec008b-2683-4f56-ac36-71ea3ccc3478
 owners:
   - name: eftechcombr
     email: contato@eftech.com.br
-ignore:
-  - docker/
+# ignore:
+#   - name: docker
