@@ -38,6 +38,8 @@ annotations:
     - name: support
       url: https://github.com/eftechcombr/glpi/issues
   artifacthub.io/changes: |
+    - kind: changed
+      description: "Replace inline Redis with helmforge/valkey subchart"
     - kind: fixed
       description: "Fix CronJob YAML indentation bug preventing deployment"
     - kind: fixed

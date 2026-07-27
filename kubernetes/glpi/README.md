@@ -96,7 +96,7 @@ The following table lists the configurable parameters of the GLPI chart and thei
 | `glpi.jobs.dbInstall.enabled` | Install GLPI database schema (fresh installs) | `true` |
 | `glpi.jobs.dbUpgrade.enabled` | Upgrade GLPI database schema (upgrades) | `true` |
 | `glpi.jobs.dbConfigure.enabled` | Configure GLPI database connection | `true` |
-| `glpi.jobs.cacheConfigure.enabled` | Configure GLPI Redis cache settings | `true` |
+| `glpi.jobs.cacheConfigure.enabled` | Configure GLPI cache settings (Valkey) | `true` |
 
 ### CronJob
 
@@ -146,7 +146,6 @@ Valkey (Redis-compatible fork) replaces the previously inlined Redis deployment.
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `valkey.enabled` | Deploy Valkey for caching | `true` |
-
 | `valkey.architecture` | Valkey topology | `standalone` |
 | `valkey.image.repository` | Valkey image repository | `docker.io/valkey/valkey` |
 | `valkey.image.tag` | Valkey image tag | `"9.1.0"` |

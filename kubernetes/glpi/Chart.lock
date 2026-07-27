@@ -2,5 +2,5 @@ dependencies:
 - name: valkey
   repository: https://repo.helmforge.dev
   version: 2.0.2
-digest: sha256:d53882821cf7e6e08ff72856ff2fa22300497f4b457ace3e1e1f8b1d4519b982
-generated: "2026-07-27T07:17:09.060412-03:00"
+digest: sha256:7987613db308b01f2f7592a32891e8ea4635f7119f60be9031417b349d3e6f1d
+generated: "2026-07-27T07:41:32.529936-03:00"
