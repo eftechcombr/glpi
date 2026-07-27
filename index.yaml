@@ -1,0 +1,244 @@
+apiVersion: v1
+entries:
+  glpi:
+  - annotations:
+      artifacthub.io/category: integration-delivery
+      artifacthub.io/changes: |
+        - kind: changed
+          description: "Replace inline MariaDB StatefulSet with helmforge/mariadb subchart v2.0.3"
+        - kind: changed
+          description: "Update MariaDB image from mariadb:11.4 to mariadb:12.3.2"
+        - kind: changed
+          description: "MariaDB values restructured: resources/persistence under standalone.*, security UID 999"
+        - kind: changed
+          description: "Timezone grant moved from helm hook job to subchart initdb.scripts"
+        - kind: changed
+          description: "Service DNS changed to dynamic {release-name}-mariadb pattern"
+      artifacthub.io/language: en, pt-br
+      artifacthub.io/license: GPL-3.0
+      artifacthub.io/links: |
+        - name: support
+          url: https://github.com/eftechcombr/glpi/issues
+    apiVersion: v2
+    appVersion: 11.0.8
+    created: "2026-07-27T17:34:33.391437884Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: https://repo.helmforge.dev
+      version: 2.0.2
+    - condition: mariadb.enabled
+      name: mariadb
+      repository: https://repo.helmforge.dev
+      version: 2.0.3
+    description: GLPI Helm Chart - IT Asset Management and Service Desk
+    digest: f16a78db3c70b6448bbee12fefeea009dbd1a1bdacb543b449a1a47c7e721cc4
+    home: https://github.com/eftechcombr/glpi
+    icon: https://www.glpi-project.org/wp-content/uploads/2025/03/glpi-teclib-color-logo.svg
+    keywords:
+    - glpi
+    - itil
+    - asset-management
+    - service-desk
+    - itsm
+    maintainers:
+    - email: contato@eftech.com.br
+      name: eftechcombr
+      url: https://github.com/eftechcombr
+    name: glpi
+    sources:
+    - https://github.com/eftechcombr/glpi
+    - https://github.com/glpi-project/glpi
+    type: application
+    urls:
+    - https://github.com/eftechcombr/glpi/releases/download/glpi-2.11.1/glpi-2.11.1.tgz
+    version: 2.11.1
+  - annotations:
+      artifacthub.io/category: integration-delivery
+      artifacthub.io/changes: |
+        - kind: changed
+          description: "Replace inline MariaDB StatefulSet with helmforge/mariadb subchart v2.0.3"
+        - kind: changed
+          description: "Update MariaDB image from mariadb:11.4 to mariadb:12.3.2"
+        - kind: changed
+          description: "MariaDB values restructured: resources/persistence under standalone.*, security UID 999"
+        - kind: changed
+          description: "Timezone grant moved from helm hook job to subchart initdb.scripts"
+        - kind: changed
+          description: "Service DNS changed to dynamic {release-name}-mariadb pattern"
+      artifacthub.io/language: en, pt-br
+      artifacthub.io/license: GPL-3.0
+      artifacthub.io/links: |
+        - name: support
+          url: https://github.com/eftechcombr/glpi/issues
+    apiVersion: v2
+    appVersion: 11.0.8
+    created: "2026-07-27T15:24:49.217407422Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: https://repo.helmforge.dev
+      version: 2.0.2
+    - condition: mariadb.enabled
+      name: mariadb
+      repository: https://repo.helmforge.dev
+      version: 2.0.3
+    description: GLPI Helm Chart - IT Asset Management and Service Desk
+    digest: f19f75fe7e0bbf50e8f63ce917f8e19639389a4d9ce526b9478b845c84a9a511
+    home: https://github.com/eftechcombr/glpi
+    icon: https://www.glpi-project.org/wp-content/uploads/2025/03/glpi-teclib-color-logo.svg
+    keywords:
+    - glpi
+    - itil
+    - asset-management
+    - service-desk
+    - itsm
+    maintainers:
+    - email: contato@eftech.com.br
+      name: eftechcombr
+      url: https://github.com/eftechcombr
+    name: glpi
+    sources:
+    - https://github.com/eftechcombr/glpi
+    - https://github.com/glpi-project/glpi
+    type: application
+    urls:
+    - https://github.com/eftechcombr/glpi/releases/download/glpi-2.11.0/glpi-2.11.0.tgz
+    version: 2.11.0
+  - annotations:
+      artifacthub.io/category: it-service-management
+      artifacthub.io/changes: |
+        - kind: changed
+          description: "Replace inline Redis with helmforge/valkey subchart"
+        - kind: fixed
+          description: "Fix CronJob YAML indentation bug preventing deployment"
+        - kind: fixed
+          description: "Fix Ingress backend service name to match nginx service"
+        - kind: changed
+          description: "StatefulSet now uses volumeClaimTemplates for multi-replica support"
+        - kind: changed
+          description: "Use app.kubernetes.io/component labels consistently across all templates"
+        - kind: added
+          description: "ServiceAccount template with imagePullSecrets and scheduling values"
+        - kind: added
+          description: "External database support via externalDatabase config"
+        - kind: changed
+          description: "Added security contexts and resource limits to init containers"
+        - kind: changed
+          description: "Redis now has liveness/readiness probes and security context defaults"
+        - kind: changed
+          description: "MariaDB and Redis now run with non-root security contexts by default"
+        - kind: fixed
+          description: "Fix GLPI_DOC_DIR pointing to /var/www/html instead of var dir"
+        - kind: changed
+          description: "StatefulSet anti-affinity changed to requiredDuringScheduling"
+        - kind: fixed
+          description: "Remove deprecated alpha API annotation and status subresource fields"
+        - kind: fixed
+          description: "Fix terminationGracePeriodSeconds moved to pod template spec"
+        - kind: fixed
+          description: "Fix helm-publish workflow skipping publish on release events"
+      artifacthub.io/language: en, pt-br
+      artifacthub.io/license: GPL-3.0
+      artifacthub.io/links: |
+        - name: support
+          url: https://github.com/eftechcombr/glpi/issues
+    apiVersion: v2
+    appVersion: 11.0.8
+    created: "2026-07-27T12:05:03.28513899Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: https://repo.helmforge.dev
+      version: 2.0.2
+    description: GLPI Helm Chart - IT Asset Management and Service Desk
+    digest: d47cdcb8698d7694b93f2cf2ea317f3c6a7e5ae2ae8953c219cea0dcef76a8fb
+    home: https://github.com/eftechcombr/glpi
+    icon: https://glpi-project.org/wp-content/themes/glpi/assets/img/logo-glpi.svg
+    keywords:
+    - glpi
+    - itil
+    - asset-management
+    - service-desk
+    - itsm
+    maintainers:
+    - email: contato@eftech.com.br
+      name: eftechcombr
+      url: https://github.com/eftechcombr
+    name: glpi
+    sources:
+    - https://github.com/eftechcombr/glpi
+    - https://github.com/glpi-project/glpi
+    type: application
+    urls:
+    - https://github.com/eftechcombr/glpi/releases/download/glpi-1.11.1/glpi-1.11.1.tgz
+    version: 1.11.1
+  - annotations:
+      artifacthub.io/category: it-service-management
+      artifacthub.io/changes: |
+        - kind: changed
+          description: "Replace inline Redis with helmforge/valkey subchart"
+        - kind: fixed
+          description: "Fix CronJob YAML indentation bug preventing deployment"
+        - kind: fixed
+          description: "Fix Ingress backend service name to match nginx service"
+        - kind: changed
+          description: "StatefulSet now uses volumeClaimTemplates for multi-replica support"
+        - kind: changed
+          description: "Use app.kubernetes.io/component labels consistently across all templates"
+        - kind: added
+          description: "ServiceAccount template with imagePullSecrets and scheduling values"
+        - kind: added
+          description: "External database support via externalDatabase config"
+        - kind: changed
+          description: "Added security contexts and resource limits to init containers"
+        - kind: changed
+          description: "Redis now has liveness/readiness probes and security context defaults"
+        - kind: changed
+          description: "MariaDB and Redis now run with non-root security contexts by default"
+        - kind: fixed
+          description: "Fix GLPI_DOC_DIR pointing to /var/www/html instead of var dir"
+        - kind: changed
+          description: "StatefulSet anti-affinity changed to requiredDuringScheduling"
+        - kind: fixed
+          description: "Remove deprecated alpha API annotation and status subresource fields"
+        - kind: fixed
+          description: "Fix terminationGracePeriodSeconds moved to pod template spec"
+        - kind: fixed
+          description: "Fix helm-publish workflow skipping publish on release events"
+      artifacthub.io/language: en, pt-br
+      artifacthub.io/license: GPL-3.0
+      artifacthub.io/links: |
+        - name: support
+          url: https://github.com/eftechcombr/glpi/issues
+    apiVersion: v2
+    appVersion: 11.0.8
+    created: "2026-07-27T11:10:27.033335011Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: https://repo.helmforge.dev
+      version: 2.0.2
+    description: GLPI Helm Chart - IT Asset Management and Service Desk
+    digest: 1cb96b732b2ac642a51402a2b89d60c79417f5d4873a9e336a0dcc580c2ac5a9
+    home: https://github.com/eftechcombr/glpi
+    icon: https://glpi-project.org/wp-content/themes/glpi/assets/img/logo-glpi.svg
+    keywords:
+    - glpi
+    - itil
+    - asset-management
+    - service-desk
+    - itsm
+    maintainers:
+    - email: contato@eftech.com.br
+      name: eftechcombr
+      url: https://github.com/eftechcombr
+    name: glpi
+    sources:
+    - https://github.com/eftechcombr/glpi
+    - https://github.com/glpi-project/glpi
+    type: application
+    urls:
+    - https://github.com/eftechcombr/glpi/releases/download/glpi-1.11.0/glpi-1.11.0.tgz
+    version: 1.11.0
+generated: "2026-07-27T17:34:33.391475124Z"
