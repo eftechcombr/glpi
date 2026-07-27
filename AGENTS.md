@@ -7,7 +7,7 @@ This repository contains Docker and Kubernetes configurations for deploying GLPI
 - PHP-FPM application image (`docker/php/Dockerfile`)
 - Nginx reverse proxy (`docker/nginx/Dockerfile`)
 - Docker Compose configurations for development and production
-- Helm chart for Kubernetes deployment (`kubernetes/glpi/`)
+- Helm chart for Kubernetes deployment (`helm/`)
 
 ## Build Commands
 
@@ -202,10 +202,10 @@ When upgrading GLPI or PHP versions:
 7. Update `docker/nginx/Dockerfile`:
    - Base image tag
 
-8. Update `kubernetes/glpi/Chart.yaml`:
+8. Update `helm/Chart.yaml`:
    - `version:` and `appVersion:` fields
 
-9. Update `kubernetes/glpi/values.yaml`:
+9. Update `helm/values.yaml`:
    - `glpi.version`, `glpi.phpfpm.image.tag`, `glpi.nginx.image.tag`
 
 10. Verify with hadolint:
