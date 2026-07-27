@@ -13,7 +13,7 @@ dependencies:
 
 # Artifact Hub Metadata
 home: https://github.com/eftechcombr/glpi
-icon: https://glpi-project.org/wp-content/themes/glpi/assets/img/logo-glpi.svg
+icon: https://www.glpi-project.org/wp-content/uploads/2025/03/glpi-teclib-color-logo.svg
 sources:
   - https://github.com/eftechcombr/glpi
   - https://github.com/glpi-project/glpi
@@ -31,7 +31,7 @@ keywords:
   - itsm
 
 annotations:
-  artifacthub.io/category: it-service-management
+  artifacthub.io/category: integration-delivery
   artifacthub.io/language: en, pt-br
   artifacthub.io/license: GPL-3.0
   artifacthub.io/links: |
