@@ -2,5 +2,8 @@ dependencies:
 - name: valkey
   repository: https://repo.helmforge.dev
   version: 2.0.2
-digest: sha256:7987613db308b01f2f7592a32891e8ea4635f7119f60be9031417b349d3e6f1d
-generated: "2026-07-27T09:00:55.988574-03:00"
+- name: mariadb
+  repository: https://repo.helmforge.dev
+  version: 2.0.3
+digest: sha256:c7170dff9f62601d9aec745d6da0a927f0e2b55529730adcb32c5c0ce84dcc2d
+generated: "2026-07-27T12:07:19.851674-03:00"

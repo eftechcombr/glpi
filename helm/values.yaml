@@ -219,24 +219,26 @@ glpi:
       drop:
       - ALL
 
-# -- MariaDB Database Configuration
+# -- MariaDB Subchart Configuration
+# Database Configuration (deploys helmforge/mariadb subchart)
+# Replaces the inline MariaDB StatefulSet. Uses the helmforge/mariadb chart.
+# Service DNS: {release-name}-mariadb.{namespace}.svc.cluster.local:3306
 mariadb:
   # Enable or disable MariaDB deployment
   # Set to false to use an external database
   enabled: true
-  
+  # MariaDB deployment mode: standalone (Deployment) or replication (StatefulSet + GTID)
+  architecture: standalone
+
   # Container image settings
   image:
     # Image repository for MariaDB
-    repository: mariadb
+    repository: docker.io/library/mariadb
     # Image tag for MariaDB
-    tag: "11.4"
+    tag: "12.3.2"
     # Image pull policy
     pullPolicy: IfNotPresent
-  
-  # Number of MariaDB replicas
-  replicaCount: 1
-  
+
   # Database authentication configuration
   auth:
     # Root password for MariaDB
@@ -247,9 +249,22 @@ mariadb:
     username: glpi
     # Database password for GLPI user
     password: glpi
-  
-  # Primary database configuration
-  primary:
+
+  # Service configuration
+  service:
+    # Service port for database connections
+    port: 3306
+
+  # Standalone mode specific configuration
+  standalone:
+    # Persistent storage configuration for MariaDB
+    persistence:
+      # Enable persistent storage for database
+      enabled: true
+      # Storage class name (leave empty for default)
+      storageClass: ""
+      # Size of the persistent volume
+      size: 10Gi
     # Resource limits and requests for MariaDB
     resources:
       limits:
@@ -258,35 +273,24 @@ mariadb:
       requests:
         cpu: 250m
         memory: 256Mi
-  
-  # Persistent storage configuration for MariaDB
-  persistence:
-    # Enable persistent storage for database
-    enabled: true
-    # Storage class name (leave empty for default)
-    storageClass: ""
-    # Access mode for the volume
-    accessMode: ReadWriteOnce
-    # Size of the persistent volume
-    size: 10Gi
-  
-  # MariaDB service configuration
-  service:
-    # Service type (ClusterIP, NodePort, LoadBalancer)
-    type: ClusterIP
-    # Service port for database connections
-    port: 3306
+
+  # Init scripts executed on first boot (docker-entrypoint-initdb.d)
+  initdb:
+    scripts:
+      grant-timezone.sql: |
+        GRANT SELECT ON mysql.time_zone_name TO 'glpi'@'%';
+        FLUSH PRIVILEGES;
 
   # -- MariaDB Pod Security Context
   # Security settings applied at the pod level
   podSecurityContext:
-    fsGroup: 1001
+    fsGroup: 999
 
   # -- MariaDB Container Security Context
   # Security settings applied at the container level
   securityContext:
     runAsNonRoot: true
-    runAsUser: 1001
+    runAsUser: 999
     capabilities:
       drop:
         - ALL

@@ -80,10 +80,4 @@ Return the proper GLPI Nginx image name
 {{- printf "%s:%s" .Values.glpi.nginx.image.repository .Values.glpi.nginx.image.tag }}
 {{- end }}
 
-{{/*
-Return the proper MariaDB image name
-*/}}
-{{- define "glpi.mariadb.image" -}}
-{{- printf "%s:%s" .Values.mariadb.image.repository .Values.mariadb.image.tag }}
-{{- end }}
 

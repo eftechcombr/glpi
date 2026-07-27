@@ -2,7 +2,7 @@ apiVersion: v2
 name: glpi
 description: GLPI Helm Chart - IT Asset Management and Service Desk
 type: application
-version: 1.11.1
+version: 2.11.0
 appVersion: "11.0.8"
 
 dependencies:
@@ -10,6 +10,10 @@ dependencies:
     version: "2.0.2"
     repository: "https://repo.helmforge.dev"
     condition: valkey.enabled
+  - name: mariadb
+    version: "2.0.3"
+    repository: "https://repo.helmforge.dev"
+    condition: mariadb.enabled
 
 # Artifact Hub Metadata
 home: https://github.com/eftechcombr/glpi
@@ -39,32 +43,12 @@ annotations:
       url: https://github.com/eftechcombr/glpi/issues
   artifacthub.io/changes: |
     - kind: changed
-      description: "Replace inline Redis with helmforge/valkey subchart"
-    - kind: fixed
-      description: "Fix CronJob YAML indentation bug preventing deployment"
-    - kind: fixed
-      description: "Fix Ingress backend service name to match nginx service"
+      description: "Replace inline MariaDB StatefulSet with helmforge/mariadb subchart v2.0.3"
     - kind: changed
-      description: "StatefulSet now uses volumeClaimTemplates for multi-replica support"
+      description: "Update MariaDB image from mariadb:11.4 to mariadb:12.3.2"
     - kind: changed
-      description: "Use app.kubernetes.io/component labels consistently across all templates"
-    - kind: added
-      description: "ServiceAccount template with imagePullSecrets and scheduling values"
-    - kind: added
-      description: "External database support via externalDatabase config"
+      description: "MariaDB values restructured: resources/persistence under standalone.*, security UID 999"
     - kind: changed
-      description: "Added security contexts and resource limits to init containers"
+      description: "Timezone grant moved from helm hook job to subchart initdb.scripts"
     - kind: changed
-      description: "Redis now has liveness/readiness probes and security context defaults"
-    - kind: changed
-      description: "MariaDB and Redis now run with non-root security contexts by default"
-    - kind: fixed
-      description: "Fix GLPI_DOC_DIR pointing to /var/www/html instead of var dir"
-    - kind: changed
-      description: "StatefulSet anti-affinity changed to requiredDuringScheduling"
-    - kind: fixed
-      description: "Remove deprecated alpha API annotation and status subresource fields"
-    - kind: fixed
-      description: "Fix terminationGracePeriodSeconds moved to pod template spec"
-    - kind: fixed
-      description: "Fix helm-publish workflow skipping publish on release events"
+      description: "Service DNS changed to dynamic {release-name}-mariadb pattern"

@@ -116,28 +116,32 @@ The following table lists the configurable parameters of the GLPI chart and thei
 
 ### MariaDB Configuration
 
+MariaDB (deploys the [helmforge/mariadb](https://artifacthub.io/packages/helm/helmforge/mariadb) subchart v2.0.3). Replaces the previously inlined MariaDB StatefulSet.
+
+Service DNS: `{release-name}-mariadb.{namespace}.svc.cluster.local:3306`
+
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `mariadb.enabled` | Deploy internal MariaDB | `true` |
-| `mariadb.image.repository` | MariaDB image repository | `mariadb` |
-| `mariadb.image.tag` | MariaDB image tag | `"11.4"` |
+| `mariadb.architecture` | Deployment mode (`standalone` or `replication`) | `standalone` |
+| `mariadb.image.repository` | MariaDB image repository | `docker.io/library/mariadb` |
+| `mariadb.image.tag` | MariaDB image tag | `"12.3.2"` |
 | `mariadb.image.pullPolicy` | MariaDB image pull policy | `IfNotPresent` |
-| `mariadb.replicaCount` | Number of MariaDB replicas | `1` |
 | `mariadb.auth.rootPassword` | MariaDB root password | `glpi` |
 | `mariadb.auth.database` | Database name for GLPI | `glpi` |
 | `mariadb.auth.username` | Username for GLPI | `glpi` |
 | `mariadb.auth.password` | Password for GLPI user | `glpi` |
-| `mariadb.primary.resources.limits.cpu` | MariaDB CPU limit | `1000m` |
-| `mariadb.primary.resources.limits.memory` | MariaDB memory limit | `2Gi` |
-| `mariadb.primary.resources.requests.cpu` | MariaDB CPU request | `250m` |
-| `mariadb.primary.resources.requests.memory` | MariaDB memory request | `256Mi` |
-| `mariadb.persistence.enabled` | Enable persistence for MariaDB | `true` |
-| `mariadb.persistence.size` | MariaDB volume size | `10Gi` |
-| `mariadb.service.type` | MariaDB service type | `ClusterIP` |
+| `mariadb.standalone.resources.limits.cpu` | MariaDB CPU limit | `1000m` |
+| `mariadb.standalone.resources.limits.memory` | MariaDB memory limit | `2Gi` |
+| `mariadb.standalone.resources.requests.cpu` | MariaDB CPU request | `250m` |
+| `mariadb.standalone.resources.requests.memory` | MariaDB memory request | `256Mi` |
+| `mariadb.standalone.persistence.enabled` | Enable persistence for MariaDB | `true` |
+| `mariadb.standalone.persistence.size` | MariaDB volume size | `10Gi` |
 | `mariadb.service.port` | MariaDB service port | `3306` |
-| `mariadb.podSecurityContext.fsGroup` | Pod-level fsGroup | `1001` |
+| `mariadb.initdb.scripts` | Init scripts (e.g., timezone grant) | `grant-timezone.sql` |
+| `mariadb.podSecurityContext.fsGroup` | Pod-level fsGroup | `999` |
 | `mariadb.securityContext.runAsNonRoot` | Run as non-root | `true` |
-| `mariadb.securityContext.runAsUser` | User ID | `1001` |
+| `mariadb.securityContext.runAsUser` | User ID | `999` |
 
 ### Valkey Cache Configuration
 
@@ -177,6 +181,7 @@ Valkey (Redis-compatible fork) replaces the previously inlined Redis deployment.
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `externalDatabase.host` | External database hostname | `""` |
+| `externalDatabase.port` | External database port | `3306` |
 | `externalDatabase.database` | External database name | `""` |
 | `externalDatabase.username` | External database username | `""` |
 | `externalDatabase.password` | External database password | `""` |
@@ -213,7 +218,9 @@ If using multiple replicas for PHP-FPM, ensure your StorageClass supports `ReadW
 
 ## Database
 
-By default, the chart deploys MariaDB. For production, it is recommended to use an external database by setting `mariadb.enabled: false` and providing connection details via the `externalDatabase` section:
+By default, the chart deploys MariaDB via the [helmforge/mariadb](https://artifacthub.io/packages/helm/helmforge/mariadb) subchart. The internal database service is reachable at `{release-name}-mariadb.{namespace}.svc.cluster.local:3306`.
+
+For production, it is recommended to use an external database by setting `mariadb.enabled: false` and providing connection details via the `externalDatabase` section:
 
 ```yaml
 mariadb:
@@ -221,6 +228,7 @@ mariadb:
 
 externalDatabase:
   host: my-db-host.example.com
+  port: 3306
   database: glpi
   username: glpi
   password: mySecurePassword
@@ -233,7 +241,6 @@ The chart includes Helm hook jobs that run during install/upgrade:
 | Job | Hook | Weight | Description |
 |-----|------|--------|-------------|
 | `glpi-verify-dir` | post-install, post-upgrade | 5 | Create required GLPI directories |
-| `mariadb-timezone` | post-install, post-upgrade | 7 | Populate MariaDB timezone data |
 | `glpi-db-install` | post-install | 10 | Install GLPI database schema (fresh installs) |
 | `glpi-db-upgrade` | post-upgrade | 10 | Upgrade GLPI database schema (upgrades) |
 | `glpi-db-configure` | post-install, post-upgrade | 20 | Configure GLPI database connection |
@@ -241,11 +248,13 @@ The chart includes Helm hook jobs that run during install/upgrade:
 
 Jobs can be individually disabled via `glpi.jobs.<name>.enabled: false`.
 
+The timezone grant (`GRANT SELECT ON mysql.time_zone_name`) that was previously a Helm hook job (`mariadb-timezone`) is now handled by the MariaDB subchart's `initdb.scripts` — it runs automatically on database first boot.
+
 ## Security Contexts
 
 All components are configured with secure defaults:
 - **GLPI (PHP-FPM/Nginx)**: Runs as non-root user `www-data` (uid 82), drops all capabilities
-- **MariaDB**: Runs as non-root user (uid 1001) with `fsGroup: 1001`
+- **MariaDB**: Runs as non-root user (uid 999) with `fsGroup: 999`
 - **Valkey**: Runs as non-root user (uid 999) with `fsGroup: 1001`
 
 ---
