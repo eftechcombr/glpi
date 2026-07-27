@@ -18,7 +18,7 @@ jobs:
 
       - name: Get chart version
         id: chart
-        run: echo "version=$(grep '^version:' kubernetes/glpi/Chart.yaml | awk '{print $2}')" >> $GITHUB_OUTPUT
+        run: echo "version=$(grep '^version:' helm/Chart.yaml | awk '{print $2}')" >> $GITHUB_OUTPUT
 
       - name: Helm login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin
@@ -29,10 +29,10 @@ jobs:
           helm repo update
 
       - name: Build chart dependencies
-        run: helm dependency build kubernetes/glpi/
+        run: helm dependency build helm/
 
       - name: Package chart
-        run: helm package kubernetes/glpi/ --version ${{ steps.chart.outputs.version }}
+        run: helm package helm/ --version ${{ steps.chart.outputs.version }}
 
       - name: Push chart to GitHub Packages
         run: helm push ${{ github.event.repository.name }}-${{ steps.chart.outputs.version }}.tgz oci://ghcr.io/${{ github.repository_owner }}/helm-charts

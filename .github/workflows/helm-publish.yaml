@@ -18,7 +18,7 @@ permissions:
   id-token: write
 
 env:
-  CHART_DIR: kubernetes/glpi
+  CHART_DIR: helm
 
 jobs:
   lint:
@@ -107,5 +107,5 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
-          charts_dir: kubernetes
+          charts_dir: helm
           skip_existing: true

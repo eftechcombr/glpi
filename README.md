@@ -90,9 +90,9 @@ GLPI will be accessible at http://localhost:8080
     - GLPI_VAR_DIR, GLPI_CONFIG_DIR, GLPI_MARKETPLACE_DIR and other directory paths
 
 
-### kubernetes
+### helm
 
-    See ./kubernetes/glpi/values.yaml for all configurable Helm chart parameters,
+    See ./helm/values.yaml for all configurable Helm chart parameters,
     including GLPI, MariaDB, Redis, Ingress, and external database settings.
     
 
