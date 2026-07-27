@@ -96,7 +96,7 @@ The following table lists the configurable parameters of the GLPI chart and thei
 | `glpi.jobs.dbInstall.enabled` | Install GLPI database schema (fresh installs) | `true` |
 | `glpi.jobs.dbUpgrade.enabled` | Upgrade GLPI database schema (upgrades) | `true` |
 | `glpi.jobs.dbConfigure.enabled` | Configure GLPI database connection | `true` |
-| `glpi.jobs.cacheConfigure.enabled` | Configure GLPI cache settings (Valkey) | `true` |
+| `glpi.jobs.cacheConfigure.enabled` | Configure GLPI cache settings | `true` |
 
 ### CronJob
 
@@ -186,6 +186,15 @@ Valkey (Redis-compatible fork) replaces the previously inlined Redis deployment.
 | `externalDatabase.username` | External database username | `""` |
 | `externalDatabase.password` | External database password | `""` |
 
+### External Cache
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `externalCache.host` | External Redis/Valkey hostname | `""` |
+| `externalCache.port` | External Redis/Valkey port | `6379` |
+| `externalCache.password` | External Redis/Valkey password | `""` |
+| `externalCache.tls` | Enable TLS (rediss://) | `false` |
+
 ### Service Account
 
 | Parameter | Description | Default |
@@ -232,6 +241,23 @@ externalDatabase:
   database: glpi
   username: glpi
   password: mySecurePassword
+```
+
+## Cache
+
+By default, the chart deploys Valkey (a Redis-compatible fork) via the [helmforge/valkey](https://artifacthub.io/packages/helm/helmforge/valkey) subchart. The internal cache service is reachable at `{release-name}-valkey-client.{namespace}.svc.cluster.local:6379`.
+
+To use an external Redis/Valkey instance, disable the built-in Valkey and configure `externalCache`:
+
+```yaml
+valkey:
+  enabled: false
+
+externalCache:
+  host: my-redis.example.com
+  port: 6379
+  password: myCachePassword
+  tls: false
 ```
 
 ## Initialization Jobs

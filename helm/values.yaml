@@ -454,3 +454,15 @@ externalDatabase:
   username: ""
   # External database password
   password: ""
+
+# -- External Cache Configuration
+# Used when valkey.enabled is false
+externalCache:
+  # External Redis/Valkey hostname or IP
+  host: ""
+  # External Redis/Valkey port
+  port: 6379
+  # External Redis/Valkey password (leave empty if no auth)
+  password: ""
+  # Enable TLS for cache connection (rediss://)
+  tls: false
