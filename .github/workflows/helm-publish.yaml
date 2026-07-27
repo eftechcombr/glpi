@@ -1,6 +1,12 @@
 name: Helm Chart CI/CD
 
 on:
+  push:
+    branches:
+      - latest
+      - main
+    paths:
+      - 'helm/**'
   workflow_dispatch:
     inputs:
       publish:
@@ -36,6 +42,8 @@ jobs:
   package:
     runs-on: ubuntu-latest
     needs: lint
+    outputs:
+      version: ${{ steps.chart_version.outputs.version }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v7
@@ -54,7 +62,7 @@ jobs:
       - name: Extract chart version
         id: chart_version
         run: |
-          VERSION=$(grep '^version:' "${{ env.CHART_DIR }}/Chart.yaml" | awk '{print $2}')
+          VERSION=$(sed -n -E 's/^version:[[:space:]]*"?([^"]+)"?/\1/p' "${{ env.CHART_DIR }}/Chart.yaml")
           echo "Chart version: $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
@@ -79,7 +87,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     needs: package
-    if: ${{ github.event_name == 'release' || github.event.inputs.publish == 'true' }}
+    if: ${{ github.event_name == 'push' || github.event_name == 'release' || github.event.inputs.publish == 'true' }}
     steps:
       - name: Check out repository code with full history
         uses: actions/checkout@v7
@@ -102,10 +110,17 @@ jobs:
       - name: Build chart dependencies
         run: helm dependency build ${{ env.CHART_DIR }}
 
+      - name: Extract chart version
+        id: chart_version
+        run: |
+          VERSION=$(sed -n -E 's/^version:[[:space:]]*"?([^"]+)"?/\1/p' "${{ env.CHART_DIR }}/Chart.yaml")
+          echo "Publishing chart version: $VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.7.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
-          charts_dir: helm
+          charts_dir: .
           skip_existing: true
