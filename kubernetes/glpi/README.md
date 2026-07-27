@@ -139,24 +139,29 @@ The following table lists the configurable parameters of the GLPI chart and thei
 | `mariadb.securityContext.runAsNonRoot` | Run as non-root | `true` |
 | `mariadb.securityContext.runAsUser` | User ID | `1001` |
 
-### Redis Configuration
+### Valkey Cache Configuration
+
+Valkey (Redis-compatible fork) replaces the previously inlined Redis deployment. It is deployed as a Helm dependency subchart from [helmforge/valkey](https://artifacthub.io/packages/helm/helmforge/valkey).
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `redis.enabled` | Deploy internal Redis for caching | `true` |
-| `redis.image.repository` | Redis image repository | `redis` |
-| `redis.image.tag` | Redis image tag | `"7.0-alpine"` |
-| `redis.image.pullPolicy` | Redis image pull policy | `IfNotPresent` |
-| `redis.replicaCount` | Number of Redis replicas | `1` |
-| `redis.resources.limits.cpu` | Redis CPU limit | `500m` |
-| `redis.resources.limits.memory` | Redis memory limit | `256Mi` |
-| `redis.resources.requests.cpu` | Redis CPU request | `100m` |
-| `redis.resources.requests.memory` | Redis memory request | `128Mi` |
-| `redis.service.type` | Redis service type | `ClusterIP` |
-| `redis.service.port` | Redis service port | `6379` |
-| `redis.podSecurityContext.fsGroup` | Pod-level fsGroup | `1001` |
-| `redis.securityContext.runAsNonRoot` | Run as non-root | `true` |
-| `redis.securityContext.runAsUser` | User ID | `999` |
+| `valkey.enabled` | Deploy Valkey for caching | `true` |
+
+| `valkey.architecture` | Valkey topology | `standalone` |
+| `valkey.image.repository` | Valkey image repository | `docker.io/valkey/valkey` |
+| `valkey.image.tag` | Valkey image tag | `"9.1.0"` |
+| `valkey.image.pullPolicy` | Valkey image pull policy | `IfNotPresent` |
+| `valkey.auth.enabled` | Enable Valkey authentication | `false` |
+| `valkey.standalone.persistence.enabled` | Enable persistence | `false` |
+| `valkey.resources.limits.cpu` | Valkey CPU limit | `500m` |
+| `valkey.resources.limits.memory` | Valkey memory limit | `256Mi` |
+| `valkey.resources.requests.cpu` | Valkey CPU request | `100m` |
+| `valkey.resources.requests.memory` | Valkey memory request | `128Mi` |
+| `valkey.service.type` | Valkey service type | `ClusterIP` |
+| `valkey.service.port` | Valkey service port | `6379` |
+| `valkey.podSecurityContext.fsGroup` | Pod-level fsGroup | `1001` |
+| `valkey.securityContext.runAsNonRoot` | Run as non-root | `true` |
+| `valkey.securityContext.runAsUser` | User ID | `999` |
 
 ### Ingress Configuration
 
@@ -233,7 +238,7 @@ The chart includes Helm hook jobs that run during install/upgrade:
 | `glpi-db-install` | post-install | 10 | Install GLPI database schema (fresh installs) |
 | `glpi-db-upgrade` | post-upgrade | 10 | Upgrade GLPI database schema (upgrades) |
 | `glpi-db-configure` | post-install, post-upgrade | 20 | Configure GLPI database connection |
-| `glpi-cache-configure` | post-install, post-upgrade | 30 | Configure GLPI Redis cache settings |
+| `glpi-cache-configure` | post-install, post-upgrade | 30 | Configure GLPI cache settings (Valkey) |
 
 Jobs can be individually disabled via `glpi.jobs.<name>.enabled: false`.
 
@@ -242,7 +247,7 @@ Jobs can be individually disabled via `glpi.jobs.<name>.enabled: false`.
 All components are configured with secure defaults:
 - **GLPI (PHP-FPM/Nginx)**: Runs as non-root user `www-data` (uid 82), drops all capabilities
 - **MariaDB**: Runs as non-root user (uid 1001) with `fsGroup: 1001`
-- **Redis**: Runs as non-root user (uid 999) with `fsGroup: 1001`
+- **Valkey**: Runs as non-root user (uid 999) with `fsGroup: 1001`
 
 ---
 

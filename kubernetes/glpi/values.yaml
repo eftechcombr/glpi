@@ -291,25 +291,44 @@ mariadb:
       drop:
         - ALL
 
-# -- Redis Cache Configuration
-redis:
-  # Enable or disable Redis deployment
+# -- Valkey Subchart Configuration
+# Cache Configuration (deploys Valkey subchart)
+# Replaces the inline Redis deployment. Uses the helmforge/valkey chart.
+# Service DNS: {fullnameOverride}-valkey-client.{namespace}.svc.cluster.local:6379
+valkey:
+  # Enable or disable Valkey deployment for caching
   # Set to false if caching is not needed
   enabled: true
-  
-  # Container image settings
+  # Valkey topology: standalone, replication, sentinel, or cluster
+  architecture: standalone
+
+  # Valkey container image settings
   image:
-    # Image repository for Redis
-    repository: redis
-    # Image tag for Redis
-    tag: "7.0-alpine"
+    # Image repository for Valkey
+    repository: docker.io/valkey/valkey
+    # Image tag for Valkey
+    tag: "9.1.0"
     # Image pull policy
     pullPolicy: IfNotPresent
-  
-  # Number of Redis replicas
-  replicaCount: 1
-  
-  # Resource limits and requests for Redis
+
+  # Authentication (disabled to match previous behavior)
+  auth:
+    enabled: false
+
+  # Service configuration
+  service:
+    # Service type (ClusterIP, NodePort, LoadBalancer)
+    type: ClusterIP
+    # Service port for Valkey connections
+    port: 6379
+
+  # Standalone mode specific configuration
+  standalone:
+    # Persistence (disabled — Valkey serves as a cache, not a database)
+    persistence:
+      enabled: false
+
+  # Resource limits and requests for Valkey
   resources:
     limits:
       cpu: 500m
@@ -317,23 +336,12 @@ redis:
     requests:
       cpu: 100m
       memory: 128Mi
-  
-  # Redis service configuration
-  service:
-    # Service type (ClusterIP, NodePort, LoadBalancer)
-    type: ClusterIP
-    # Service port for Redis connections
-    port: 6379
-    # Target port on the container
-    targetPort: 6379
 
-  # -- Redis Pod Security Context
-  # Security settings applied at the pod level
+  # -- Valkey Pod Security Context
   podSecurityContext:
     fsGroup: 1001
 
-  # -- Redis Container Security Context
-  # Security settings applied at the container level
+  # -- Valkey Container Security Context
   securityContext:
     runAsNonRoot: true
     runAsUser: 999

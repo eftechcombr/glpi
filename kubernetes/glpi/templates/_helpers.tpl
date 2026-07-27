@@ -87,9 +87,3 @@ Return the proper MariaDB image name
 {{- printf "%s:%s" .Values.mariadb.image.repository .Values.mariadb.image.tag }}
 {{- end }}
 
-{{/*
-Return the proper Redis image name
-*/}}
-{{- define "glpi.redis.image" -}}
-{{- printf "%s:%s" .Values.redis.image.repository .Values.redis.image.tag }}
-{{- end }}
