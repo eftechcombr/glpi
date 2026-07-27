@@ -94,6 +94,14 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v5
 
+      - name: Add Helm repositories
+        run: |
+          helm repo add helmforge https://repo.helmforge.dev
+          helm repo update
+
+      - name: Build chart dependencies
+        run: helm dependency build ${{ env.CHART_DIR }}
+
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.7.0
         env:
