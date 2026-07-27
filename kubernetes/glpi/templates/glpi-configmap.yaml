@@ -33,6 +33,10 @@ data:
   MARIADB_PORT: {{ .Values.externalDatabase.port | quote }}
   {{- end }}
 
+  {{- if .Values.valkey.enabled }}
+  {{- $valkeyPort := .Values.valkey.service.port | default 6379 | toString }}
+  CACHE_DSN: {{ printf "redis://%s-valkey-client:%s" .Release.Name $valkeyPort | quote }}
+  {{- end }}
 
 ---
 apiVersion: v1

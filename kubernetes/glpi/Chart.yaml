@@ -2,8 +2,14 @@ apiVersion: v2
 name: glpi
 description: GLPI Helm Chart - IT Asset Management and Service Desk
 type: application
-version: 11.0.8
+version: 1.11.0
 appVersion: "11.0.8"
+
+dependencies:
+  - name: valkey
+    version: "2.0.2"
+    repository: "https://repo.helmforge.dev"
+    condition: valkey.enabled
 
 # Artifact Hub Metadata
 home: https://github.com/eftechcombr/glpi
