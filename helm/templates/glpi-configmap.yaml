@@ -36,6 +36,10 @@ data:
   {{- if .Values.valkey.enabled }}
   {{- $valkeyPort := .Values.valkey.service.port | default 6379 | toString }}
   CACHE_DSN: {{ printf "redis://%s-valkey-client:%s" .Release.Name $valkeyPort | quote }}
+  {{- else if .Values.externalCache.host }}
+  {{- $scheme := "redis" }}
+  {{- if .Values.externalCache.tls }}{{ $scheme = "rediss" }}{{ end }}
+  CACHE_DSN: {{ printf "%s://%s:%s" $scheme .Values.externalCache.host (.Values.externalCache.port | default 6379 | toString) | quote }}
   {{- end }}
 
 ---
