@@ -2,7 +2,7 @@ apiVersion: v2
 name: glpi
 description: GLPI Helm Chart - IT Asset Management and Service Desk
 type: application
-version: 1.11.1
+version: 2.11.0
 appVersion: "11.0.8"
 
 dependencies:
@@ -10,6 +10,10 @@ dependencies:
     version: "2.0.2"
     repository: "https://repo.helmforge.dev"
     condition: valkey.enabled
+  - name: mariadb
+    version: "2.0.3"
+    repository: "https://repo.helmforge.dev"
+    condition: mariadb.enabled
 
 # Artifact Hub Metadata
 home: https://github.com/eftechcombr/glpi
@@ -40,6 +44,8 @@ annotations:
   artifacthub.io/changes: |
     - kind: changed
       description: "Replace inline Redis with helmforge/valkey subchart"
+    - kind: changed
+      description: "Replace inline MariaDB with helmforge/mariadb subchart"
     - kind: fixed
       description: "Fix CronJob YAML indentation bug preventing deployment"
     - kind: fixed
@@ -55,9 +61,7 @@ annotations:
     - kind: changed
       description: "Added security contexts and resource limits to init containers"
     - kind: changed
-      description: "Redis now has liveness/readiness probes and security context defaults"
-    - kind: changed
-      description: "MariaDB and Redis now run with non-root security contexts by default"
+      description: "MariaDB and Valkey now run with non-root security contexts by default"
     - kind: fixed
       description: "Fix GLPI_DOC_DIR pointing to /var/www/html instead of var dir"
     - kind: changed

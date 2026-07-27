@@ -26,8 +26,8 @@ data:
   GLPI_CONFIG_DIR: {{ .Values.glpi.paths.config }}
 
   {{- if .Values.mariadb.enabled }}
-  MARIADB_HOST: "mariadb-headless.{{ include "glpi.namespace" . }}.svc.cluster.local"
-  MARIADB_PORT: {{ .Values.mariadb.service.port | quote }}
+  MARIADB_HOST: {{ printf "%s-mariadb.%s.svc.cluster.local" .Release.Name (include "glpi.namespace" .) | quote }}
+  MARIADB_PORT: {{ .Values.mariadb.service.port | default "3306" | quote }}
   {{- else }}
   MARIADB_HOST: {{ .Values.externalDatabase.host | quote }}
   MARIADB_PORT: {{ .Values.externalDatabase.port | quote }}
