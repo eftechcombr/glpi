@@ -34,7 +34,7 @@ entries:
     description: GLPI Helm Chart - IT Asset Management and Service Desk
     digest: f16a78db3c70b6448bbee12fefeea009dbd1a1bdacb543b449a1a47c7e721cc4
     home: https://github.com/eftechcombr/glpi
-    icon: https://www.glpi-project.org/wp-content/uploads/2025/03/glpi-teclib-color-logo.svg
+    icon: https://www.eftech.com.br/img/logo.png
     keywords:
     - glpi
     - itil
@@ -86,7 +86,7 @@ entries:
     description: GLPI Helm Chart - IT Asset Management and Service Desk
     digest: f19f75fe7e0bbf50e8f63ce917f8e19639389a4d9ce526b9478b845c84a9a511
     home: https://github.com/eftechcombr/glpi
-    icon: https://www.glpi-project.org/wp-content/uploads/2025/03/glpi-teclib-color-logo.svg
+    icon: https://www.eftech.com.br/img/logo.png
     keywords:
     - glpi
     - itil
@@ -154,7 +154,7 @@ entries:
     description: GLPI Helm Chart - IT Asset Management and Service Desk
     digest: d47cdcb8698d7694b93f2cf2ea317f3c6a7e5ae2ae8953c219cea0dcef76a8fb
     home: https://github.com/eftechcombr/glpi
-    icon: https://www.glpi-project.org/wp-content/uploads/2025/03/glpi-teclib-color-logo.svg
+    icon: https://www.eftech.com.br/img/logo.png
     keywords:
     - glpi
     - itil
@@ -222,7 +222,7 @@ entries:
     description: GLPI Helm Chart - IT Asset Management and Service Desk
     digest: 1cb96b732b2ac642a51402a2b89d60c79417f5d4873a9e336a0dcc580c2ac5a9
     home: https://github.com/eftechcombr/glpi
-    icon: https://www.glpi-project.org/wp-content/uploads/2025/03/glpi-teclib-color-logo.svg
+    icon: https://www.eftech.com.br/img/logo.png
     keywords:
     - glpi
     - itil
