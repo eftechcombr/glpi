@@ -1,5 +1,7 @@
 [![Helm Chart CI/CD](https://github.com/eftechcombr/glpi/actions/workflows/helm-publish.yaml/badge.svg)](https://github.com/eftechcombr/glpi/actions/workflows/helm-publish.yaml)
 
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/eftechcombr-glpi)](https://artifacthub.io/packages/search?repo=eftechcombr-glpi)
+
 # GLPI Containers
 
 
