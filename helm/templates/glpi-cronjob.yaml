@@ -48,6 +48,14 @@ spec:
                     name: glpi-config
                 - secretRef: 
                     name: glpi-secret
+              {{- if .Values.mariadb.enabled }}
+              env:
+                - name: MARIADB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "glpi.mariadb.secretName" . }}
+                      key: {{ include "glpi.mariadb.secretPasswordKey" . }}
+              {{- end }}
               command: 
                 - php
                 - front/cron.php

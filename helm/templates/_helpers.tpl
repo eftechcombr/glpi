@@ -80,4 +80,29 @@ Return the proper GLPI Nginx image name
 {{- printf "%s:%s" .Values.glpi.nginx.image.repository .Values.glpi.nginx.image.tag }}
 {{- end }}
 
+{{/*
+Return the name of the Secret holding the MariaDB application user password: either the
+user-supplied mariadb.auth.existingSecret, or the helmforge/mariadb subchart's own
+auto-generated Secret ({release-name}-mariadb-auth). Mirrors that subchart's internal
+"mariadb.secretName" naming convention so GLPI's own containers can read the SAME live
+secret instead of duplicating (and potentially going stale/empty on) the password value in
+glpi-secret. Only meaningful when mariadb.enabled is true.
+*/}}
+{{- define "glpi.mariadb.secretName" -}}
+{{- if .Values.mariadb.auth.existingSecret -}}
+{{- .Values.mariadb.auth.existingSecret -}}
+{{- else -}}
+{{- printf "%s-mariadb-auth" .Release.Name -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Return the key within the MariaDB auth Secret (see glpi.mariadb.secretName) that holds the
+application user's password. Mirrors mariadb.auth.existingSecretUserPasswordKey so a custom
+existingSecret with a non-default key name is respected.
+*/}}
+{{- define "glpi.mariadb.secretPasswordKey" -}}
+{{- .Values.mariadb.auth.existingSecretUserPasswordKey | default "mariadb-user-password" -}}
+{{- end }}
+
 
