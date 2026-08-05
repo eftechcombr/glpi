@@ -67,6 +67,20 @@ glpi:
       periodSeconds: 5
       timeoutSeconds: 3
       failureThreshold: 3
+
+    # -- Pod Disruption Budget
+    # Only meaningful when phpfpm.replicaCount > 1: with a single replica, a PDB
+    # requiring minAvailable: 1 (or maxUnavailable: 0) will block voluntary node
+    # drains/evictions entirely, since Kubernetes can never satisfy it. Defaults to
+    # disabled for that reason; enable once you scale replicaCount up.
+    pdb:
+      enabled: false
+      # Minimum number/percentage of pods that must remain available (e.g. 1 or "50%").
+      # Leave empty to use maxUnavailable instead.
+      minAvailable: ""
+      # Maximum number/percentage of pods that may be unavailable (e.g. 1 or "50%").
+      # Ignored if minAvailable is set.
+      maxUnavailable: 1
   
   # Nginx container configuration
   nginx:
@@ -116,6 +130,14 @@ glpi:
       periodSeconds: 5
       timeoutSeconds: 3
       failureThreshold: 3
+
+    # -- Pod Disruption Budget
+    # Only meaningful when nginx.replicaCount > 1 - see the equivalent note under
+    # glpi.phpfpm.pdb.
+    pdb:
+      enabled: false
+      minAvailable: ""
+      maxUnavailable: 1
     
     # Nginx service configuration
     service:
