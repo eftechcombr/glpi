@@ -32,8 +32,22 @@ glpi:
       # Image pull policy
       pullPolicy: IfNotPresent
     
-    # Number of PHP-FPM replicas
+    # Number of PHP-FPM replicas.
+    # Ignored (Kubernetes/HPA owns the field instead) when autoscaling.enabled is true.
     replicaCount: 1
+
+    # -- Horizontal Pod Autoscaler
+    # Remember the shared-storage caveat: php-fpm reads/writes GLPI_VAR_DIR (uploads,
+    # sessions) on a PVC. Scaling beyond 1 replica requires that PVC to use a
+    # ReadWriteMany-capable storageClass (NFS, CephFS, EFS, etc) - see
+    # glpi.persistence.files.accessMode.
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 5
+      # Leave empty to omit that metric from the HPA entirely.
+      targetCPUUtilizationPercentage: 80
+      targetMemoryUtilizationPercentage: ""
     
     # Resource limits and requests for PHP-FPM container
     resources:
@@ -79,8 +93,17 @@ glpi:
       # Image pull policy
       pullPolicy: IfNotPresent
     
-    # Number of Nginx replicas
+    # Number of Nginx replicas.
+    # Ignored (Kubernetes/HPA owns the field instead) when autoscaling.enabled is true.
     replicaCount: 1
+
+    # -- Horizontal Pod Autoscaler
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 5
+      targetCPUUtilizationPercentage: 80
+      targetMemoryUtilizationPercentage: ""
     
     # Resource limits and requests for Nginx container
     resources:
