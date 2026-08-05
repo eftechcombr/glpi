@@ -21,6 +21,58 @@ entries:
           url: https://github.com/eftechcombr/glpi/issues
     apiVersion: v2
     appVersion: 11.0.8
+    created: "2026-08-05T09:03:20.203278371Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: https://repo.helmforge.dev
+      version: 2.0.2
+    - condition: mariadb.enabled
+      name: mariadb
+      repository: https://repo.helmforge.dev
+      version: 2.0.3
+    description: GLPI Helm Chart - IT Asset Management and Service Desk
+    digest: 6df36f4285c7799c80e4b0a9f5e64f70754e3ee1737d8bec11dd9e488eec8390
+    home: https://github.com/eftechcombr/glpi
+    icon: https://www.glpi-project.org/wp-content/uploads/2025/03/glpi-teclib-color-logo.svg
+    keywords:
+    - glpi
+    - itil
+    - asset-management
+    - service-desk
+    - itsm
+    maintainers:
+    - email: contato@eftech.com.br
+      name: eftechcombr
+      url: https://github.com/eftechcombr
+    name: glpi
+    sources:
+    - https://github.com/eftechcombr/glpi
+    - https://github.com/glpi-project/glpi
+    type: application
+    urls:
+    - https://github.com/eftechcombr/glpi/releases/download/glpi-2.11.2/glpi-2.11.2.tgz
+    version: 2.11.2
+  - annotations:
+      artifacthub.io/category: integration-delivery
+      artifacthub.io/changes: |
+        - kind: changed
+          description: "Replace inline MariaDB StatefulSet with helmforge/mariadb subchart v2.0.3"
+        - kind: changed
+          description: "Update MariaDB image from mariadb:11.4 to mariadb:12.3.2"
+        - kind: changed
+          description: "MariaDB values restructured: resources/persistence under standalone.*, security UID 999"
+        - kind: changed
+          description: "Timezone grant moved from helm hook job to subchart initdb.scripts"
+        - kind: changed
+          description: "Service DNS changed to dynamic {release-name}-mariadb pattern"
+      artifacthub.io/language: en, pt-br
+      artifacthub.io/license: GPL-3.0
+      artifacthub.io/links: |
+        - name: support
+          url: https://github.com/eftechcombr/glpi/issues
+    apiVersion: v2
+    appVersion: 11.0.8
     created: "2026-07-27T17:34:33.391437884Z"
     dependencies:
     - condition: valkey.enabled
@@ -241,4 +293,4 @@ entries:
     urls:
     - https://github.com/eftechcombr/glpi/releases/download/glpi-1.11.0/glpi-1.11.0.tgz
     version: 1.11.0
-generated: "2026-07-27T17:34:33.391475124Z"
+generated: "2026-08-05T09:03:20.203302878Z"
