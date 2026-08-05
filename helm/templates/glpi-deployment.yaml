@@ -88,8 +88,11 @@ spec:
             timeoutSeconds: {{ .Values.glpi.phpfpm.readinessProbe.timeoutSeconds }}
             failureThreshold: {{ .Values.glpi.phpfpm.readinessProbe.failureThreshold }}
           {{- end }}
+          {{- $phpfpmRes := include "glpi.resources" (dict "resources" .Values.glpi.phpfpm.resources "preset" .Values.glpi.phpfpm.resourcesPreset) }}
+          {{- if $phpfpmRes }}
           resources:
-            {{- toYaml .Values.glpi.phpfpm.resources | nindent 12 }}
+            {{- $phpfpmRes | nindent 12 }}
+          {{- end }}
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -196,8 +199,11 @@ spec:
             timeoutSeconds: {{ .Values.glpi.nginx.readinessProbe.timeoutSeconds }}
             failureThreshold: {{ .Values.glpi.nginx.readinessProbe.failureThreshold }}
           {{- end }}
+          {{- $nginxRes := include "glpi.resources" (dict "resources" .Values.glpi.nginx.resources "preset" .Values.glpi.nginx.resourcesPreset) }}
+          {{- if $nginxRes }}
           resources:
-            {{- toYaml .Values.glpi.nginx.resources | nindent 12 }}
+            {{- $nginxRes | nindent 12 }}
+          {{- end }}
       volumes:
         - name: etc
           persistentVolumeClaim:
