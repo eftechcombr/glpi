@@ -2,7 +2,7 @@ apiVersion: v2
 name: glpi
 description: GLPI Helm Chart - IT Asset Management and Service Desk
 type: application
-version: 2.11.1
+version: 2.11.2
 appVersion: "11.0.8"
 
 dependencies:
