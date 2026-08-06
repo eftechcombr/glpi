@@ -455,6 +455,17 @@ podAnnotations: {}
 # Labels to add to GLPI pods
 podLabels: {}
 
+# -- Priority Class Name
+# Assign a PriorityClass to all GLPI-owned pods (php-fpm, nginx, the init Jobs, and the
+# cronjob). Useful to protect the init Jobs (dbInstall/dbConfigure/etc) from eviction or
+# scheduling starvation under node pressure during install/upgrade, and/or to keep GLPI
+# itself running preferentially over lower-priority workloads. Must reference a
+# PriorityClass that already exists in the cluster (this chart does not create one).
+# Example: "system-cluster-critical" or a custom PriorityClass name.
+# To also prioritize the database/cache tier, set mariadb.priorityClassName and/or
+# valkey.priorityClassName - both subcharts already support this independently.
+priorityClassName: ""
+
 # -- Node Selector
 # Node labels for pod assignment
 # Example:
