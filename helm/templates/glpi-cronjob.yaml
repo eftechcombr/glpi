@@ -69,6 +69,10 @@ spec:
                   mountPath: /var/www/html/marketplace
                 - name: etc 
                   mountPath: /etc/glpi
+                {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+                - name: tmp
+                  mountPath: /tmp
+                {{- end }}
               resources:
                 {{- toYaml .Values.glpi.phpfpm.resources | nindent 16 }}
           volumes: 
@@ -81,5 +85,9 @@ spec:
             - name: marketplace
               persistentVolumeClaim:
                 claimName: glpi-marketplace
+            {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+            - name: tmp
+              emptyDir: {}
+            {{- end }}
           restartPolicy: OnFailure
 {{- end }}

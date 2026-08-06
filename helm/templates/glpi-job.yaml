@@ -59,6 +59,10 @@ spec:
               mountPath: /var/www/html/marketplace
             - name: etc
               mountPath: /etc/glpi
+            {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+            - name: tmp
+              mountPath: /tmp
+            {{- end }}
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -69,6 +73,10 @@ spec:
         - name: marketplace
           persistentVolumeClaim:
             claimName: glpi-marketplace
+        {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+        - name: tmp
+          emptyDir: {}
+        {{- end }}
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1
@@ -159,6 +167,10 @@ spec:
               mountPath: /var/www/html/marketplace
             - name: etc
               mountPath: /etc/glpi
+            {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+            - name: tmp
+              mountPath: /tmp
+            {{- end }}
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -169,6 +181,10 @@ spec:
         - name: marketplace
           persistentVolumeClaim:
             claimName: glpi-marketplace
+        {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+        - name: tmp
+          emptyDir: {}
+        {{- end }}
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1
@@ -259,6 +275,10 @@ spec:
               mountPath: /var/www/html/marketplace
             - name: etc
               mountPath: /etc/glpi
+            {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+            - name: tmp
+              mountPath: /tmp
+            {{- end }}
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -269,6 +289,10 @@ spec:
         - name: marketplace
           persistentVolumeClaim:
             claimName: glpi-marketplace
+        {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+        - name: tmp
+          emptyDir: {}
+        {{- end }}
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1
@@ -359,6 +383,10 @@ spec:
               mountPath: /var/lib/glpi
             - name: marketplace
               mountPath: /var/www/html/marketplace
+            {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+            - name: tmp
+              mountPath: /tmp
+            {{- end }}
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -369,6 +397,10 @@ spec:
         - name: marketplace
           persistentVolumeClaim:
             claimName: glpi-marketplace
+        {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+        - name: tmp
+          emptyDir: {}
+        {{- end }}
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1
@@ -428,6 +460,10 @@ spec:
               mountPath: /var/lib/glpi
             - name: marketplace
               mountPath: /var/www/html/marketplace
+            {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+            - name: tmp
+              mountPath: /tmp
+            {{- end }}
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -438,6 +474,10 @@ spec:
         - name: marketplace
           persistentVolumeClaim:
             claimName: glpi-marketplace
+        {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+        - name: tmp
+          emptyDir: {}
+        {{- end }}
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1

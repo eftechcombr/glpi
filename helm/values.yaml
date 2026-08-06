@@ -253,7 +253,7 @@ glpi:
     fsGroup: 82
 
   # -- GLPI Container Security Context
-  # Security settings applied at the container level
+  # Security settings applied at the container level (php-fpm, nginx, all init Jobs, cronjob)
   securityContext:
     # Run as non-root user
     runAsNonRoot: true
@@ -263,6 +263,14 @@ glpi:
     capabilities:
       drop:
       - ALL
+    # Mount the container's root filesystem as read-only. Verified against the actual
+    # eftechcombr/glpi:php-fpm and :nginx images (docker run --read-only): php-fpm starts
+    # cleanly with no extra writable paths; nginx needs /tmp writable (proxy_temp etc, used
+    # by nginx-unprivileged's default config). When enabled, this chart mounts an emptyDir
+    # at /tmp on every container that shares this securityContext (php-fpm, nginx, init
+    # Jobs, cronjob) to cover both cases uniformly. GLPI's own data (uploads, sessions,
+    # config, marketplace) already lives on PVCs, unaffected by this setting either way.
+    readOnlyRootFilesystem: false
 
 # -- MariaDB Subchart Configuration
 # Database Configuration (deploys helmforge/mariadb subchart)
