@@ -8,7 +8,9 @@ metadata:
     app.kubernetes.io/component: php-fpm
   namespace: {{ include "glpi.namespace" . }}
 spec:
+  {{- if not .Values.glpi.phpfpm.autoscaling.enabled }}
   replicas: {{ .Values.glpi.phpfpm.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "glpi.selectorLabels" . | nindent 6 }}
@@ -112,7 +114,9 @@ metadata:
     app.kubernetes.io/component: nginx
   namespace: {{ include "glpi.namespace" . }}
 spec:
+  {{- if not .Values.glpi.nginx.autoscaling.enabled }}
   replicas: {{ .Values.glpi.nginx.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "glpi.selectorLabels" . | nindent 6 }}
