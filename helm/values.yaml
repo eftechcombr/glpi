@@ -32,7 +32,8 @@ glpi:
       # Image pull policy
       pullPolicy: IfNotPresent
     
-    # Number of PHP-FPM replicas
+    # Number of PHP-FPM replicas.
+    # Ignored (Kubernetes/HPA owns the field instead) when autoscaling.enabled is true.
     replicaCount: 1
 
     # Set container resources according to one common preset (allowed values: none, nano,
@@ -40,6 +41,18 @@ glpi:
     # left empty ({}). In production, setting `resources` explicitly is recommended over
     # relying on a preset.
     resourcesPreset: "none"
+    # -- Horizontal Pod Autoscaler
+    # Remember the shared-storage caveat: php-fpm reads/writes GLPI_VAR_DIR (uploads,
+    # sessions) on a PVC. Scaling beyond 1 replica requires that PVC to use a
+    # ReadWriteMany-capable storageClass (NFS, CephFS, EFS, etc) - see
+    # glpi.persistence.files.accessMode.
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 5
+      # Leave empty to omit that metric from the HPA entirely.
+      targetCPUUtilizationPercentage: 80
+      targetMemoryUtilizationPercentage: ""
     
     # Resource limits and requests for PHP-FPM container
     resources:
@@ -73,6 +86,20 @@ glpi:
       periodSeconds: 5
       timeoutSeconds: 3
       failureThreshold: 3
+
+    # -- Pod Disruption Budget
+    # Only meaningful when phpfpm.replicaCount > 1: with a single replica, a PDB
+    # requiring minAvailable: 1 (or maxUnavailable: 0) will block voluntary node
+    # drains/evictions entirely, since Kubernetes can never satisfy it. Defaults to
+    # disabled for that reason; enable once you scale replicaCount up.
+    pdb:
+      enabled: false
+      # Minimum number/percentage of pods that must remain available (e.g. 1 or "50%").
+      # Leave empty to use maxUnavailable instead.
+      minAvailable: ""
+      # Maximum number/percentage of pods that may be unavailable (e.g. 1 or "50%").
+      # Ignored if minAvailable is set.
+      maxUnavailable: 1
   
   # Nginx container configuration
   nginx:
@@ -85,13 +112,21 @@ glpi:
       # Image pull policy
       pullPolicy: IfNotPresent
     
-    # Number of Nginx replicas
+    # Number of Nginx replicas.
+    # Ignored (Kubernetes/HPA owns the field instead) when autoscaling.enabled is true.
     replicaCount: 1
 
     # Set container resources according to one common preset (allowed values: none, nano,
     # micro, small, medium, large, xlarge, 2xlarge). Only applied when `resources` below is
     # left empty ({}).
     resourcesPreset: "none"
+    # -- Horizontal Pod Autoscaler
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 5
+      targetCPUUtilizationPercentage: 80
+      targetMemoryUtilizationPercentage: ""
     
     # Resource limits and requests for Nginx container
     resources:
@@ -127,6 +162,14 @@ glpi:
       periodSeconds: 5
       timeoutSeconds: 3
       failureThreshold: 3
+
+    # -- Pod Disruption Budget
+    # Only meaningful when nginx.replicaCount > 1 - see the equivalent note under
+    # glpi.phpfpm.pdb.
+    pdb:
+      enabled: false
+      minAvailable: ""
+      maxUnavailable: 1
     
     # Nginx service configuration
     service:
@@ -420,6 +463,17 @@ podAnnotations: {}
 # -- Pod Labels
 # Labels to add to GLPI pods
 podLabels: {}
+
+# -- Priority Class Name
+# Assign a PriorityClass to all GLPI-owned pods (php-fpm, nginx, the init Jobs, and the
+# cronjob). Useful to protect the init Jobs (dbInstall/dbConfigure/etc) from eviction or
+# scheduling starvation under node pressure during install/upgrade, and/or to keep GLPI
+# itself running preferentially over lower-priority workloads. Must reference a
+# PriorityClass that already exists in the cluster (this chart does not create one).
+# Example: "system-cluster-critical" or a custom PriorityClass name.
+# To also prioritize the database/cache tier, set mariadb.priorityClassName and/or
+# valkey.priorityClassName - both subcharts already support this independently.
+priorityClassName: ""
 
 # -- Node Selector
 # Node labels for pod assignment
