@@ -36,6 +36,11 @@ glpi:
     # Ignored (Kubernetes/HPA owns the field instead) when autoscaling.enabled is true.
     replicaCount: 1
 
+    # Set container resources according to one common preset (allowed values: none, nano,
+    # micro, small, medium, large, xlarge, 2xlarge). Only applied when `resources` below is
+    # left empty ({}). In production, setting `resources` explicitly is recommended over
+    # relying on a preset.
+    resourcesPreset: "none"
     # -- Horizontal Pod Autoscaler
     # Remember the shared-storage caveat: php-fpm reads/writes GLPI_VAR_DIR (uploads,
     # sessions) on a PVC. Scaling beyond 1 replica requires that PVC to use a
@@ -111,6 +116,10 @@ glpi:
     # Ignored (Kubernetes/HPA owns the field instead) when autoscaling.enabled is true.
     replicaCount: 1
 
+    # Set container resources according to one common preset (allowed values: none, nano,
+    # micro, small, medium, large, xlarge, 2xlarge). Only applied when `resources` below is
+    # left empty ({}).
+    resourcesPreset: "none"
     # -- Horizontal Pod Autoscaler
     autoscaling:
       enabled: false
