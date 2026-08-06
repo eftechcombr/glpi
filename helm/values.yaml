@@ -303,6 +303,14 @@ mariadb:
     username: glpi
     # Database password for GLPI user
     password: glpi
+    # -- Use a pre-existing Secret (Doppler / External Secrets / Vault / sealed-secrets, etc)
+    # for MariaDB credentials instead of the plaintext values above. When set, leave
+    # rootPassword/password empty - GLPI's own containers read the password directly from this
+    # Secret (see glpi.mariadb.secretName in _helpers.tpl), so it stays in sync automatically.
+    # existingSecret: ""
+    # -- Key within existingSecret holding the application user password, if it differs from
+    # the helmforge/mariadb subchart's default ("mariadb-user-password").
+    # existingSecretUserPasswordKey: mariadb-user-password
 
   # Service configuration
   service:
