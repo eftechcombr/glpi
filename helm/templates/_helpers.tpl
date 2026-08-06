@@ -124,6 +124,10 @@ Usage: {{ include "glpi.resources.preset" (dict "type" "small") }}
 {{- index $presets .type | toYaml -}}
 {{- else -}}
 {{- printf "ERROR: resourcesPreset '%s' invalid. Allowed values are %s" .type (join "," (keys $presets)) | fail -}}
+{{- end }}
+{{- end }}
+
+{{/*
 Return the name of the Secret holding the MariaDB application user password: either the
 user-supplied mariadb.auth.existingSecret, or the helmforge/mariadb subchart's own
 auto-generated Secret ({release-name}-mariadb-auth). Mirrors that subchart's internal
@@ -150,6 +154,9 @@ unset). Usage: {{- include "glpi.resources" (dict "resources" .Values.glpi.phpfp
 {{- else if and .preset (ne .preset "none") -}}
 {{- include "glpi.resources.preset" (dict "type" .preset) -}}
 {{- end -}}
+{{- end }}
+
+{{/*
 Return the key within the MariaDB auth Secret (see glpi.mariadb.secretName) that holds the
 application user's password. Mirrors mariadb.auth.existingSecretUserPasswordKey so a custom
 existingSecret with a non-default key name is respected.
