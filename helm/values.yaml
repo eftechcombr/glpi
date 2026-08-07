@@ -255,6 +255,67 @@ glpi:
     # Schedule in cron format (default: every 2 minutes)
     schedule: "*/2 * * * *"
 
+  # -- Files Backup Configuration
+  # Periodically archives the files/marketplace/etc PVCs (uploads, documents, sessions,
+  # marketplace plugins, GLPI config) to S3-compatible storage. Mirrors the naming and
+  # implementation pattern of the helmforge/mariadb subchart's own backup.* (same uploader
+  # image, same existingSecret convention) - use that subchart's backup.enabled for database
+  # backups; this is the files-only counterpart, since GLPI's actual data lives on PVCs the
+  # mariadb subchart has no knowledge of.
+  backup:
+    # -- Enable the files backup CronJob. Requires s3.endpoint and s3.bucket to be set.
+    enabled: false
+    # -- Backup schedule in Cron format
+    schedule: "0 3 * * *"
+    # -- Suspend backup execution
+    suspend: false
+    # -- CronJob concurrency policy
+    concurrencyPolicy: Forbid
+    # -- Successful job history retained by the CronJob
+    successfulJobsHistoryLimit: 3
+    # -- Failed job history retained by the CronJob
+    failedJobsHistoryLimit: 3
+    # -- Job backoff limit
+    backoffLimit: 1
+    # -- Prefix used in generated backup archive names
+    archivePrefix: glpi
+    # -- Resources applied to the backup (tar) and upload containers
+    resources: {}
+    images:
+      # -- MinIO client image used to upload the archive to S3. Same image as the
+      # helmforge/mariadb subchart's backup.images.uploader, for consistency.
+      uploader:
+        repository: docker.io/helmforge/mc
+        tag: "1.0.0"
+        pullPolicy: IfNotPresent
+    # -- Which persistent volumes to include in the backup archive. Disable individually to
+    # reduce archive size/backup time - e.g. skip `files` (usually the largest, holding
+    # uploads/documents) if it is already covered by a separate volume-level snapshot policy
+    # (CSI VolumeSnapshot, cloud disk snapshots, etc).
+    volumes:
+      files: true
+      marketplace: true
+      etc: true
+    s3:
+      # -- S3-compatible endpoint URL, for example: https://s3.amazonaws.com or https://minio.example.com
+      endpoint: ""
+      # -- Target bucket name
+      bucket: ""
+      # -- Optional key prefix inside the bucket
+      prefix: glpi
+      # -- Create the bucket automatically when it does not exist yet
+      createBucketIfNotExists: true
+      # -- Existing secret containing access-key and secret-key
+      existingSecret: ""
+      # -- Secret key name for the access key inside s3.existingSecret
+      existingSecretAccessKeyKey: access-key
+      # -- Secret key name for the secret key inside s3.existingSecret
+      existingSecretSecretKeyKey: secret-key
+      # -- Inline access key used when s3.existingSecret is not set
+      accessKey: ""
+      # -- Inline secret key used when s3.existingSecret is not set
+      secretKey: ""
+
   # -- GLPI Pod Security Context
   # Security settings applied at the pod level
   podSecurityContext:
