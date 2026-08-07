@@ -100,6 +100,17 @@ glpi:
       # Maximum number/percentage of pods that may be unavailable (e.g. 1 or "50%").
       # Ignored if minAvailable is set.
       maxUnavailable: 1
+
+    # -- Extra environment variables to add to the php-fpm container.
+    # Example:
+    # extraEnv:
+    #   - name: PHP_MEMORY_LIMIT
+    #     value: "512M"
+    extraEnv: []
+    # -- Extra volumeMounts to add to the php-fpm container. Paired with extraVolumes below.
+    extraVolumeMounts: []
+    # -- Extra volumes to add to the php-fpm pod. Paired with extraVolumeMounts above.
+    extraVolumes: []
   
   # Nginx container configuration
   nginx:
@@ -170,6 +181,20 @@ glpi:
       enabled: false
       minAvailable: ""
       maxUnavailable: 1
+
+    # -- Extra environment variables to add to the nginx container. nginx no longer gets
+    # glpi-config/glpi-secret by default (its own config never reads GLPI_*/MARIADB_*/
+    # CACHE_DSN) - use this if a custom nginx-conf needs one.
+    extraEnv: []
+    # -- Extra volumeMounts to add to the nginx container. nginx no longer mounts the
+    # files/marketplace/etc PVCs by default (its shipped config serves only from its own
+    # image-baked /var/www/html/public and proxies everything else to php-fpm) - use this
+    # if a custom nginx-conf needs direct filesystem access to one of them, e.g. to serve
+    # marketplace plugin static assets directly instead of through PHP. Paired with
+    # extraVolumes below.
+    extraVolumeMounts: []
+    # -- Extra volumes to add to the nginx pod. Paired with extraVolumeMounts above.
+    extraVolumes: []
     
     # Nginx service configuration
     service:

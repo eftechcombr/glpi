@@ -65,13 +65,18 @@ spec:
                 name: glpi-config
             - secretRef:
                 name: glpi-secret
-          {{- if .Values.mariadb.enabled }}
+          {{- if or .Values.mariadb.enabled .Values.glpi.phpfpm.extraEnv }}
           env:
+            {{- if .Values.mariadb.enabled }}
             - name: MARIADB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "glpi.mariadb.secretName" . }}
                   key: {{ include "glpi.mariadb.secretPasswordKey" . }}
+            {{- end }}
+            {{- with .Values.glpi.phpfpm.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           {{- end }}
           ports:
             - containerPort: 9000
@@ -86,6 +91,9 @@ spec:
             {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
             - name: tmp
               mountPath: /tmp
+            {{- end }}
+            {{- with .Values.glpi.phpfpm.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
           {{- if .Values.glpi.phpfpm.livenessProbe.enabled }}
           livenessProbe:
@@ -123,6 +131,9 @@ spec:
         {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
         - name: tmp
           emptyDir: {}
+        {{- end }}
+        {{- with .Values.glpi.phpfpm.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
         {{- end }}
 
 
@@ -188,26 +199,22 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          envFrom:
-            - configMapRef:
-                name: glpi-config
-            - secretRef:
-                name: glpi-secret
+          {{- with .Values.glpi.nginx.extraEnv }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - containerPort: 8080
               name: http
           volumeMounts:
-            - name: files
-              mountPath: /var/lib/glpi
-            - name: marketplace
-              mountPath: /var/www/html/marketplace
-            - name: etc
-              mountPath: /etc/glpi
             - name: nginx-conf
               mountPath: /etc/nginx/conf.d
             {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
             - name: tmp
               mountPath: /tmp
+            {{- end }}
+            {{- with .Values.glpi.nginx.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
           {{- if .Values.glpi.nginx.livenessProbe.enabled }}
           livenessProbe:
@@ -235,15 +242,6 @@ spec:
             {{- $nginxRes | nindent 12 }}
           {{- end }}
       volumes:
-        - name: etc
-          persistentVolumeClaim:
-            claimName: glpi-etc
-        - name: files
-          persistentVolumeClaim:
-            claimName: glpi-files
-        - name: marketplace
-          persistentVolumeClaim:
-            claimName: glpi-marketplace
         - name: nginx-conf
           configMap:
             defaultMode: 420
@@ -251,6 +249,9 @@ spec:
         {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
         - name: tmp
           emptyDir: {}
+        {{- end }}
+        {{- with .Values.glpi.nginx.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
         {{- end }}
 
 
