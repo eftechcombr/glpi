@@ -40,14 +40,12 @@ spec:
                 name: glpi-config
             - secretRef:
                 name: glpi-secret
-          {{- if .Values.mariadb.enabled }}
           env:
             - name: MARIADB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "glpi.mariadb.secretName" . }}
-                  key: {{ include "glpi.mariadb.secretPasswordKey" . }}
-          {{- end }}
+                  name: {{ include "glpi.database.secretName" . }}
+                  key: {{ include "glpi.database.secretPasswordKey" . }}
           command:
             - sh
             - -c
@@ -152,14 +150,12 @@ spec:
                 name: glpi-config
             - secretRef:
                 name: glpi-secret
-          {{- if .Values.mariadb.enabled }}
           env:
             - name: MARIADB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "glpi.mariadb.secretName" . }}
-                  key: {{ include "glpi.mariadb.secretPasswordKey" . }}
-          {{- end }}
+                  name: {{ include "glpi.database.secretName" . }}
+                  key: {{ include "glpi.database.secretPasswordKey" . }}
           volumeMounts:
             - name: files
               mountPath: /var/lib/glpi
@@ -260,14 +256,12 @@ spec:
                 name: glpi-config
             - secretRef:
                 name: glpi-secret
-          {{- if .Values.mariadb.enabled }}
           env:
             - name: MARIADB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "glpi.mariadb.secretName" . }}
-                  key: {{ include "glpi.mariadb.secretPasswordKey" . }}
-          {{- end }}
+                  name: {{ include "glpi.database.secretName" . }}
+                  key: {{ include "glpi.database.secretPasswordKey" . }}
           volumeMounts:
             - name: files
               mountPath: /var/lib/glpi
@@ -368,14 +362,12 @@ spec:
                 name: glpi-config
             - secretRef:
                 name: glpi-secret
-          {{- if .Values.mariadb.enabled }}
           env:
             - name: MARIADB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "glpi.mariadb.secretName" . }}
-                  key: {{ include "glpi.mariadb.secretPasswordKey" . }}
-          {{- end }}
+                  name: {{ include "glpi.database.secretName" . }}
+                  key: {{ include "glpi.database.secretPasswordKey" . }}
           volumeMounts:
             - name: etc
               mountPath: /etc/glpi

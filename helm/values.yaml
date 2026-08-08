@@ -523,7 +523,9 @@ tolerations: []
 affinity: {}
 
 # -- External Database Configuration
-# Used when mariadb.enabled is false
+# Used when mariadb.enabled is false. host/database/username are required in that case (the
+# chart fails fast at template-render time otherwise, rather than leaving the wait-for-mariadb
+# initContainers hanging against an empty host).
 externalDatabase:
   # External database hostname or IP
   host: ""
@@ -533,8 +535,13 @@ externalDatabase:
   database: ""
   # External database username
   username: ""
-  # External database password
+  # External database password. Ignored when existingSecret is set.
   password: ""
+  # -- Name of a pre-existing Secret (Doppler / External Secrets / Vault / sealed-secrets, etc)
+  # containing the external database password, instead of the plaintext value above. Must
+  # contain a key named "password". When left empty, the chart generates its own Secret from
+  # the plaintext password above (unchanged default behavior).
+  existingSecret: ""
 
 # -- External Cache Configuration
 # Used when valkey.enabled is false
