@@ -165,4 +165,73 @@ existingSecret with a non-default key name is respected.
 {{- .Values.mariadb.auth.existingSecretUserPasswordKey | default "mariadb-user-password" -}}
 {{- end }}
 
+{{/*
+Return the name of the Secret holding the external database password: either the user-supplied
+externalDatabase.existingSecret, or this chart's own generated Secret ({fullname}-externaldb).
+Mirrors the same existingSecret-or-generated pattern used by mainstream charts for this exact
+scenario (e.g. bitnami/moodle's externalDatabase.existingSecret + moodle.databaseSecretName) -
+a fixed, documented key name (see glpi.database.secretPasswordKey) rather than a second
+customizable "which key" field, since this is chart-owned/generated in the common case. Only
+meaningful when mariadb.enabled is false.
+*/}}
+{{- define "glpi.externalDatabase.secretName" -}}
+{{- if .Values.externalDatabase.existingSecret -}}
+{{- .Values.externalDatabase.existingSecret -}}
+{{- else -}}
+{{- printf "%s-externaldb" (include "glpi.fullname" .) -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Return the name of the Secret holding the database password GLPI should connect with, whether
+that's the internal helmforge/mariadb subchart (mariadb.enabled: true) or an external database
+(mariadb.enabled: false). Lets every consumer (php-fpm, jobs, cronjob) use a single, unconditional
+secretKeyRef instead of duplicating the mariadb.enabled branch in each template.
+*/}}
+{{- define "glpi.database.secretName" -}}
+{{- if .Values.mariadb.enabled -}}
+{{- include "glpi.mariadb.secretName" . -}}
+{{- else -}}
+{{- include "glpi.externalDatabase.secretName" . -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Return the key within glpi.database.secretName that holds the database password. See
+glpi.mariadb.secretPasswordKey for the mariadb.enabled case; externalDatabase always uses a
+fixed "password" key (whether in a user-supplied existingSecret or this chart's own generated
+one), documented in values.yaml.
+*/}}
+{{- define "glpi.database.secretPasswordKey" -}}
+{{- if .Values.mariadb.enabled -}}
+{{- include "glpi.mariadb.secretPasswordKey" . -}}
+{{- else -}}
+password
+{{- end -}}
+{{- end }}
+
+{{/*
+Fail fast with a clear error when mariadb.enabled is false but externalDatabase is missing
+required fields, instead of silently rendering an empty MARIADB_HOST that leaves the
+wait-for-mariadb initContainers (`nc -z "" 3306`) hanging indefinitely on every install/upgrade.
+Call from a template that always renders (glpi-configmap.yaml) so this runs regardless of which
+specific resource Helm happens to template/install first.
+*/}}
+{{- define "glpi.externalDatabase.validate" -}}
+{{- if not .Values.mariadb.enabled -}}
+  {{- if not .Values.externalDatabase.host -}}
+    {{- fail "externalDatabase.host is required when mariadb.enabled is false" -}}
+  {{- end -}}
+  {{- if not .Values.externalDatabase.database -}}
+    {{- fail "externalDatabase.database is required when mariadb.enabled is false" -}}
+  {{- end -}}
+  {{- if not .Values.externalDatabase.username -}}
+    {{- fail "externalDatabase.username is required when mariadb.enabled is false" -}}
+  {{- end -}}
+  {{- if not (or .Values.externalDatabase.existingSecret .Values.externalDatabase.password) -}}
+    {{- fail "either externalDatabase.existingSecret or externalDatabase.password is required when mariadb.enabled is false" -}}
+  {{- end -}}
+{{- end -}}
+{{- end }}
+
 
