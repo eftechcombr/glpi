@@ -176,6 +176,10 @@ subchart's own backup.s3.existingSecret / mariadb.backupSecretName.
 {{- .Values.glpi.backup.s3.existingSecret -}}
 {{- else -}}
 {{- printf "%s-backup" (include "glpi.fullname" .) -}}
+{{- end -}}
+{{- end }}
+
+{{/*
 Return the name of the Secret holding the external database password: either the user-supplied
 externalDatabase.existingSecret, or this chart's own generated Secret ({fullname}-externaldb).
 Mirrors the same existingSecret-or-generated pattern used by mainstream charts for this exact
@@ -210,6 +214,10 @@ a CronJob silently failing every run).
     {{- fail "glpi.backup.enabled is true but glpi.backup.volumes.files/marketplace/etc are all false - nothing to back up" -}}
   {{- end -}}
   true
+{{- end -}}
+{{- end }}
+
+{{/*
 Return the name of the Secret holding the database password GLPI should connect with, whether
 that's the internal helmforge/mariadb subchart (mariadb.enabled: true) or an external database
 (mariadb.enabled: false). Lets every consumer (php-fpm, jobs, cronjob) use a single, unconditional
