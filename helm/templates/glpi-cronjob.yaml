@@ -38,6 +38,62 @@ spec:
           affinity:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          initContainers:
+            # On a fresh install, this CronJob (schedule every N minutes) is a normal
+            # resource created in the same Sync phase as nginx/php-fpm, without waiting for
+            # the post-install glpi-db-install/glpi-db-configure/glpi-cache-configure Jobs
+            # (which run as Helm hooks, post-install hook-weight 10/20/30) to finish. Without
+            # this guard, front/cron.php can fire before GLPI is actually ready, failing with
+            # "Unable to load the GLPI configuration from the database".
+            #
+            # A naive `[ -f config_db.php ]` file-existence check is NOT sufficient: db:install
+            # (hook-weight 10) already runs with --reconfigure and writes that same file as
+            # soon as the schema is created, well before db:configure/cache:configure (weight
+            # 20/30) finish - verified empirically this still let cron.php race ~1 in 2 runs on
+            # a fresh install. Instead, this loops the exact read-only command
+            # glpi-db-install.sh itself already uses to decide whether the schema is fully
+            # installed (`database:check_schema_integrity`), using the real php-fpm image
+            # (needed for the php binary + GLPI codebase, unlike the lighter busybox image
+            # used by wait-for-mariadb elsewhere) - the actual precondition front/cron.php
+            # needs, not an indirect proxy for it.
+            - name: wait-for-glpi-ready
+              image: {{ include "glpi.phpfpm.image" . }}
+              imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
+              {{- with .Values.glpi.securityContext }}
+              securityContext:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              envFrom:
+                - configMapRef:
+                    name: glpi-config
+                - secretRef:
+                    name: glpi-secret
+              {{- if .Values.mariadb.enabled }}
+              env:
+                - name: MARIADB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "glpi.mariadb.secretName" . }}
+                      key: {{ include "glpi.mariadb.secretPasswordKey" . }}
+              {{- end }}
+              command:
+                - sh
+                - -c
+                - until php bin/console database:check_schema_integrity > /dev/null 2>&1; do sleep 3; done
+              volumeMounts:
+                - name: etc
+                  mountPath: /etc/glpi
+                {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+                - name: tmp
+                  mountPath: /tmp
+                {{- end }}
+              resources:
+                limits:
+                  cpu: 500m
+                  memory: 256Mi
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
           containers:
             - image: {{ include "glpi.phpfpm.image" . }}
               imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
