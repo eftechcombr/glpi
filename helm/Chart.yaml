@@ -2,8 +2,8 @@ apiVersion: v2
 name: glpi
 description: GLPI Helm Chart - IT Asset Management and Service Desk
 type: application
-version: 2.11.4
-appVersion: "11.0.8"
+version: 2.12.0
+appVersion: "12.0.0-rc1"
 
 dependencies:
   - name: valkey
@@ -43,12 +43,4 @@ annotations:
       url: https://github.com/eftechcombr/glpi/issues
   artifacthub.io/changes: |
     - kind: changed
-      description: "Replace inline MariaDB StatefulSet with helmforge/mariadb subchart v2.0.3"
-    - kind: changed
-      description: "Update MariaDB image from mariadb:11.4 to mariadb:12.3.2"
-    - kind: changed
-      description: "MariaDB values restructured: resources/persistence under standalone.*, security UID 999"
-    - kind: changed
-      description: "Timezone grant moved from helm hook job to subchart initdb.scripts"
-    - kind: changed
-      description: "Service DNS changed to dynamic {release-name}-mariadb pattern"
+      description: "Upgrade GLPI to 12.0.0-rc1"

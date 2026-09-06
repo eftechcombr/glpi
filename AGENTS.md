@@ -20,8 +20,8 @@ docker-compose -f docker-compose-build.yml build
 
 # Build specific image
 docker build -t eftechcombr/glpi:base -f docker/php/Dockerfile.base docker/php/
-docker build -t eftechcombr/glpi:php-fpm-11.0.8 -f docker/php/Dockerfile docker/php/
-docker build -t eftechcombr/glpi:nginx-11.0.8 -f docker/nginx/Dockerfile docker/nginx/
+docker build -t eftechcombr/glpi:php-fpm-12.0.0-rc1 -f docker/php/Dockerfile docker/php/
+docker build -t eftechcombr/glpi:nginx-12.0.0-rc1 -f docker/nginx/Dockerfile docker/nginx/
 ```
 
 ### Run Containers
