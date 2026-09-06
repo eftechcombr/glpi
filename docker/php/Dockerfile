@@ -7,6 +7,7 @@ ENV MARIADB_HOST=mariadb-glpi
 ENV MARIADB_PORT=3306 
 ENV MARIADB_DATABASE=glpi 
 ENV MARIADB_USER=glpi 
+# hadolint ignore=DL3064
 ENV MARIADB_PASSWORD=glpi 
 ENV GLPI_CONFIG_DIR=/etc/glpi/config 
 ENV GLPI_VAR_DIR=/var/lib/glpi 
@@ -43,6 +44,7 @@ RUN rm -rf /var/www/html/install/install.php
 
 EXPOSE 9000/tcp 
 
+# hadolint ignore=DL3066
 USER www-data 
 
 CMD ["php-fpm"]
