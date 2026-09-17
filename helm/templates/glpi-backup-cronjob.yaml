@@ -1,0 +1,136 @@
+{{- if include "glpi.backup.enabled" . }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "glpi.fullname" . }}-backup
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
+    app.kubernetes.io/component: backup
+spec:
+  schedule: {{ .Values.glpi.backup.schedule | quote }}
+  suspend: {{ .Values.glpi.backup.suspend }}
+  concurrencyPolicy: {{ .Values.glpi.backup.concurrencyPolicy }}
+  successfulJobsHistoryLimit: {{ .Values.glpi.backup.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.glpi.backup.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: {{ .Values.glpi.backup.backoffLimit }}
+      template:
+        metadata:
+          labels:
+            {{- include "glpi.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: backup
+        spec:
+          restartPolicy: Never
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.glpi.podSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.priorityClassName }}
+          priorityClassName: {{ . }}
+          {{- end }}
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          initContainers:
+            - name: glpi-backup
+              image: {{ include "glpi.phpfpm.image" . }}
+              imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
+              {{- with .Values.glpi.securityContext }}
+              securityContext:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              command: ["/bin/sh", "/scripts/glpi-backup.sh"]
+              env:
+                - name: BACKUP_ARCHIVE_PREFIX
+                  value: {{ .Values.glpi.backup.archivePrefix | quote }}
+              resources:
+                {{- toYaml .Values.glpi.backup.resources | nindent 16 }}
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+                - name: backup-workdir
+                  mountPath: /backup/out
+                {{- if .Values.glpi.backup.volumes.files }}
+                - name: files
+                  mountPath: /backup/source/files
+                  readOnly: true
+                {{- end }}
+                {{- if .Values.glpi.backup.volumes.marketplace }}
+                - name: marketplace
+                  mountPath: /backup/source/marketplace
+                  readOnly: true
+                {{- end }}
+                {{- if .Values.glpi.backup.volumes.etc }}
+                - name: etc
+                  mountPath: /backup/source/etc
+                  readOnly: true
+                {{- end }}
+          containers:
+            - name: upload
+              image: "{{ .Values.glpi.backup.images.uploader.repository }}:{{ .Values.glpi.backup.images.uploader.tag }}"
+              imagePullPolicy: {{ .Values.glpi.backup.images.uploader.pullPolicy }}
+              command: ["/bin/sh", "/scripts/upload-backup.sh"]
+              env:
+                - name: S3_ENDPOINT
+                  value: {{ .Values.glpi.backup.s3.endpoint | quote }}
+                - name: S3_BUCKET
+                  value: {{ .Values.glpi.backup.s3.bucket | quote }}
+                - name: S3_PREFIX
+                  value: {{ .Values.glpi.backup.s3.prefix | quote }}
+                - name: S3_CREATE_BUCKET_IF_NOT_EXISTS
+                  value: {{ ternary "true" "false" .Values.glpi.backup.s3.createBucketIfNotExists | quote }}
+                - name: S3_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "glpi.backup.secretName" . }}
+                      key: {{ .Values.glpi.backup.s3.existingSecretAccessKeyKey }}
+                - name: S3_SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "glpi.backup.secretName" . }}
+                      key: {{ .Values.glpi.backup.s3.existingSecretSecretKeyKey }}
+              resources:
+                {{- toYaml .Values.glpi.backup.resources | nindent 16 }}
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+                - name: backup-workdir
+                  mountPath: /backup/out
+          volumes:
+            - name: scripts
+              configMap:
+                name: {{ include "glpi.fullname" . }}-backup-scripts
+                defaultMode: 0755
+            - name: backup-workdir
+              emptyDir: {}
+            {{- if .Values.glpi.backup.volumes.files }}
+            - name: files
+              persistentVolumeClaim:
+                claimName: glpi-files
+            {{- end }}
+            {{- if .Values.glpi.backup.volumes.marketplace }}
+            - name: marketplace
+              persistentVolumeClaim:
+                claimName: glpi-marketplace
+            {{- end }}
+            {{- if .Values.glpi.backup.volumes.etc }}
+            - name: etc
+              persistentVolumeClaim:
+                claimName: glpi-etc
+            {{- end }}
+{{- end }}

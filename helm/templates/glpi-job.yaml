@@ -24,6 +24,9 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.priorityClassName }}
+      priorityClassName: {{ . }}
+      {{- end }}
       containers:
         - image: {{ include "glpi.phpfpm.image" . }}
           imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
@@ -37,6 +40,12 @@ spec:
                 name: glpi-config
             - secretRef:
                 name: glpi-secret
+          env:
+            - name: MARIADB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "glpi.database.secretName" . }}
+                  key: {{ include "glpi.database.secretPasswordKey" . }}
           command:
             - sh
             - -c
@@ -48,6 +57,10 @@ spec:
               mountPath: /var/www/html/marketplace
             - name: etc
               mountPath: /etc/glpi
+            {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+            - name: tmp
+              mountPath: /tmp
+            {{- end }}
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -58,6 +71,10 @@ spec:
         - name: marketplace
           persistentVolumeClaim:
             claimName: glpi-marketplace
+        {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+        - name: tmp
+          emptyDir: {}
+        {{- end }}
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1
@@ -89,6 +106,9 @@ spec:
       {{- with .Values.glpi.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.priorityClassName }}
+      priorityClassName: {{ . }}
       {{- end }}
       initContainers:
         - name: wait-for-mariadb
@@ -130,6 +150,12 @@ spec:
                 name: glpi-config
             - secretRef:
                 name: glpi-secret
+          env:
+            - name: MARIADB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "glpi.database.secretName" . }}
+                  key: {{ include "glpi.database.secretPasswordKey" . }}
           volumeMounts:
             - name: files
               mountPath: /var/lib/glpi
@@ -137,6 +163,10 @@ spec:
               mountPath: /var/www/html/marketplace
             - name: etc
               mountPath: /etc/glpi
+            {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+            - name: tmp
+              mountPath: /tmp
+            {{- end }}
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -147,6 +177,10 @@ spec:
         - name: marketplace
           persistentVolumeClaim:
             claimName: glpi-marketplace
+        {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+        - name: tmp
+          emptyDir: {}
+        {{- end }}
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1
@@ -178,6 +212,9 @@ spec:
       {{- with .Values.glpi.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.priorityClassName }}
+      priorityClassName: {{ . }}
       {{- end }}
       initContainers:
         - name: wait-for-mariadb
@@ -219,6 +256,12 @@ spec:
                 name: glpi-config
             - secretRef:
                 name: glpi-secret
+          env:
+            - name: MARIADB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "glpi.database.secretName" . }}
+                  key: {{ include "glpi.database.secretPasswordKey" . }}
           volumeMounts:
             - name: files
               mountPath: /var/lib/glpi
@@ -226,6 +269,10 @@ spec:
               mountPath: /var/www/html/marketplace
             - name: etc
               mountPath: /etc/glpi
+            {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+            - name: tmp
+              mountPath: /tmp
+            {{- end }}
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -236,6 +283,10 @@ spec:
         - name: marketplace
           persistentVolumeClaim:
             claimName: glpi-marketplace
+        {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+        - name: tmp
+          emptyDir: {}
+        {{- end }}
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1
@@ -267,6 +318,9 @@ spec:
       {{- with .Values.glpi.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.priorityClassName }}
+      priorityClassName: {{ . }}
       {{- end }}
       initContainers:
         - name: wait-for-mariadb
@@ -308,6 +362,12 @@ spec:
                 name: glpi-config
             - secretRef:
                 name: glpi-secret
+          env:
+            - name: MARIADB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "glpi.database.secretName" . }}
+                  key: {{ include "glpi.database.secretPasswordKey" . }}
           volumeMounts:
             - name: etc
               mountPath: /etc/glpi
@@ -315,6 +375,10 @@ spec:
               mountPath: /var/lib/glpi
             - name: marketplace
               mountPath: /var/www/html/marketplace
+            {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+            - name: tmp
+              mountPath: /tmp
+            {{- end }}
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -325,6 +389,10 @@ spec:
         - name: marketplace
           persistentVolumeClaim:
             claimName: glpi-marketplace
+        {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+        - name: tmp
+          emptyDir: {}
+        {{- end }}
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1
@@ -357,6 +425,9 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.priorityClassName }}
+      priorityClassName: {{ . }}
+      {{- end }}
       containers:
         - image: {{ include "glpi.phpfpm.image" . }}
           imagePullPolicy: {{ .Values.glpi.phpfpm.image.pullPolicy }}
@@ -381,6 +452,10 @@ spec:
               mountPath: /var/lib/glpi
             - name: marketplace
               mountPath: /var/www/html/marketplace
+            {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+            - name: tmp
+              mountPath: /tmp
+            {{- end }}
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -391,6 +466,10 @@ spec:
         - name: marketplace
           persistentVolumeClaim:
             claimName: glpi-marketplace
+        {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
+        - name: tmp
+          emptyDir: {}
+        {{- end }}
       restartPolicy: OnFailure
   parallelism: 1
   completions: 1

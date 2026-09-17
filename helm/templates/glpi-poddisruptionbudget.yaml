@@ -1,0 +1,42 @@
+{{- if .Values.glpi.phpfpm.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: php-fpm
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
+    app.kubernetes.io/component: php-fpm
+spec:
+  {{- if .Values.glpi.phpfpm.pdb.minAvailable }}
+  minAvailable: {{ .Values.glpi.phpfpm.pdb.minAvailable }}
+  {{- else }}
+  maxUnavailable: {{ .Values.glpi.phpfpm.pdb.maxUnavailable }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "glpi.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: php-fpm
+{{- end }}
+
+---
+{{- if .Values.glpi.nginx.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: nginx
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
+    app.kubernetes.io/component: nginx
+spec:
+  {{- if .Values.glpi.nginx.pdb.minAvailable }}
+  minAvailable: {{ .Values.glpi.nginx.pdb.minAvailable }}
+  {{- else }}
+  maxUnavailable: {{ .Values.glpi.nginx.pdb.maxUnavailable }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "glpi.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: nginx
+{{- end }}

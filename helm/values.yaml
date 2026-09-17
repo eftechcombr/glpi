@@ -16,7 +16,7 @@ global:
 # -- GLPI Application Configuration
 glpi:
   # GLPI version to deploy
-  version: "11.0.8"
+  version: "11.0.9"
   
   # GLPI default language (e.g., en_US, fr_FR, pt_BR)
   language: "en_US"
@@ -28,12 +28,31 @@ glpi:
       # Image repository for PHP-FPM
       repository: eftechcombr/glpi
       # Image tag for PHP-FPM
-      tag: php-fpm-11.0.8
+      tag: php-fpm-11.0.9
       # Image pull policy
       pullPolicy: IfNotPresent
     
-    # Number of PHP-FPM replicas
+    # Number of PHP-FPM replicas.
+    # Ignored (Kubernetes/HPA owns the field instead) when autoscaling.enabled is true.
     replicaCount: 1
+
+    # Set container resources according to one common preset (allowed values: none, nano,
+    # micro, small, medium, large, xlarge, 2xlarge). Only applied when `resources` below is
+    # left empty ({}). In production, setting `resources` explicitly is recommended over
+    # relying on a preset.
+    resourcesPreset: "none"
+    # -- Horizontal Pod Autoscaler
+    # Remember the shared-storage caveat: php-fpm reads/writes GLPI_VAR_DIR (uploads,
+    # sessions) on a PVC. Scaling beyond 1 replica requires that PVC to use a
+    # ReadWriteMany-capable storageClass (NFS, CephFS, EFS, etc) - see
+    # glpi.persistence.files.accessMode.
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 5
+      # Leave empty to omit that metric from the HPA entirely.
+      targetCPUUtilizationPercentage: 80
+      targetMemoryUtilizationPercentage: ""
     
     # Resource limits and requests for PHP-FPM container
     resources:
@@ -67,6 +86,31 @@ glpi:
       periodSeconds: 5
       timeoutSeconds: 3
       failureThreshold: 3
+
+    # -- Pod Disruption Budget
+    # Only meaningful when phpfpm.replicaCount > 1: with a single replica, a PDB
+    # requiring minAvailable: 1 (or maxUnavailable: 0) will block voluntary node
+    # drains/evictions entirely, since Kubernetes can never satisfy it. Defaults to
+    # disabled for that reason; enable once you scale replicaCount up.
+    pdb:
+      enabled: false
+      # Minimum number/percentage of pods that must remain available (e.g. 1 or "50%").
+      # Leave empty to use maxUnavailable instead.
+      minAvailable: ""
+      # Maximum number/percentage of pods that may be unavailable (e.g. 1 or "50%").
+      # Ignored if minAvailable is set.
+      maxUnavailable: 1
+
+    # -- Extra environment variables to add to the php-fpm container.
+    # Example:
+    # extraEnv:
+    #   - name: PHP_MEMORY_LIMIT
+    #     value: "512M"
+    extraEnv: []
+    # -- Extra volumeMounts to add to the php-fpm container. Paired with extraVolumes below.
+    extraVolumeMounts: []
+    # -- Extra volumes to add to the php-fpm pod. Paired with extraVolumeMounts above.
+    extraVolumes: []
   
   # Nginx container configuration
   nginx:
@@ -75,12 +119,25 @@ glpi:
       # Image repository for Nginx
       repository: eftechcombr/glpi
       # Image tag for Nginx
-      tag: nginx-11.0.8
+      tag: nginx-11.0.9
       # Image pull policy
       pullPolicy: IfNotPresent
     
-    # Number of Nginx replicas
+    # Number of Nginx replicas.
+    # Ignored (Kubernetes/HPA owns the field instead) when autoscaling.enabled is true.
     replicaCount: 1
+
+    # Set container resources according to one common preset (allowed values: none, nano,
+    # micro, small, medium, large, xlarge, 2xlarge). Only applied when `resources` below is
+    # left empty ({}).
+    resourcesPreset: "none"
+    # -- Horizontal Pod Autoscaler
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 5
+      targetCPUUtilizationPercentage: 80
+      targetMemoryUtilizationPercentage: ""
     
     # Resource limits and requests for Nginx container
     resources:
@@ -116,6 +173,28 @@ glpi:
       periodSeconds: 5
       timeoutSeconds: 3
       failureThreshold: 3
+
+    # -- Pod Disruption Budget
+    # Only meaningful when nginx.replicaCount > 1 - see the equivalent note under
+    # glpi.phpfpm.pdb.
+    pdb:
+      enabled: false
+      minAvailable: ""
+      maxUnavailable: 1
+
+    # -- Extra environment variables to add to the nginx container. nginx no longer gets
+    # glpi-config/glpi-secret by default (its own config never reads GLPI_*/MARIADB_*/
+    # CACHE_DSN) - use this if a custom nginx-conf needs one.
+    extraEnv: []
+    # -- Extra volumeMounts to add to the nginx container. nginx no longer mounts the
+    # files/marketplace/etc PVCs by default (its shipped config serves only from its own
+    # image-baked /var/www/html/public and proxies everything else to php-fpm) - use this
+    # if a custom nginx-conf needs direct filesystem access to one of them, e.g. to serve
+    # marketplace plugin static assets directly instead of through PHP. Paired with
+    # extraVolumes below.
+    extraVolumeMounts: []
+    # -- Extra volumes to add to the nginx pod. Paired with extraVolumeMounts above.
+    extraVolumes: []
     
     # Nginx service configuration
     service:
@@ -201,6 +280,67 @@ glpi:
     # Schedule in cron format (default: every 2 minutes)
     schedule: "*/2 * * * *"
 
+  # -- Files Backup Configuration
+  # Periodically archives the files/marketplace/etc PVCs (uploads, documents, sessions,
+  # marketplace plugins, GLPI config) to S3-compatible storage. Mirrors the naming and
+  # implementation pattern of the helmforge/mariadb subchart's own backup.* (same uploader
+  # image, same existingSecret convention) - use that subchart's backup.enabled for database
+  # backups; this is the files-only counterpart, since GLPI's actual data lives on PVCs the
+  # mariadb subchart has no knowledge of.
+  backup:
+    # -- Enable the files backup CronJob. Requires s3.endpoint and s3.bucket to be set.
+    enabled: false
+    # -- Backup schedule in Cron format
+    schedule: "0 3 * * *"
+    # -- Suspend backup execution
+    suspend: false
+    # -- CronJob concurrency policy
+    concurrencyPolicy: Forbid
+    # -- Successful job history retained by the CronJob
+    successfulJobsHistoryLimit: 3
+    # -- Failed job history retained by the CronJob
+    failedJobsHistoryLimit: 3
+    # -- Job backoff limit
+    backoffLimit: 1
+    # -- Prefix used in generated backup archive names
+    archivePrefix: glpi
+    # -- Resources applied to the backup (tar) and upload containers
+    resources: {}
+    images:
+      # -- MinIO client image used to upload the archive to S3. Same image as the
+      # helmforge/mariadb subchart's backup.images.uploader, for consistency.
+      uploader:
+        repository: docker.io/helmforge/mc
+        tag: "1.0.0"
+        pullPolicy: IfNotPresent
+    # -- Which persistent volumes to include in the backup archive. Disable individually to
+    # reduce archive size/backup time - e.g. skip `files` (usually the largest, holding
+    # uploads/documents) if it is already covered by a separate volume-level snapshot policy
+    # (CSI VolumeSnapshot, cloud disk snapshots, etc).
+    volumes:
+      files: true
+      marketplace: true
+      etc: true
+    s3:
+      # -- S3-compatible endpoint URL, for example: https://s3.amazonaws.com or https://minio.example.com
+      endpoint: ""
+      # -- Target bucket name
+      bucket: ""
+      # -- Optional key prefix inside the bucket
+      prefix: glpi
+      # -- Create the bucket automatically when it does not exist yet
+      createBucketIfNotExists: true
+      # -- Existing secret containing access-key and secret-key
+      existingSecret: ""
+      # -- Secret key name for the access key inside s3.existingSecret
+      existingSecretAccessKeyKey: access-key
+      # -- Secret key name for the secret key inside s3.existingSecret
+      existingSecretSecretKeyKey: secret-key
+      # -- Inline access key used when s3.existingSecret is not set
+      accessKey: ""
+      # -- Inline secret key used when s3.existingSecret is not set
+      secretKey: ""
+
   # -- GLPI Pod Security Context
   # Security settings applied at the pod level
   podSecurityContext:
@@ -208,7 +348,7 @@ glpi:
     fsGroup: 82
 
   # -- GLPI Container Security Context
-  # Security settings applied at the container level
+  # Security settings applied at the container level (php-fpm, nginx, all init Jobs, cronjob)
   securityContext:
     # Run as non-root user
     runAsNonRoot: true
@@ -218,6 +358,14 @@ glpi:
     capabilities:
       drop:
       - ALL
+    # Mount the container's root filesystem as read-only. Verified against the actual
+    # eftechcombr/glpi:php-fpm and :nginx images (docker run --read-only): php-fpm starts
+    # cleanly with no extra writable paths; nginx needs /tmp writable (proxy_temp etc, used
+    # by nginx-unprivileged's default config). When enabled, this chart mounts an emptyDir
+    # at /tmp on every container that shares this securityContext (php-fpm, nginx, init
+    # Jobs, cronjob) to cover both cases uniformly. GLPI's own data (uploads, sessions,
+    # config, marketplace) already lives on PVCs, unaffected by this setting either way.
+    readOnlyRootFilesystem: false
 
 # -- MariaDB Subchart Configuration
 # Database Configuration (deploys helmforge/mariadb subchart)
@@ -249,6 +397,14 @@ mariadb:
     username: glpi
     # Database password for GLPI user
     password: glpi
+    # -- Use a pre-existing Secret (Doppler / External Secrets / Vault / sealed-secrets, etc)
+    # for MariaDB credentials instead of the plaintext values above. When set, leave
+    # rootPassword/password empty - GLPI's own containers read the password directly from this
+    # Secret (see glpi.mariadb.secretName in _helpers.tpl), so it stays in sync automatically.
+    # existingSecret: ""
+    # -- Key within existingSecret holding the application user password, if it differs from
+    # the helmforge/mariadb subchart's default ("mariadb-user-password").
+    # existingSecretUserPasswordKey: mariadb-user-password
 
   # Service configuration
   service:
@@ -410,6 +566,17 @@ podAnnotations: {}
 # Labels to add to GLPI pods
 podLabels: {}
 
+# -- Priority Class Name
+# Assign a PriorityClass to all GLPI-owned pods (php-fpm, nginx, the init Jobs, and the
+# cronjob). Useful to protect the init Jobs (dbInstall/dbConfigure/etc) from eviction or
+# scheduling starvation under node pressure during install/upgrade, and/or to keep GLPI
+# itself running preferentially over lower-priority workloads. Must reference a
+# PriorityClass that already exists in the cluster (this chart does not create one).
+# Example: "system-cluster-critical" or a custom PriorityClass name.
+# To also prioritize the database/cache tier, set mariadb.priorityClassName and/or
+# valkey.priorityClassName - both subcharts already support this independently.
+priorityClassName: ""
+
 # -- Node Selector
 # Node labels for pod assignment
 # Example:
@@ -442,7 +609,9 @@ tolerations: []
 affinity: {}
 
 # -- External Database Configuration
-# Used when mariadb.enabled is false
+# Used when mariadb.enabled is false. host/database/username are required in that case (the
+# chart fails fast at template-render time otherwise, rather than leaving the wait-for-mariadb
+# initContainers hanging against an empty host).
 externalDatabase:
   # External database hostname or IP
   host: ""
@@ -452,8 +621,13 @@ externalDatabase:
   database: ""
   # External database username
   username: ""
-  # External database password
+  # External database password. Ignored when existingSecret is set.
   password: ""
+  # -- Name of a pre-existing Secret (Doppler / External Secrets / Vault / sealed-secrets, etc)
+  # containing the external database password, instead of the plaintext value above. Must
+  # contain a key named "password". When left empty, the chart generates its own Secret from
+  # the plaintext password above (unchanged default behavior).
+  existingSecret: ""
 
 # -- External Cache Configuration
 # Used when valkey.enabled is false

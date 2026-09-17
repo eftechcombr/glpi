@@ -35,6 +35,14 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v5
 
+      - name: Add Helm repositories
+        run: |
+          helm repo add helmforge https://repo.helmforge.dev
+          helm repo update
+
+      - name: Build chart dependencies
+        run: helm dependency build ${{ env.CHART_DIR }}
+
       - name: Lint Helm chart
         run: helm lint ${{ env.CHART_DIR }}
 

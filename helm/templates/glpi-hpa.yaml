@@ -1,0 +1,70 @@
+{{- if .Values.glpi.phpfpm.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: php-fpm
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
+    app.kubernetes.io/component: php-fpm
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: php-fpm
+  minReplicas: {{ .Values.glpi.phpfpm.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.glpi.phpfpm.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.glpi.phpfpm.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.glpi.phpfpm.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.glpi.phpfpm.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.glpi.phpfpm.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}
+
+---
+{{- if .Values.glpi.nginx.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nginx
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
+    app.kubernetes.io/component: nginx
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nginx
+  minReplicas: {{ .Values.glpi.nginx.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.glpi.nginx.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.glpi.nginx.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.glpi.nginx.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.glpi.nginx.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.glpi.nginx.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}
