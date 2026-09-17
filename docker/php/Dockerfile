@@ -1,6 +1,6 @@
 FROM eftechcombr/glpi:base 
 
-ENV VERSION=12.0.0-rc1 
+ENV VERSION=12.0.0-rc2 
 ENV GLPI_LANG=en_US 
 ENV CACHE_DSN=redis://redis:6379/
 ENV MARIADB_HOST=mariadb-glpi 
