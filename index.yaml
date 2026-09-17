@@ -93,6 +93,50 @@ entries:
       artifacthub.io/category: integration-delivery
       artifacthub.io/changes: |
         - kind: changed
+          description: "Upgrade GLPI to 11.0.9"
+      artifacthub.io/language: en, pt-br
+      artifacthub.io/license: GPL-3.0
+      artifacthub.io/links: |
+        - name: support
+          url: https://github.com/eftechcombr/glpi/issues
+    apiVersion: v2
+    appVersion: 11.0.9
+    created: "2026-09-17T01:14:56.066642809Z"
+    dependencies:
+    - condition: valkey.enabled
+      name: valkey
+      repository: https://repo.helmforge.dev
+      version: 2.0.2
+    - condition: mariadb.enabled
+      name: mariadb
+      repository: https://repo.helmforge.dev
+      version: 2.0.3
+    description: GLPI Helm Chart - IT Asset Management and Service Desk
+    digest: 93c70dc719cc08187688a14adf4d1590af6439570c737be2af02eaff6d3de88c
+    home: https://github.com/eftechcombr/glpi
+    icon: https://www.glpi-project.org/wp-content/uploads/2025/03/glpi-teclib-color-logo.svg
+    keywords:
+    - glpi
+    - itil
+    - asset-management
+    - service-desk
+    - itsm
+    maintainers:
+    - email: contato@eftech.com.br
+      name: eftechcombr
+      url: https://github.com/eftechcombr
+    name: glpi
+    sources:
+    - https://github.com/eftechcombr/glpi
+    - https://github.com/glpi-project/glpi
+    type: application
+    urls:
+    - https://github.com/eftechcombr/glpi/releases/download/glpi-2.11.5/glpi-2.11.5.tgz
+    version: 2.11.5
+  - annotations:
+      artifacthub.io/category: integration-delivery
+      artifacthub.io/changes: |
+        - kind: changed
           description: "Replace inline MariaDB StatefulSet with helmforge/mariadb subchart v2.0.3"
         - kind: changed
           description: "Update MariaDB image from mariadb:11.4 to mariadb:12.3.2"
@@ -485,4 +529,4 @@ entries:
     urls:
     - https://github.com/eftechcombr/glpi/releases/download/glpi-1.11.0/glpi-1.11.0.tgz
     version: 1.11.0
-generated: "2026-09-17T01:03:40.825450869Z"
+generated: "2026-09-17T01:14:56.066679978Z"
