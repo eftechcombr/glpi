@@ -269,4 +269,93 @@ specific resource Helm happens to template/install first.
 {{- end -}}
 {{- end }}
 
+{{/*
+Check if database SSL is enabled. Supports database.ssl.enabled and externalDatabase.ssl.enabled as fallback.
+*/}}
+{{- define "glpi.database.ssl.enabled" -}}
+{{- $ssl := dict -}}
+{{- if and .Values.database .Values.database.ssl -}}
+  {{- $ssl = .Values.database.ssl -}}
+{{- else if and .Values.externalDatabase .Values.externalDatabase.ssl -}}
+  {{- $ssl = .Values.externalDatabase.ssl -}}
+{{- end -}}
+{{- if $ssl.enabled -}}
+true
+{{- end -}}
+{{- end }}
+
+{{/*
+Return the name of the Secret holding database SSL certificates: either the user-supplied
+database.ssl.existingSecret, or this chart's own generated Secret ({fullname}-db-tls).
+*/}}
+{{- define "glpi.database.ssl.secretName" -}}
+{{- $ssl := dict -}}
+{{- if and .Values.database .Values.database.ssl -}}
+  {{- $ssl = .Values.database.ssl -}}
+{{- else if and .Values.externalDatabase .Values.externalDatabase.ssl -}}
+  {{- $ssl = .Values.externalDatabase.ssl -}}
+{{- end -}}
+{{- if $ssl.existingSecret -}}
+{{- $ssl.existingSecret -}}
+{{- else -}}
+{{- printf "%s-db-tls" (include "glpi.fullname" .) -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Render volume mounts for database SSL certificates.
+*/}}
+{{- define "glpi.database.ssl.volumeMounts" -}}
+{{- if include "glpi.database.ssl.enabled" . -}}
+{{- $ssl := dict -}}
+{{- if and .Values.database .Values.database.ssl -}}
+  {{- $ssl = .Values.database.ssl -}}
+{{- else if and .Values.externalDatabase .Values.externalDatabase.ssl -}}
+  {{- $ssl = .Values.externalDatabase.ssl -}}
+{{- end -}}
+{{- $certPath := $ssl.certPath | default "/etc/glpi/db-tls" -}}
+{{- $hasSecret := or $ssl.existingSecret (or $ssl.caCert (or $ssl.clientCert $ssl.clientKey)) -}}
+{{- if $hasSecret }}
+- name: db-tls
+  mountPath: {{ $certPath }}
+  readOnly: true
+{{- end }}
+{{- if $ssl.existingConfigMap }}
+{{- $cmPath := $certPath }}
+{{- if $hasSecret }}
+{{- $cmPath = printf "%s-cm" $certPath }}
+{{- end }}
+- name: db-tls-cm
+  mountPath: {{ $cmPath }}
+  readOnly: true
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+Render volumes for database SSL certificates.
+*/}}
+{{- define "glpi.database.ssl.volumes" -}}
+{{- if include "glpi.database.ssl.enabled" . -}}
+{{- $ssl := dict -}}
+{{- if and .Values.database .Values.database.ssl -}}
+  {{- $ssl = .Values.database.ssl -}}
+{{- else if and .Values.externalDatabase .Values.externalDatabase.ssl -}}
+  {{- $ssl = .Values.externalDatabase.ssl -}}
+{{- end -}}
+{{- $hasSecret := or $ssl.existingSecret (or $ssl.caCert (or $ssl.clientCert $ssl.clientKey)) -}}
+{{- if $hasSecret }}
+- name: db-tls
+  secret:
+    secretName: {{ include "glpi.database.ssl.secretName" . }}
+{{- end }}
+{{- if $ssl.existingConfigMap }}
+- name: db-tls-cm
+  configMap:
+    name: {{ $ssl.existingConfigMap }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+
 

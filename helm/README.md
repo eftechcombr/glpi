@@ -185,6 +185,27 @@ Valkey (Redis-compatible fork) replaces the previously inlined Redis deployment.
 | `externalDatabase.database` | External database name | `""` |
 | `externalDatabase.username` | External database username | `""` |
 | `externalDatabase.password` | External database password | `""` |
+| `externalDatabase.existingSecret` | Name of an existing Secret containing DB password | `""` |
+
+### Database SSL/TLS
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `database.ssl.enabled` | Enable SSL/TLS for database connection | `false` |
+| `database.ssl.existingSecret` | Name of an existing Secret containing TLS files | `""` |
+| `database.ssl.existingConfigMap` | Name of an existing ConfigMap containing CA certificate | `""` |
+| `database.ssl.caKey` | Key in Secret/ConfigMap for CA certificate | `"ca.crt"` |
+| `database.ssl.certKey` | Key in Secret for client certificate | `""` |
+| `database.ssl.keyKey` | Key in Secret for client private key | `""` |
+| `database.ssl.certPath` | Mount path inside containers for TLS files | `"/etc/glpi/db-tls"` |
+| `database.ssl.caCert` | Inline CA certificate content (creates Secret if existingSecret unset) | `""` |
+| `database.ssl.clientCert` | Inline client certificate content | `""` |
+| `database.ssl.clientKey` | Inline client private key content | `""` |
+| `database.ssl.ca` | Direct container path to CA certificate | `""` |
+| `database.ssl.cert` | Direct container path to client certificate | `""` |
+| `database.ssl.key` | Direct container path to client private key | `""` |
+| `database.ssl.capath` | Directory containing trusted CA certificates | `""` |
+| `database.ssl.cipher` | Allowable cipher suites for SSL connection | `""` |
 
 ### External Cache
 
@@ -241,6 +262,43 @@ externalDatabase:
   database: glpi
   username: glpi
   password: mySecurePassword
+```
+
+### Database SSL/TLS Connection
+
+To enable an encrypted TLS/SSL connection between GLPI and the database (internal MariaDB or external database), set `database.ssl.enabled: true`.
+
+#### Using an existing Kubernetes Secret (e.g. cert-manager or manual)
+
+```yaml
+database:
+  ssl:
+    enabled: true
+    existingSecret: glpi-db-tls
+    caKey: ca.crt
+    certKey: tls.crt
+    keyKey: tls.key
+```
+
+This mounts the Secret at `/etc/glpi/db-tls` and passes the corresponding `GLPI_DB_SSL_*` environment variables to GLPI containers and installation/upgrade jobs.
+
+#### Using CA certificate from a ConfigMap (server-only TLS verification)
+
+```yaml
+database:
+  ssl:
+    enabled: true
+    existingConfigMap: glpi-db-ca
+    caKey: ca.crt
+```
+
+#### Using system truststore or pre-existing certificates
+
+```yaml
+database:
+  ssl:
+    enabled: true
+    ca: /etc/ssl/certs/ca-certificates.crt
 ```
 
 ## Cache
