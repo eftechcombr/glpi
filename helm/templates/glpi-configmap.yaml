@@ -95,24 +95,4 @@ metadata:
     name: nginx-conf
 data:
   default.conf: |-
-    server {
-        listen 8080;
-        listen [::]:8080;
-
-        server_name glpi.localhost;
-
-        root /var/www/html/public;
-
-        location / {
-            try_files $uri /index.php$is_args$args;
-        }
-
-        location ~ ^/index\.php$ {
-            fastcgi_pass php-fpm.{{ include "glpi.namespace" . }}.svc.cluster.local:9000;
-
-            fastcgi_split_path_info ^(.+\.php)(/.*)$;
-            include fastcgi_params;
-
-            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        }
-    }
+    {{ tpl .Values.glpi.nginx.configTemplate . | nindent 4 }}
