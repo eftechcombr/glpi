@@ -10,9 +10,9 @@ on:
   # push:
   #   branches:
   #     - "latest" 
-  # release: 
-  #   types: 
-  #     - published
+  release: 
+    types: 
+      - published
 
 env:
   REGISTRY: "docker.io"
