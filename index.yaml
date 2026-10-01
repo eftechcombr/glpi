@@ -93,14 +93,14 @@ entries:
       artifacthub.io/category: integration-delivery
       artifacthub.io/changes: |
         - kind: changed
-          description: "Upgrade GLPI to 11.0.10"
+          description: "Upgrade GLPI to 11.0.11"
       artifacthub.io/language: en, pt-br
       artifacthub.io/license: GPL-3.0
       artifacthub.io/links: |
         - name: support
           url: https://github.com/eftechcombr/glpi/issues
     apiVersion: v2
-    appVersion: 11.0.10
+    appVersion: 11.0.11
     created: "2026-09-17T01:14:56.066642809Z"
     dependencies:
     - condition: valkey.enabled

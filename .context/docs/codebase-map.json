@@ -1,0 +1,107 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-10-01T21:55:15.066Z",
+  "stack": {
+    "primaryLanguage": null,
+    "languages": [],
+    "frameworks": [],
+    "buildTools": [
+      "helm"
+    ],
+    "testFrameworks": [],
+    "packageManager": null,
+    "isMonorepo": false,
+    "hasDocker": false,
+    "hasCI": true
+  },
+  "structure": {
+    "totalFiles": 46,
+    "rootPath": ".",
+    "topDirectories": [
+      {
+        "name": "docker",
+        "fileCount": 17,
+        "description": "Module directory"
+      },
+      {
+        "name": "helm",
+        "fileCount": 23,
+        "description": "Module directory"
+      }
+    ],
+    "languageDistribution": [
+      {
+        "extension": ".yaml",
+        "count": 19
+      },
+      {
+        "extension": ".sh",
+        "count": 7
+      },
+      {
+        "extension": ".md",
+        "count": 4
+      },
+      {
+        "extension": ".ini",
+        "count": 4
+      },
+      {
+        "extension": ".yml",
+        "count": 3
+      },
+      {
+        "extension": ".tgz",
+        "count": 2
+      },
+      {
+        "extension": ".lock",
+        "count": 1
+      },
+      {
+        "extension": ".tpl",
+        "count": 1
+      },
+      {
+        "extension": ".base",
+        "count": 1
+      },
+      {
+        "extension": ".conf",
+        "count": 1
+      }
+    ]
+  },
+  "architecture": {
+    "layers": [],
+    "patterns": [],
+    "entryPoints": [],
+    "mainEntryPoints": [],
+    "moduleExports": []
+  },
+  "symbols": {
+    "classes": [],
+    "interfaces": [],
+    "functions": [],
+    "types": [],
+    "enums": []
+  },
+  "publicAPI": [],
+  "dependencies": {
+    "mostImported": []
+  },
+  "stats": {
+    "totalSymbols": 0,
+    "exportedSymbols": 0,
+    "analysisTimeMs": 9
+  },
+  "keyFiles": [],
+  "navigation": {
+    "tests": "src/**/*.test.ts",
+    "config": [],
+    "types": [],
+    "mainLogic": [
+      "src"
+    ]
+  }
+}
