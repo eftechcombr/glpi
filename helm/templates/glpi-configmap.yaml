@@ -34,6 +34,47 @@ data:
   MARIADB_PORT: {{ .Values.externalDatabase.port | quote }}
   {{- end }}
 
+  {{- if include "glpi.database.ssl.enabled" . }}
+  {{- $ssl := dict }}
+  {{- if and .Values.database .Values.database.ssl }}
+    {{- $ssl = .Values.database.ssl }}
+  {{- else if and .Values.externalDatabase .Values.externalDatabase.ssl }}
+    {{- $ssl = .Values.externalDatabase.ssl }}
+  {{- end }}
+  {{- $certPath := $ssl.certPath | default "/etc/glpi/db-tls" }}
+  {{- $hasSecret := or $ssl.existingSecret (or $ssl.caCert (or $ssl.clientCert $ssl.clientKey)) }}
+  GLPI_DB_SSL: "true"
+  {{- if $ssl.ca }}
+  GLPI_DB_SSL_CA: {{ $ssl.ca | quote }}
+  {{- else if and $ssl.caKey $ssl.existingConfigMap }}
+  {{- $cmPath := $certPath }}
+  {{- if $hasSecret }}{{ $cmPath = printf "%s-cm" $certPath }}{{ end }}
+  GLPI_DB_SSL_CA: {{ printf "%s/%s" $cmPath $ssl.caKey | quote }}
+  {{- else if and $ssl.caKey $hasSecret }}
+  GLPI_DB_SSL_CA: {{ printf "%s/%s" $certPath $ssl.caKey | quote }}
+  {{- end }}
+  {{- if $ssl.cert }}
+  GLPI_DB_SSL_CERT: {{ $ssl.cert | quote }}
+  {{- else if and $ssl.certKey $hasSecret }}
+  GLPI_DB_SSL_CERT: {{ printf "%s/%s" $certPath $ssl.certKey | quote }}
+  {{- else if and $ssl.certKey $ssl.existingConfigMap }}
+  {{- $cmPath := $certPath }}
+  {{- if $hasSecret }}{{ $cmPath = printf "%s-cm" $certPath }}{{ end }}
+  GLPI_DB_SSL_CERT: {{ printf "%s/%s" $cmPath $ssl.certKey | quote }}
+  {{- end }}
+  {{- if $ssl.key }}
+  GLPI_DB_SSL_KEY: {{ $ssl.key | quote }}
+  {{- else if and $ssl.keyKey $hasSecret }}
+  GLPI_DB_SSL_KEY: {{ printf "%s/%s" $certPath $ssl.keyKey | quote }}
+  {{- end }}
+  {{- if $ssl.capath }}
+  GLPI_DB_SSL_CAPATH: {{ $ssl.capath | quote }}
+  {{- end }}
+  {{- if $ssl.cipher }}
+  GLPI_DB_SSL_CIPHER: {{ $ssl.cipher | quote }}
+  {{- end }}
+  {{- end }}
+
   {{- if .Values.valkey.enabled }}
   {{- $valkeyPort := .Values.valkey.service.port | default 6379 | toString }}
   CACHE_DSN: {{ printf "redis://%s-valkey-client:%s" .Release.Name $valkeyPort | quote }}
@@ -54,24 +95,4 @@ metadata:
     name: nginx-conf
 data:
   default.conf: |-
-    server {
-        listen 8080;
-        listen [::]:8080;
-
-        server_name glpi.localhost;
-
-        root /var/www/html/public;
-
-        location / {
-            try_files $uri /index.php$is_args$args;
-        }
-
-        location ~ ^/index\.php$ {
-            fastcgi_pass php-fpm.{{ include "glpi.namespace" . }}.svc.cluster.local:9000;
-
-            fastcgi_split_path_info ^(.+\.php)(/.*)$;
-            include fastcgi_params;
-
-            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        }
-    }
+    {{ tpl .Values.glpi.nginx.configTemplate . | nindent 4 }}

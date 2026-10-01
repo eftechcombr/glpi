@@ -61,6 +61,10 @@ spec:
             - name: tmp
               mountPath: /tmp
             {{- end }}
+            {{- $sslMounts := include "glpi.database.ssl.volumeMounts" . }}
+            {{- if $sslMounts }}
+            {{- $sslMounts | nindent 12 }}
+            {{- end }}
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -74,6 +78,10 @@ spec:
         {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
         - name: tmp
           emptyDir: {}
+        {{- end }}
+        {{- $sslVolumes := include "glpi.database.ssl.volumes" . }}
+        {{- if $sslVolumes }}
+        {{- $sslVolumes | nindent 8 }}
         {{- end }}
       restartPolicy: OnFailure
   parallelism: 1
@@ -167,6 +175,10 @@ spec:
             - name: tmp
               mountPath: /tmp
             {{- end }}
+            {{- $sslMounts := include "glpi.database.ssl.volumeMounts" . }}
+            {{- if $sslMounts }}
+            {{- $sslMounts | nindent 12 }}
+            {{- end }}
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -180,6 +192,10 @@ spec:
         {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
         - name: tmp
           emptyDir: {}
+        {{- end }}
+        {{- $sslVolumes := include "glpi.database.ssl.volumes" . }}
+        {{- if $sslVolumes }}
+        {{- $sslVolumes | nindent 8 }}
         {{- end }}
       restartPolicy: OnFailure
   parallelism: 1
@@ -273,6 +289,10 @@ spec:
             - name: tmp
               mountPath: /tmp
             {{- end }}
+            {{- $sslMounts := include "glpi.database.ssl.volumeMounts" . }}
+            {{- if $sslMounts }}
+            {{- $sslMounts | nindent 12 }}
+            {{- end }}
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -286,6 +306,10 @@ spec:
         {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
         - name: tmp
           emptyDir: {}
+        {{- end }}
+        {{- $sslVolumes := include "glpi.database.ssl.volumes" . }}
+        {{- if $sslVolumes }}
+        {{- $sslVolumes | nindent 8 }}
         {{- end }}
       restartPolicy: OnFailure
   parallelism: 1
@@ -379,6 +403,10 @@ spec:
             - name: tmp
               mountPath: /tmp
             {{- end }}
+            {{- $sslMounts := include "glpi.database.ssl.volumeMounts" . }}
+            {{- if $sslMounts }}
+            {{- $sslMounts | nindent 12 }}
+            {{- end }}
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -392,6 +420,10 @@ spec:
         {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
         - name: tmp
           emptyDir: {}
+        {{- end }}
+        {{- $sslVolumes := include "glpi.database.ssl.volumes" . }}
+        {{- if $sslVolumes }}
+        {{- $sslVolumes | nindent 8 }}
         {{- end }}
       restartPolicy: OnFailure
   parallelism: 1
@@ -456,6 +488,10 @@ spec:
             - name: tmp
               mountPath: /tmp
             {{- end }}
+            {{- $sslMounts := include "glpi.database.ssl.volumeMounts" . }}
+            {{- if $sslMounts }}
+            {{- $sslMounts | nindent 12 }}
+            {{- end }}
       volumes:
         - name: etc
           persistentVolumeClaim:
@@ -469,6 +505,10 @@ spec:
         {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
         - name: tmp
           emptyDir: {}
+        {{- end }}
+        {{- $sslVolumes := include "glpi.database.ssl.volumes" . }}
+        {{- if $sslVolumes }}
+        {{- $sslVolumes | nindent 8 }}
         {{- end }}
       restartPolicy: OnFailure
   parallelism: 1

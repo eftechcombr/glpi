@@ -68,14 +68,12 @@ spec:
                     name: glpi-config
                 - secretRef:
                     name: glpi-secret
-              {{- if .Values.mariadb.enabled }}
               env:
                 - name: MARIADB_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: {{ include "glpi.mariadb.secretName" . }}
-                      key: {{ include "glpi.mariadb.secretPasswordKey" . }}
-              {{- end }}
+                      name: {{ include "glpi.database.secretName" . }}
+                      key: {{ include "glpi.database.secretPasswordKey" . }}
               command:
                 - sh
                 - -c
@@ -86,6 +84,10 @@ spec:
                 {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
                 - name: tmp
                   mountPath: /tmp
+                {{- end }}
+                {{- $sslMounts := include "glpi.database.ssl.volumeMounts" . }}
+                {{- if $sslMounts }}
+                {{- $sslMounts | nindent 16 }}
                 {{- end }}
               resources:
                 limits:
@@ -127,6 +129,10 @@ spec:
                 - name: tmp
                   mountPath: /tmp
                 {{- end }}
+                {{- $sslMounts := include "glpi.database.ssl.volumeMounts" . }}
+                {{- if $sslMounts }}
+                {{- $sslMounts | nindent 16 }}
+                {{- end }}
               resources:
                 {{- toYaml .Values.glpi.phpfpm.resources | nindent 16 }}
           volumes: 
@@ -142,6 +148,10 @@ spec:
             {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
             - name: tmp
               emptyDir: {}
+            {{- end }}
+            {{- $sslVolumes := include "glpi.database.ssl.volumes" . }}
+            {{- if $sslVolumes }}
+            {{- $sslVolumes | nindent 12 }}
             {{- end }}
           restartPolicy: OnFailure
 {{- end }}

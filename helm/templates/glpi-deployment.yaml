@@ -65,19 +65,15 @@ spec:
                 name: glpi-config
             - secretRef:
                 name: glpi-secret
-          {{- if or .Values.mariadb.enabled .Values.glpi.phpfpm.extraEnv }}
           env:
-            {{- if .Values.mariadb.enabled }}
             - name: MARIADB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "glpi.mariadb.secretName" . }}
-                  key: {{ include "glpi.mariadb.secretPasswordKey" . }}
-            {{- end }}
+                  name: {{ include "glpi.database.secretName" . }}
+                  key: {{ include "glpi.database.secretPasswordKey" . }}
             {{- with .Values.glpi.phpfpm.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-          {{- end }}
           ports:
             - containerPort: 9000
               name: fpm
@@ -91,6 +87,10 @@ spec:
             {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
             - name: tmp
               mountPath: /tmp
+            {{- end }}
+            {{- $sslMounts := include "glpi.database.ssl.volumeMounts" . }}
+            {{- if $sslMounts }}
+            {{- $sslMounts | nindent 12 }}
             {{- end }}
             {{- with .Values.glpi.phpfpm.extraVolumeMounts }}
             {{- toYaml . | nindent 12 }}
@@ -131,6 +131,10 @@ spec:
         {{- if .Values.glpi.securityContext.readOnlyRootFilesystem }}
         - name: tmp
           emptyDir: {}
+        {{- end }}
+        {{- $sslVolumes := include "glpi.database.ssl.volumes" . }}
+        {{- if $sslVolumes }}
+        {{- $sslVolumes | nindent 8 }}
         {{- end }}
         {{- with .Values.glpi.phpfpm.extraVolumes }}
         {{- toYaml . | nindent 8 }}

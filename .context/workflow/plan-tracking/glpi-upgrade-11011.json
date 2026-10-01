@@ -1,0 +1,40 @@
+{
+  "planSlug": "glpi-upgrade-11011",
+  "progress": 100,
+  "phases": {
+    "phase-2": {
+      "phaseId": "phase-2",
+      "status": "completed",
+      "startedAt": "2026-10-01T22:34:35.949Z",
+      "steps": [
+        {
+          "stepIndex": 1,
+          "description": "Step 1",
+          "status": "completed",
+          "completedAt": "2026-10-01T22:34:35.949Z",
+          "output": "All 12 files updated from 11.0.10 to 11.0.11",
+          "notes": "All files updated and hadolint passes"
+        }
+      ],
+      "completedAt": "2026-10-01T22:34:35.949Z"
+    },
+    "phase-3": {
+      "phaseId": "phase-3",
+      "status": "completed",
+      "startedAt": "2026-10-01T22:34:42.387Z",
+      "steps": [
+        {
+          "stepIndex": 1,
+          "description": "Step 1",
+          "status": "completed",
+          "completedAt": "2026-10-01T22:34:42.387Z",
+          "output": "All validation checks passed successfully.",
+          "notes": "Validation completed: Hadolint clean on all Dockerfiles, Helm lint passed, local Docker builds succeeded and GLPI_VERSION 11.0.11 confirmed in runtime container."
+        }
+      ],
+      "completedAt": "2026-10-01T22:34:42.387Z"
+    }
+  },
+  "decisions": [],
+  "lastUpdated": "2026-10-01T22:34:42.387Z"
+}

@@ -20,8 +20,8 @@ docker-compose -f docker-compose-build.yml build
 
 # Build specific image
 docker build -t eftechcombr/glpi:base -f docker/php/Dockerfile.base docker/php/
-docker build -t eftechcombr/glpi:php-fpm-11.0.9 -f docker/php/Dockerfile docker/php/
-docker build -t eftechcombr/glpi:nginx-11.0.9 -f docker/nginx/Dockerfile docker/nginx/
+docker build -t eftechcombr/glpi:php-fpm-11.0.11 -f docker/php/Dockerfile docker/php/
+docker build -t eftechcombr/glpi:nginx-11.0.11 -f docker/nginx/Dockerfile docker/nginx/
 ```
 
 ### Run Containers
@@ -260,3 +260,7 @@ Current pinned versions in `Dockerfile.base` (Alpine 3.22):
 - **Docker Compose**: 2.0+
 - **Hadolint**: For Dockerfile linting
 - **QEMU**: For multi-platform builds (arm64/amd64)
+## AI Context References
+- Documentation index: `.context/docs/README.md`
+- Agent playbooks: `.context/agents/README.md`
+

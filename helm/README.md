@@ -31,7 +31,7 @@ The following table lists the configurable parameters of the GLPI chart and thei
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `glpi.version` | GLPI version to deploy | `"11.0.9"` |
+| `glpi.version` | GLPI version to deploy | `"11.0.11"` |
 | `glpi.language` | Default language for GLPI | `en_US` |
 
 ### PHP-FPM Configuration
@@ -39,7 +39,7 @@ The following table lists the configurable parameters of the GLPI chart and thei
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `glpi.phpfpm.image.repository` | PHP-FPM image repository | `eftechcombr/glpi` |
-| `glpi.phpfpm.image.tag` | PHP-FPM image tag | `php-fpm-11.0.9` |
+| `glpi.phpfpm.image.tag` | PHP-FPM image tag | `php-fpm-11.0.11` |
 | `glpi.phpfpm.image.pullPolicy` | PHP-FPM image pull policy | `IfNotPresent` |
 | `glpi.phpfpm.replicaCount` | Number of PHP-FPM pods | `1` |
 | `glpi.phpfpm.resources.limits.cpu` | PHP-FPM container CPU limit | `1000m` |
@@ -54,7 +54,7 @@ The following table lists the configurable parameters of the GLPI chart and thei
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `glpi.nginx.image.repository` | Nginx image repository | `eftechcombr/glpi` |
-| `glpi.nginx.image.tag` | Nginx image tag | `nginx-11.0.9` |
+| `glpi.nginx.image.tag` | Nginx image tag | `nginx-11.0.11` |
 | `glpi.nginx.image.pullPolicy` | Nginx image pull policy | `IfNotPresent` |
 | `glpi.nginx.replicaCount` | Number of Nginx pods | `1` |
 | `glpi.nginx.resources.limits.cpu` | Nginx container CPU limit | `500m` |
@@ -185,6 +185,27 @@ Valkey (Redis-compatible fork) replaces the previously inlined Redis deployment.
 | `externalDatabase.database` | External database name | `""` |
 | `externalDatabase.username` | External database username | `""` |
 | `externalDatabase.password` | External database password | `""` |
+| `externalDatabase.existingSecret` | Name of an existing Secret containing DB password | `""` |
+
+### Database SSL/TLS
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `database.ssl.enabled` | Enable SSL/TLS for database connection | `false` |
+| `database.ssl.existingSecret` | Name of an existing Secret containing TLS files | `""` |
+| `database.ssl.existingConfigMap` | Name of an existing ConfigMap containing CA certificate | `""` |
+| `database.ssl.caKey` | Key in Secret/ConfigMap for CA certificate | `"ca.crt"` |
+| `database.ssl.certKey` | Key in Secret for client certificate | `""` |
+| `database.ssl.keyKey` | Key in Secret for client private key | `""` |
+| `database.ssl.certPath` | Mount path inside containers for TLS files | `"/etc/glpi/db-tls"` |
+| `database.ssl.caCert` | Inline CA certificate content (creates Secret if existingSecret unset) | `""` |
+| `database.ssl.clientCert` | Inline client certificate content | `""` |
+| `database.ssl.clientKey` | Inline client private key content | `""` |
+| `database.ssl.ca` | Direct container path to CA certificate | `""` |
+| `database.ssl.cert` | Direct container path to client certificate | `""` |
+| `database.ssl.key` | Direct container path to client private key | `""` |
+| `database.ssl.capath` | Directory containing trusted CA certificates | `""` |
+| `database.ssl.cipher` | Allowable cipher suites for SSL connection | `""` |
 
 ### External Cache
 
@@ -241,6 +262,43 @@ externalDatabase:
   database: glpi
   username: glpi
   password: mySecurePassword
+```
+
+### Database SSL/TLS Connection
+
+To enable an encrypted TLS/SSL connection between GLPI and the database (internal MariaDB or external database), set `database.ssl.enabled: true`.
+
+#### Using an existing Kubernetes Secret (e.g. cert-manager or manual)
+
+```yaml
+database:
+  ssl:
+    enabled: true
+    existingSecret: glpi-db-tls
+    caKey: ca.crt
+    certKey: tls.crt
+    keyKey: tls.key
+```
+
+This mounts the Secret at `/etc/glpi/db-tls` and passes the corresponding `GLPI_DB_SSL_*` environment variables to GLPI containers and installation/upgrade jobs.
+
+#### Using CA certificate from a ConfigMap (server-only TLS verification)
+
+```yaml
+database:
+  ssl:
+    enabled: true
+    existingConfigMap: glpi-db-ca
+    caKey: ca.crt
+```
+
+#### Using system truststore or pre-existing certificates
+
+```yaml
+database:
+  ssl:
+    enabled: true
+    ca: /etc/ssl/certs/ca-certificates.crt
 ```
 
 ## Cache

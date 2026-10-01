@@ -16,7 +16,7 @@ global:
 # -- GLPI Application Configuration
 glpi:
   # GLPI version to deploy
-  version: "11.0.9"
+  version: "11.0.11"
   
   # GLPI default language (e.g., en_US, fr_FR, pt_BR)
   language: "en_US"
@@ -28,7 +28,7 @@ glpi:
       # Image repository for PHP-FPM
       repository: eftechcombr/glpi
       # Image tag for PHP-FPM
-      tag: php-fpm-11.0.9
+      tag: php-fpm-11.0.11
       # Image pull policy
       pullPolicy: IfNotPresent
     
@@ -119,7 +119,7 @@ glpi:
       # Image repository for Nginx
       repository: eftechcombr/glpi
       # Image tag for Nginx
-      tag: nginx-11.0.9
+      tag: nginx-11.0.11
       # Image pull policy
       pullPolicy: IfNotPresent
     
@@ -195,6 +195,29 @@ glpi:
     extraVolumeMounts: []
     # -- Extra volumes to add to the nginx pod. Paired with extraVolumeMounts above.
     extraVolumes: []
+
+    configTemplate: |-
+      server {
+          listen 8080;
+          listen [::]:8080;
+
+          server_name glpi.localhost;
+
+          root /var/www/html/public;
+
+          location / {
+              try_files $uri /index.php$is_args$args;
+          }
+
+          location ~ ^/index\.php$ {
+              fastcgi_pass php-fpm.{{ include "glpi.namespace" . }}.svc.cluster.local:9000;
+
+              fastcgi_split_path_info ^(.+\.php)(/.*)$;
+              include fastcgi_params;
+
+              fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+          }
+      }
     
     # Nginx service configuration
     service:
@@ -628,6 +651,54 @@ externalDatabase:
   # contain a key named "password". When left empty, the chart generates its own Secret from
   # the plaintext password above (unchanged default behavior).
   existingSecret: ""
+
+# -- Database SSL/TLS Configuration
+# Configures encrypted connection between GLPI and the database (MySQL/MariaDB).
+# Applies whether using the internal MariaDB subchart (with SSL enabled on MariaDB) or an external database.
+# Supports mounting CA certificate, client certificate, and client private key from an existing Kubernetes Secret,
+# ConfigMap, or inline values, as well as specifying custom certificate paths and cipher suites.
+database:
+  ssl:
+    # Enable SSL/TLS for database connection (sets GLPI_DB_SSL="true")
+    enabled: false
+    # -- Name of a pre-existing Kubernetes Secret containing TLS certificates and/or private key.
+    # When specified, the Secret is mounted at `certPath` (/etc/glpi/db-tls by default) across all
+    # GLPI pods, jobs, and cronjobs.
+    existingSecret: ""
+    # -- Name of a pre-existing ConfigMap containing CA certificate(s).
+    # When specified, the ConfigMap is mounted at `certPath` (or `certPath-cm` if existingSecret is also set).
+    existingConfigMap: ""
+    # -- Key inside existingSecret or existingConfigMap holding the CA certificate file (default: "ca.crt").
+    # Set to empty ("") if no CA certificate file is needed.
+    caKey: "ca.crt"
+    # -- Key inside existingSecret holding the client certificate file (e.g. "tls.crt").
+    # Leave empty if client certificate (mTLS) is not used.
+    certKey: ""
+    # -- Key inside existingSecret holding the client private key file (e.g. "tls.key").
+    # Leave empty if client certificate (mTLS) is not used.
+    keyKey: ""
+    # -- Mount path inside containers for TLS files (default: /etc/glpi/db-tls).
+    certPath: "/etc/glpi/db-tls"
+    # -- Inline CA certificate PEM content. When provided without existingSecret, the chart automatically
+    # generates a Secret containing this certificate.
+    caCert: ""
+    # -- Inline client certificate PEM content.
+    clientCert: ""
+    # -- Inline client private key PEM content.
+    clientKey: ""
+    # -- Direct file path to the CA certificate inside the container (e.g. "/etc/ssl/certs/ca-certificates.crt").
+    # Overrides the default derived path ($certPath/$caKey).
+    ca: ""
+    # -- Direct file path to the client certificate inside the container.
+    # Overrides the default derived path ($certPath/$certKey).
+    cert: ""
+    # -- Direct file path to the client private key inside the container.
+    # Overrides the default derived path ($certPath/$keyKey).
+    key: ""
+    # -- Path to directory containing trusted CA certificates (sets GLPI_DB_SSL_CAPATH).
+    capath: ""
+    # -- List of allowable cipher suites for SSL connection (sets GLPI_DB_SSL_CIPHER).
+    cipher: ""
 
 # -- External Cache Configuration
 # Used when valkey.enabled is false

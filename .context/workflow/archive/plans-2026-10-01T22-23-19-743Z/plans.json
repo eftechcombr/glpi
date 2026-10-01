@@ -1,0 +1,14 @@
+{
+  "active": [
+    {
+      "slug": "glpi-version-upgrade",
+      "path": "plans/glpi-version-upgrade.md",
+      "title": "GLPI Version Upgrade 11.0.9 to 11.0.10",
+      "summary": "Upgrade GLPI from version 11.0.9 to 11.0.10 across all Dockerfiles, Docker Compose files, Helm chart, and documentation.",
+      "linkedAt": "2026-10-01T22:00:47.343Z",
+      "status": "active"
+    }
+  ],
+  "completed": [],
+  "primary": "glpi-version-upgrade"
+}
