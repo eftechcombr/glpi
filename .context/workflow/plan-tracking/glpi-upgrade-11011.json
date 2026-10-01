@@ -1,0 +1,24 @@
+{
+  "planSlug": "glpi-upgrade-11011",
+  "progress": 100,
+  "phases": {
+    "phase-2": {
+      "phaseId": "phase-2",
+      "status": "completed",
+      "startedAt": "2026-10-01T22:34:35.949Z",
+      "steps": [
+        {
+          "stepIndex": 1,
+          "description": "Step 1",
+          "status": "completed",
+          "completedAt": "2026-10-01T22:34:35.949Z",
+          "output": "All 12 files updated from 11.0.10 to 11.0.11",
+          "notes": "All files updated and hadolint passes"
+        }
+      ],
+      "completedAt": "2026-10-01T22:34:35.949Z"
+    }
+  },
+  "decisions": [],
+  "lastUpdated": "2026-10-01T22:34:35.949Z"
+}
