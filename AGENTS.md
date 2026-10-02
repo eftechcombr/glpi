@@ -62,7 +62,7 @@ DeepSource is also configured for automated linting via `.deepsource.toml` (dock
 ### Dockerfiles
 
 #### General Rules
-- Use specific version tags for base images (e.g., `php:8.4.19-fpm-alpine3.22`, not `php:latest`)
+- Use specific version tags for base images (e.g., `php:8.5.11-fpm-alpine3.24`, not `php:latest`)
 - Pin package versions in Alpine (e.g., `icu-dev=76.1-r1`)
 - Always clean up build dependencies with `apk del .build-deps`
 - Remove `docker-php-source delete` after installing extensions
@@ -223,27 +223,27 @@ When upgrading GLPI or PHP versions:
 
 ## Package Version Reference
 
-Current pinned versions in `Dockerfile.base` (Alpine 3.22):
+Current pinned versions in `Dockerfile.base` (Alpine 3.24):
 
 | Package | Version |
 |---------|---------|
-| php base | 8.4.19-fpm-alpine3.22 |
-| icu-dev | 76.1-r1 |
+| php base | 8.5.11-fpm-alpine3.24 |
+| icu-dev | 78.1-r0 |
 | zlib-dev | 1.3.2-r0 |
-| libpng-dev | 1.6.57-r0 |
+| libpng-dev | 1.6.59-r0 |
 | bzip2-dev | 1.0.8-r6 |
-| libzip-dev | 1.11.4-r0 |
-| openldap-dev | 2.6.8-r0 |
-| autoconf | 2.72-r1 |
-| dpkg-dev | 1.22.15-r0 |
-| dpkg | 1.22.15-r0 |
-| file | 5.46-r2 |
-| g++ | 14.2.0-r6 |
-| gcc | 14.2.0-r6 |
-| musl-dev | 1.2.5-r12 |
-| make | 4.4.1-r3 |
-| pkgconf | 2.4.3-r0 |
-| re2c | 4.2-r0 |
+| libzip-dev | 1.11.4-r2 |
+| openldap-dev | 2.6.15-r0 |
+| autoconf | 2.73-r0 |
+| dpkg-dev | 1.23.7-r0 |
+| dpkg | 1.23.7-r0 |
+| file | 5.47-r2 |
+| g++ | 15.2.0-r5 |
+| gcc | 15.2.0-r5 |
+| musl-dev | 1.2.6-r2 |
+| make | 4.4.1-r4 |
+| pkgconf | 2.5.1-r0 |
+| re2c | 4.5.1-r0 |
 
 ## Security Best Practices
 
