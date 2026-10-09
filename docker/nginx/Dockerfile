@@ -1,4 +1,4 @@
-FROM eftechcombr/glpi:php-fpm-11.0.11 as BUILD
+FROM eftechcombr/glpi:php-fpm-12.0.0 as BUILD
 #
 
 FROM nginxinc/nginx-unprivileged:1.31.6-alpine3.24-slim
