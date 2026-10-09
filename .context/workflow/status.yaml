@@ -2,7 +2,7 @@ project:
   name: "glpi-upgrade-12.0.0"
   scale: MEDIUM
   started: "2026-10-09T12:10:46.937Z"
-  current_phase: E
+  current_phase: V
 
 phases:
   P:
@@ -14,21 +14,23 @@ phases:
     started_at: "2026-10-09T12:11:29.877Z"
     completed_at: "2026-10-09T12:11:42.642Z"
   E:
-    status: in_progress
+    status: filled
     started_at: "2026-10-09T12:11:42.642Z"
+    completed_at: "2026-10-09T12:16:45.128Z"
   V:
-    status: pending
+    status: in_progress
+    started_at: "2026-10-09T12:16:45.129Z"
   C:
     status: skipped
     reason: "Not required for scale MEDIUM"
 
 execution:
   history:
-    - timestamp: "2026-10-09T12:11:42.642Z"
-      phase: E
+    - timestamp: "2026-10-09T12:16:45.129Z"
+      phase: V
       action: started
-  last_activity: "2026-10-09T12:11:42.642Z"
-  resume_context: "Fase E (Execução) em progresso"
+  last_activity: "2026-10-09T12:16:45.129Z"
+  resume_context: "Fase V (Validação) em progresso"
 
 approval:
   plan_created: true
