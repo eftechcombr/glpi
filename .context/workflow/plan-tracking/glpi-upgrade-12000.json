@@ -1,0 +1,40 @@
+{
+  "planSlug": "glpi-upgrade-12000",
+  "progress": 100,
+  "phases": {
+    "phase-2": {
+      "phaseId": "phase-2",
+      "status": "completed",
+      "startedAt": "2026-10-09T12:16:41.031Z",
+      "steps": [
+        {
+          "stepIndex": 1,
+          "description": "Step 1",
+          "status": "completed",
+          "completedAt": "2026-10-09T12:16:41.031Z",
+          "output": "All configuration files updated from 11.0.11 to 12.0.0",
+          "notes": "All files updated, hadolint passed, helm lint passed, docker-compose config passed"
+        }
+      ],
+      "completedAt": "2026-10-09T12:16:41.031Z"
+    },
+    "phase-3": {
+      "phaseId": "phase-3",
+      "status": "completed",
+      "startedAt": "2026-10-09T12:20:09.107Z",
+      "steps": [
+        {
+          "stepIndex": 1,
+          "description": "Step 1",
+          "status": "completed",
+          "completedAt": "2026-10-09T12:20:09.107Z",
+          "output": "All validation checks passed successfully.",
+          "notes": "Validation completed: Hadolint clean on all Dockerfiles, Helm lint passed, Docker Compose config valid, local Docker builds succeeded and GLPI_VERSION 12.0.0 confirmed in runtime container."
+        }
+      ],
+      "completedAt": "2026-10-09T12:20:09.107Z"
+    }
+  },
+  "decisions": [],
+  "lastUpdated": "2026-10-09T12:20:09.107Z"
+}
