@@ -4,7 +4,8 @@ This directory contains plans for coordinating work across documentation and pla
 
 ## Plan Queue
 1. [Glpi Upgrade 11011](./glpi-upgrade-11011.md)
-2. [Glpi Version Upgrade](./glpi-version-upgrade.md)
+2. [Glpi Upgrade 12000](./glpi-upgrade-12000.md)
+3. [Glpi Version Upgrade](./glpi-version-upgrade.md)
 
 ## How To Create Or Update Plans
 - Run "ai-context plan <name>" to scaffold a new plan template.

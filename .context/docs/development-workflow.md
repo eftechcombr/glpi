@@ -9,8 +9,8 @@ Day-to-day engineering follows a container-focused workflow. Changes are made to
 - **Main branch**: Production-ready code
 - **Feature branches**: `feature/description` for new features
 - **Bug fix branches**: `fix/description` for bug fixes
-- **Release tags**: Semantic versioning (e.g., `v11.0.11`)
-- **Image tags**: Follow GLPI version (e.g., `php-fpm-11.0.11`)
+- **Release tags**: Semantic versioning (e.g., `v12.0.0`)
+- **Image tags**: Follow GLPI version (e.g., `php-fpm-12.0.0`)
 
 ## Local Development
 
