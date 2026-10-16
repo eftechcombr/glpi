@@ -13,9 +13,12 @@ metadata:
 spec:
   parentRefs:
     {{- if .Values.httpRoute.parentRefs }}
-    {{- toYaml .Values.httpRoute.parentRefs | nindent 4 }}
+    {{- range .Values.httpRoute.parentRefs }}
+    - {{ toYaml (mergeOverwrite (dict "namespace" (include "glpi.namespace" $)) .) | nindent 6 }}
+    {{- end }}
     {{- else }}
     - name: {{ .Values.gateway.name | default (printf "%s-gateway" (include "glpi.fullname" .)) }}
+      namespace: {{ include "glpi.namespace" . }}
     {{- end }}
   {{- with .Values.httpRoute.hostnames }}
   hostnames:

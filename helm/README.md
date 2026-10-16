@@ -185,7 +185,9 @@ Set `gateway.enabled: true` and provide `gateway.gatewayClassName` to create a
 `Gateway`. Set `httpRoute.enabled: true` to create an `HTTPRoute` targeting the
 chart's `nginx` Service. Both resources can be customized through their values,
 including listeners, parent references, hostnames, matches, filters, and backend
-references. Existing Ingress configuration is unchanged.
+references. Parent references receive the chart namespace by default; set
+`httpRoute.parentRefs[].namespace` to target a Gateway in another namespace.
+Existing Ingress configuration is unchanged.
 
 ### Extra objects
 
