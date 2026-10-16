@@ -1,0 +1,17 @@
+{{- if .Values.gateway.enabled }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: {{ .Values.gateway.name | default (printf "%s-gateway" (include "glpi.fullname" .)) }}
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
+  {{- with .Values.gateway.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  gatewayClassName: {{ required "gateway.gatewayClassName is required when gateway.enabled is true" .Values.gateway.gatewayClassName | quote }}
+  listeners:
+    {{- toYaml .Values.gateway.listeners | nindent 4 }}
+{{- end }}
