@@ -176,6 +176,38 @@ Valkey (Redis-compatible fork) replaces the previously inlined Redis deployment.
 | `ingress.hosts` | Ingress host rules | `[{host: glpi.example.local, paths: [{path: /, pathType: Prefix}]}]` |
 | `ingress.tls` | Ingress TLS configuration | `[]` |
 
+### Gateway API and HTTPRoute
+
+Gateway API support is disabled by default. Install the Gateway API CRDs and a
+compatible Gateway controller before enabling these resources.
+
+Set `gateway.enabled: true` and provide `gateway.gatewayClassName` to create a
+`Gateway`. Set `httpRoute.enabled: true` to create an `HTTPRoute` targeting the
+chart's `nginx` Service. Both resources can be customized through their values,
+including listeners, parent references, hostnames, matches, filters, and backend
+references. Parent references receive the chart namespace by default; set
+`httpRoute.parentRefs[].namespace` to target a Gateway in another namespace.
+Existing Ingress configuration is unchanged.
+
+### Extra objects
+
+Use `extraObjects` to render additional Kubernetes manifests that are not covered
+by dedicated chart values. Each list item is rendered as its own YAML document
+and supports Helm expressions, for example:
+
+```yaml
+extraObjects:
+  - apiVersion: gateway.networking.k8s.io/v1
+    kind: GatewayClass
+    metadata:
+      name: example
+    spec:
+      controllerName: example.net/gateway-controller
+```
+
+The chart does not alter arbitrary object fields or namespaces; operators are
+responsible for ensuring that supplied objects are valid for their cluster.
+
 ### External Database
 
 | Parameter | Description | Default |

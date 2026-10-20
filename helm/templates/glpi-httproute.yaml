@@ -1,0 +1,45 @@
+{{- if .Values.httpRoute.enabled }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "glpi.fullname" . }}-httproute
+  namespace: {{ include "glpi.namespace" . }}
+  labels:
+    {{- include "glpi.labels" . | nindent 4 }}
+  {{- with .Values.httpRoute.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    {{- if .Values.httpRoute.parentRefs }}
+    {{- range .Values.httpRoute.parentRefs }}
+    - {{ toYaml (mergeOverwrite (dict "namespace" (include "glpi.namespace" $)) .) | nindent 6 }}
+    {{- end }}
+    {{- else }}
+    - name: {{ .Values.gateway.name | default (printf "%s-gateway" (include "glpi.fullname" .)) }}
+      namespace: {{ include "glpi.namespace" . }}
+    {{- end }}
+  {{- with .Values.httpRoute.hostnames }}
+  hostnames:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  rules:
+    {{- range .Values.httpRoute.rules }}
+    - {{- with .matches }}
+      matches:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .filters }}
+      filters:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      backendRefs:
+        {{- if .backendRefs }}
+        {{- toYaml .backendRefs | nindent 8 }}
+        {{- else }}
+        - name: {{ $.Values.httpRoute.serviceName }}
+          port: {{ $.Values.httpRoute.servicePort | default $.Values.glpi.nginx.service.port }}
+        {{- end }}
+    {{- end }}
+{{- end }}
