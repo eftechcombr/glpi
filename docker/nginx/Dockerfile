@@ -1,7 +1,7 @@
 FROM eftechcombr/glpi:php-fpm-12.0.0 as BUILD
 #
 
-FROM nginxinc/nginx-unprivileged:1.31.6-alpine3.24-slim
+FROM nginxinc/nginx-unprivileged:1.31.7-alpine3.24-slim
 #
 COPY --from=BUILD /var/www/html /var/www/html
 COPY --from=BUILD /var/lib/glpi /var/lib/glpi

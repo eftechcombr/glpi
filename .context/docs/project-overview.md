@@ -40,7 +40,7 @@ This repository contains Docker and Kubernetes configurations for deploying GLPI
 
 ## Technology Stack Summary
 
-- **Runtime**: PHP 8.5.12 (FPM), Nginx 1.31.6
+- **Runtime**: PHP 8.5.12 (FPM), Nginx 1.31.7
 - **Database**: MariaDB 11.4 (Docker) / 12.3.2 (Helm)
 - **Cache**: Redis 7.0 (Docker) / Valkey 9.1.0 (Helm)
 - **Container Orchestration**: Docker Compose, Kubernetes (Helm)
