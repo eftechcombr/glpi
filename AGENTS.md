@@ -62,7 +62,7 @@ DeepSource is also configured for automated linting via `.deepsource.toml` (dock
 ### Dockerfiles
 
 #### General Rules
-- Use specific version tags for base images (e.g., `php:8.5.11-fpm-alpine3.24`, not `php:latest`)
+- Use specific version tags for base images (e.g., `php:8.5.12-fpm-alpine3.24`, not `php:latest`)
 - Pin package versions in Alpine (e.g., `icu-dev=76.1-r1`)
 - Always clean up build dependencies with `apk del .build-deps`
 - Remove `docker-php-source delete` after installing extensions
@@ -227,7 +227,7 @@ Current pinned versions in `Dockerfile.base` (Alpine 3.24):
 
 | Package | Version |
 |---------|---------|
-| php base | 8.5.11-fpm-alpine3.24 |
+| php base | 8.5.12-fpm-alpine3.24 |
 | icu-dev | 78.1-r0 |
 | zlib-dev | 1.3.2-r0 |
 | libpng-dev | 1.6.59-r0 |
