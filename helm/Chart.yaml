@@ -2,8 +2,8 @@ apiVersion: v2
 name: glpi
 description: GLPI Helm Chart - IT Asset Management and Service Desk
 type: application
-version: 2.12.1
-appVersion: "12.0.0"
+version: 2.12.2
+appVersion: "12.0.1"
 
 dependencies:
   - name: valkey
@@ -43,6 +43,4 @@ annotations:
       url: https://github.com/eftechcombr/glpi/issues
   artifacthub.io/changes: |
     - kind: changed
-      description: "Upgrade GLPI to 12.0.0"
-    - kind: added
-      description: "Add Gateway API, HTTPRoute, and extraObjects support"
+      description: "Upgrade GLPI to 12.0.1"
