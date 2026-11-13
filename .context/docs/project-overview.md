@@ -27,7 +27,7 @@ This repository contains Docker and Kubernetes configurations for deploying GLPI
 ## Key Exports
 
 - Docker images: `eftechcombr/glpi:base`, `eftechcombr/glpi:php-fpm-{VERSION}`, `eftechcombr/glpi:nginx-{VERSION}`
-- Helm chart: `glpi` (appVersion 12.0.1)
+- Helm chart: `glpi` (appVersion 12.0.2)
 
 ## File Structure & Code Organization
 

@@ -7,8 +7,7 @@ relevantFiles:
   - docker/docker-compose.yml
   - .github/workflows/docker-hub.yaml
   - .github/workflows/docker-publish-base.yaml
-  - .github/workflows/docker-publish-nginx.yaml
-  - .github/workflows/docker-publish-php-fpm.yaml
+  - .github/workflows/docker-publish.yaml
   - .github/workflows/helm-publish-ghcr.yaml
   - .github/workflows/helm-publish.yaml
   - docker/nginx/Dockerfile
